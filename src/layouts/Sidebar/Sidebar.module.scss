@@ -1,0 +1,29 @@
+.wrapper {
+    width: 35%;
+    padding-right: 20px;
+}
+
+.action {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.search {
+    margin-top: 10px;
+}
+
+.content {
+    margin-top: 10px;
+}
+
+.wrapper-message-item {
+    position: relative;
+}
+
+.message-item-action-btn {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+}

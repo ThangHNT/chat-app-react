@@ -1,0 +1,44 @@
+.wrapper {
+    height: var(--message-item-height);
+    border-radius: 10px;
+    border: 1px solid #aaa;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0 10px;
+
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+.avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-left: 10px;
+}
+
+.title {
+    font-size: 16px;
+    font-weight: 500;
+    font-family: 'Helvetica Neue', Helvetica, Arial;
+}
+
+.message {
+    font-size: 14px;
+}
+
+.title,
+.message {
+    max-width: 260px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow-x: hidden;
+}
