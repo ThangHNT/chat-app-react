@@ -5,7 +5,7 @@ import styles from './Image.module.scss';
 
 const cx = classNames.bind(styles);
 
-const Image = forwardRef(({ src, alt, logo, avatar, className, arounded = false, ...props }, ref) => {
+const Image = forwardRef(({ src, alt, logo, online = false, avatar, className, arounded = false, ...props }, ref) => {
     return (
         <img
             ref={ref}
@@ -15,6 +15,7 @@ const Image = forwardRef(({ src, alt, logo, avatar, className, arounded = false,
                 arounded,
                 logo,
                 avatar,
+                online,
             })}
             {...props}
         />

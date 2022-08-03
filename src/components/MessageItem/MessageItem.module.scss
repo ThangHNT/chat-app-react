@@ -6,16 +6,23 @@
     align-items: center;
     justify-content: flex-start;
     padding: 0 10px;
+    position: relative;
+    background-color: #fff;
 
     &:hover {
         cursor: pointer;
+        background-color: #ddd;
     }
+}
+.wrapper + .wrapper {
+    margin-top: 5px;
 }
 
 .avatar {
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
 }
 
 .info {
@@ -25,20 +32,21 @@
     margin-left: 10px;
 }
 
-.title {
+.username {
     font-size: 16px;
     font-weight: 500;
-    font-family: 'Helvetica Neue', Helvetica, Arial;
+    font-family: var(--font-family-username);
 }
 
 .message {
     font-size: 14px;
 }
 
-.title,
+.username,
 .message {
     max-width: 260px;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow-x: hidden;
+    user-select: none;
 }

@@ -15,6 +15,8 @@ function Button({
     disable = false,
     normal = false,
     circle = false,
+    messageItem = false,
+    noTitle = false,
     children,
     onClick,
     leftIcon,
@@ -45,14 +47,16 @@ function Button({
         small,
         text,
         secondary,
+        messageItem,
         normal,
         circle,
+        noTitle,
     });
 
     return (
         <Btn className={classes} {...props}>
             {leftIcon && <span className={cx('icon')}>{leftIcon}</span>}
-            <span className={cx('title')}>{children}</span>
+            {!noTitle && <span className={cx('title')}>{children}</span>}
         </Btn>
     );
 }
