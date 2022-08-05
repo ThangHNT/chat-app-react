@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleInfo, faMicrophone, faPhone, faVideo } from '@fortawesome/free-solid-svg-icons';
-import { faFaceGrin } from '@fortawesome/free-regular-svg-icons';
-import { faImages } from '@fortawesome/free-regular-svg-icons';
+import { faFaceGrin, faImages } from '@fortawesome/free-regular-svg-icons';
 import classNames from 'classnames/bind';
 import Picker from 'emoji-picker-react';
 import styles from './ChatContent.module.scss';
@@ -17,18 +16,53 @@ function ChatContent() {
     const [chosenEmoji, setChosenEmoji] = useState(null);
     const [inputValue, setInputValue] = useState('');
     const [displayEmojiList, setDisplayEmojiList] = useState(false);
+    const [imgPasted, setImgPasted] = useState('');
+
+    const inputRef = useRef();
+    const contentRef = useRef();
+
+    useEffect(() => {
+        contentRef.current.scrollTop = contentRef.current.scrollHeight;
+    }, []);
+
+    useEffect(() => {
+        let value = inputRef.current.value;
+        if (value === ' ' || value === '' || value === '\n') {
+            inputRef.current.style.height = '34px';
+        }
+        let height = inputRef.current.scrollHeight;
+        inputRef.current.style.height = `${height + 2}px`;
+    }, [inputValue]);
+
+    useEffect(() => {
+        return () => {
+            if (imgPasted.length > 0) URL.revokeObjectURL(imgPasted);
+        };
+    }, [imgPasted]);
+
+    const handleRemoveImg = () => {
+        // console.log('remove');
+        setImgPasted('');
+    };
 
     const onEmojiClick = (event, emojiObject) => {
         setChosenEmoji(emojiObject);
         let emoji = emojiObject.emoji;
-        console.log(event);
         setInputValue((pre) => {
             return pre + emoji;
         });
     };
 
-    const handleType = (e) => {
+    const handleType = async (e) => {
         setInputValue(e.target.value);
+        const data = await navigator.clipboard.read();
+        const clipboardContent = data[0];
+        const type = clipboardContent.types[1];
+        if (type === 'image/png') {
+            const blob = await clipboardContent.getType('image/png');
+            const url = URL.createObjectURL(blob);
+            setImgPasted(url);
+        }
     };
 
     const handlDisplayEmojiList = (e) => {
@@ -59,7 +93,7 @@ function ChatContent() {
                     <Button noTitle leftIcon={<FontAwesomeIcon icon={faCircleInfo} />}></Button>
                 </div>
             </div>
-            <div className={cx('content')}>
+            <div ref={contentRef} className={cx('content')}>
                 <div className={cx('messages')}>
                     <div className={cx('message-item')}>
                         <Message text>Hello 500 ae</Message>
@@ -113,17 +147,24 @@ function ChatContent() {
                     <Button nestInput leftIcon={<FontAwesomeIcon icon={faMicrophone} />}></Button>
                 </div>
                 <div className={cx('chat-input')}>
-                    <Input type="text" value={inputValue} chat onInput={handleType} />
+                    {imgPasted.length > 0 && (
+                        <div className={cx('image-list')}>
+                            <div className={cx('image-list-item')}>
+                                <Image handleRemove={handleRemoveImg} small remove src={imgPasted}></Image>
+                            </div>
+                        </div>
+                    )}
+                    <Input ref={inputRef} type="text" value={inputValue} chat onInput={handleType} />
                 </div>
                 <div className={cx('chat-emoji')}>
                     <div className={cx('wrapper-emoji-btn')} onClick={handlDisplayEmojiList}>
                         <Button noTitle leftIcon={<FontAwesomeIcon icon={faFaceGrin} />} />
                     </div>
-                    {/* <div className={cx('emoji-list')}>
-                        <Picker native searchPlaceholder="smile" disableAutoFocus onEmojiClick={onEmojiClick} />
-                    </div> */}
-                    {/* {displayEmojiList && (
-                    )} */}
+                    {displayEmojiList && (
+                        <div className={cx('emoji-list')}>
+                            <Picker native searchPlaceholder="smile" disableAutoFocus onEmojiClick={onEmojiClick} />
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

@@ -1,5 +1,7 @@
 .wrapper-input {
     position: relative;
+    display: flex;
+    align-items: center;
 }
 
 .wrapper-input + .wrapper-input {

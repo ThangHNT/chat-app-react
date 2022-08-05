@@ -16,9 +16,10 @@ function Button({
     normal = false,
     circle = false,
     messageItem = false,
-    noTitle = false,
     message_sended = false,
+    noTitle = false,
     nestInput = false,
+    closeImage = false,
     children,
     onClick,
     leftIcon,
@@ -55,6 +56,7 @@ function Button({
         noTitle,
         message_sended,
         nestInput,
+        closeImage,
     });
 
     return (
