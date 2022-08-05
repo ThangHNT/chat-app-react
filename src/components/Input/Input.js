@@ -8,7 +8,7 @@ const Input = forwardRef(
     (
         {
             type,
-            title,
+            title = ' ',
             name,
             arounded,
             placeholder = ' ',
@@ -59,7 +59,7 @@ const Input = forwardRef(
                     ref={ref}
                     className={classnames}
                     name={name}
-                    title=" "
+                    title={title}
                     type={type}
                     placeholder={placeholder}
                     {...props}

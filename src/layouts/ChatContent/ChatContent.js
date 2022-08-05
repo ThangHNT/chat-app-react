@@ -41,7 +41,6 @@ function ChatContent() {
     }, [imgPasted]);
 
     const handleRemoveImg = () => {
-        // console.log('remove');
         setImgPasted('');
     };
 
