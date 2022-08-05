@@ -91,6 +91,39 @@
     background-color: #fff;
 
     &:hover {
-        background-color: red;
+        background-color: var(--button-icon-hover);
+    }
+}
+
+.message_sended {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    font-size: 14px;
+    padding: 0;
+
+    &:hover {
+        background-color: var(--button-icon-hover);
+    }
+}
+
+.nestInput {
+    position: relative;
+    width: 32px;
+    height: 32px;
+    font-size: 18px;
+    z-index: 1;
+    border-radius: 50%;
+
+    .title {
+        opacity: 0;
+        margin: 0;
+        position: absolute;
+        z-index: 2;
+    }
+
+    &:hover {
+        background-color: #ccc;
+        cursor: pointer;
     }
 }

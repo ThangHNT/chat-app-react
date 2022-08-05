@@ -1,0 +1,29 @@
+.wrapper {
+    display: flex;
+    align-items: center;
+    margin-top: 5px;
+}
+
+.reciever {
+    flex-direction: row-reverse;
+}
+
+.content-message {
+    display: block;
+    background-color: #ccc;
+    max-width: 80%;
+    padding: 8px 10px;
+    border-radius: 20px;
+    white-space: pre-wrap;
+    text-align: left;
+    line-height: 20px;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+}
+
+.message-sended-actions {
+    display: flex;
+    justify-content: space-between;
+    margin: 0 10px;
+    width: 12%;
+}

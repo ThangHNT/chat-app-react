@@ -11,23 +11,54 @@ function Input({
     noLabel = false,
     placeholder = ' ',
     input = false,
-    message = false,
-    ...props
+    chat = false,
+    file = false,
+    onInput,
+    value,
+    ...passprops
 }) {
+    const handleChange = (e) => {
+        if (chat) {
+            let value = e.target.value;
+            if (value === ' ' || value === '' || value === '\n') {
+                e.target.style.height = '34px';
+            }
+            let height = e.target.scrollHeight;
+            e.target.style.height = `${height}px`;
+        }
+    };
+
     let Input = 'input';
-    if (message) {
+    const props = {
+        ...passprops,
+        onInput,
+        value,
+        maxLength: '100',
+    };
+
+    if (chat) {
         Input = 'textarea';
+        props.maxLength = '2000';
     }
 
     const classnames = cx('wrapper', {
         input,
-        message,
+        chat,
         arounded,
+        file,
     });
 
     return (
         <div className={cx('wrapper-input')}>
-            <Input className={classnames} name={name} type={type} placeholder={placeholder} {...props} />
+            <Input
+                className={classnames}
+                name={name}
+                title=" "
+                type={type}
+                placeholder={placeholder}
+                {...props}
+                onKeyUp={handleChange}
+            />
             {!noLabel && (
                 <label className={cx(`label`)} htmlFor={name}>
                     {name}

@@ -17,6 +17,8 @@ function Button({
     circle = false,
     messageItem = false,
     noTitle = false,
+    message_sended = false,
+    nestInput = false,
     children,
     onClick,
     leftIcon,
@@ -51,12 +53,14 @@ function Button({
         normal,
         circle,
         noTitle,
+        message_sended,
+        nestInput,
     });
 
     return (
         <Btn className={classes} {...props}>
             {leftIcon && <span className={cx('icon')}>{leftIcon}</span>}
-            {!noTitle && <span className={cx('title')}>{children}</span>}
+            {!noTitle && !message_sended && <span className={cx('title')}>{children}</span>}
         </Btn>
     );
 }

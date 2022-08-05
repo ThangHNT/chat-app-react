@@ -6,8 +6,8 @@
 .header {
     position: fixed;
     top: 0;
-    width: 24%;
-    margin-top: calc(var(--margin-top-content) - 15px);
+    width: 23.4%;
+    margin-top: calc(var(--margin-top-home-content) - 12px);
     padding-top: 10px;
     z-index: 5;
     background-color: #fff;
@@ -24,7 +24,7 @@
 }
 
 .content {
-    margin-top: calc(var(--margin-top-content) + 10px);
+    margin-top: calc(var(--margin-top-home-content) + 15px);
     max-height: 400px;
     overflow-x: hidden;
 }

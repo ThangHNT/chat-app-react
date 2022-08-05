@@ -52,3 +52,24 @@
     letter-spacing: 1px;
     padding: 8px 15px;
 }
+
+.file {
+    cursor: pointer;
+}
+
+.chat {
+    font-family: 'Poppins', sans-serif;
+    outline: none;
+    resize: none;
+    line-height: 20px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    height: 34px;
+    max-height: 100px;
+
+    &::-webkit-scrollbar {
+        width: 0px;
+    }
+}
