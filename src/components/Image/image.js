@@ -1,4 +1,4 @@
-import { forwardRef } from 'react';
+import { forwardRef, memo } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmarkCircle } from '@fortawesome/free-solid-svg-icons';
 import defaultImg from '~/assets/images/No-Image-Placeholder.svg.png';
@@ -57,4 +57,4 @@ const Image = forwardRef(
     },
 );
 
-export default Image;
+export default memo(Image);

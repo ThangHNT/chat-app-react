@@ -6,11 +6,11 @@ import styles from './Menu.module.scss';
 
 const cx = classNames.bind(styles);
 
-function Menu({ elements = [], noText }) {
+function Menu({ elements = [] }) {
     return elements.map((item, index) => {
         return (
             <div key={index} className={cx('wrapper')}>
-                <Button messageItem noText={noText} text leftIcon={item.icon} children={item.text} />
+                <Button messageItem text leftIcon={item.icon} children={item.text} />
             </div>
         );
     });

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleInfo, faMicrophone, faPhone, faVideo } from '@fortawesome/free-solid-svg-icons';
 import { faFaceGrin, faImages } from '@fortawesome/free-regular-svg-icons';
@@ -13,6 +13,7 @@ import Input from '~/components/Input';
 const cx = classNames.bind(styles);
 
 function ChatContent() {
+    // eslint-disable-next-line
     const [chosenEmoji, setChosenEmoji] = useState(null);
     const [inputValue, setInputValue] = useState('');
     const [displayEmojiList, setDisplayEmojiList] = useState(false);
@@ -40,9 +41,9 @@ function ChatContent() {
         };
     }, [imgPasted]);
 
-    const handleRemoveImg = () => {
+    const handleRemoveImg = useCallback(() => {
         setImgPasted('');
-    };
+    }, []);
 
     const onEmojiClick = (event, emojiObject) => {
         setChosenEmoji(emojiObject);
