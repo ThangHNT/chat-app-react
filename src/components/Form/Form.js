@@ -12,7 +12,7 @@ import { UserContext } from '../Context/UserContext';
 const cx = classNames.bind(styles);
 
 function Form({ login, signup }) {
-    const user = useContext(UserContext);
+    const User = useContext(UserContext);
 
     // eslint-disable-next-line
     const navigate = useNavigate();
@@ -49,27 +49,39 @@ function Form({ login, signup }) {
         if (checkValues()) {
             console.log('login');
             if (values.confirmPassword.length > 0) {
-                const { data } = await axios.post('/register', values);
-                if (data.status === true) {
-                    toast('Đăng ký thành công');
-                    localStorage.setItem('chat-app-hnt', JSON.stringify(data.user));
-                    setTimeout(function () {
-                        navigate('/home', { replace: true });
-                    }, 2500);
+                try {
+                    const { data } = await axios.post('/register', values);
+                    if (data.status === true) {
+                        toast('Đăng ký thành công');
+                        User.setUser(data.user);
+                        localStorage.setItem('chat-app-hnt', JSON.stringify(data.user));
+                        setTimeout(function () {
+                            navigate('/home', { replace: true });
+                        }, 2500);
+                    } else {
+                        toast(data.msg);
+                    }
+                } catch (e) {
+                    alert('register request failed, start server');
                 }
             } else {
-                const { data } = await axios.post('/login', values);
-                if (data.status === false) {
-                    toast(data.msg);
-                } else {
-                    let account = localStorage.getItem('chat-app-hnt');
-                    if (!account) {
-                        localStorage.setItem('chat-app-hnt', JSON.stringify(data.user));
+                try {
+                    const { data } = await axios.post('/login', values);
+                    if (data.status === false) {
+                        toast(data.msg);
+                    } else {
+                        let account = localStorage.getItem('chat-app-hnt');
+                        if (!account) {
+                            localStorage.setItem('chat-app-hnt', JSON.stringify(data.user));
+                        }
+                        User.setUser(data.user);
+                        toast('Chuyển hướng đến trang chủ');
+                        setTimeout(function () {
+                            navigate('/home', { replace: true });
+                        }, 2500);
                     }
-                    toast('Chuyển hướng đến trang chủ');
-                    setTimeout(function () {
-                        navigate('/home', { replace: true });
-                    }, 2500);
+                } catch (e) {
+                    alert('login req failed, start server');
                 }
             }
         }

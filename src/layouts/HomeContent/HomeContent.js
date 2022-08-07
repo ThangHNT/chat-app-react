@@ -1,4 +1,3 @@
-import React from 'react';
 import classNames from 'classnames/bind';
 import ChatContent from '~/layouts/ChatContent';
 import Sidebar from '~/layouts/Sidebar';
