@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import classNames from 'classnames/bind';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBan, faEllipsis, faTrashCan } from '@fortawesome/free-solid-svg-icons';
@@ -7,41 +7,9 @@ import Search from '~/components/Search';
 import Button from '~/components/Button';
 import MessageItem from '~/components/MessageItem';
 import Menu from '~/components/Menu';
+import host from '~/ulties/serverHost';
 
 const cx = classNames.bind(styles);
-
-const messageItems = [
-    {
-        avatar: 'https://nhattientuu.com/wp-content/uploads/2020/08/hinh-anh-dep-1.jpg',
-        username: 'Thang Hoang',
-        message: 'hello',
-    },
-    {
-        avatar: 'https://nhattientuu.com/wp-content/uploads/2020/08/hinh-anh-dep-1.jpg',
-        username: 'hai long',
-        message: 'cho t vay it tien',
-    },
-    {
-        avatar: 'https://nhattientuu.com/wp-content/uploads/2020/08/hinh-anh-dep-1.jpg',
-        username: 'tran toan',
-        message: 'dao nay ban khoe khong?',
-    },
-    {
-        avatar: 'https://nhattientuu.com/wp-content/uploads/2020/08/hinh-anh-dep-1.jpg',
-        username: 'le bao',
-        message: 'nay da bong ko?',
-    },
-    {
-        avatar: 'https://nhattientuu.com/wp-content/uploads/2020/08/hinh-anh-dep-1.jpg',
-        username: 'nguyen huy',
-        message: 'toi an com r',
-    },
-    {
-        avatar: 'https://nhattientuu.com/wp-content/uploads/2020/08/hinh-anh-dep-1.jpg',
-        username: 'nguyen huy',
-        message: 'toi an com r',
-    },
-];
 
 const actionsMessageItem = [
     {
@@ -56,14 +24,33 @@ const actionsMessageItem = [
 
 function Sidebar() {
     const [menuMessageItem, setmenuMessageItem] = useState(-1);
+    const [listUser, setListUser] = useState([]);
 
-    // const btnRef = useRef();
+    useEffect(() => {
+        fetch(`${host}/api/message-item`)
+            .then((response) => response.json())
+            .then((data) => {
+                setListUser(data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }, []);
 
     const handleDisplayMenu = (e) => {
+        // lấy element div
         const div = e.target.closest('div');
         setmenuMessageItem((pre) => {
             return pre !== Number(div.id) ? Number(div.id) : -1;
         });
+    };
+
+    const handleClick = (e) => {
+        const target = e.target;
+        let userId = '';
+        if (target.className.indexOf('wrapper') > -1) {
+        } else if (target.parentNode.className.indexOf('wrapper') > -1) {
+        }
     };
 
     return (
@@ -80,9 +67,14 @@ function Sidebar() {
                 </div>
             </div>
             <div className={cx('content')}>
-                {messageItems.map((item, index) => (
+                {listUser.map((item, index) => (
                     <div key={index} className={cx('wrapper-message-item')}>
-                        <MessageItem avatar={item.avatar} message={item.message} username={item.username} />
+                        <MessageItem
+                            onClick={handleClick}
+                            userId={item._id}
+                            avatar={item.avatar}
+                            username={item.username}
+                        />
                         <div id={index} className={cx('wrapper-btn')} onClick={handleDisplayMenu}>
                             <Button circle>
                                 <FontAwesomeIcon icon={faEllipsis} />

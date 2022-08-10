@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import classNames from 'classnames/bind';
 import Button from '~/components/Button';
 import 'tippy.js/dist/tippy.css';
@@ -16,4 +16,4 @@ function Menu({ elements = [] }) {
     });
 }
 
-export default Menu;
+export default memo(Menu);

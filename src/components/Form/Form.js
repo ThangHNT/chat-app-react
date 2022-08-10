@@ -182,7 +182,7 @@ function Form({ login, signup }) {
                 closeOnClick
                 pauseOnFocusLoss
                 draggable
-                pauseOnHover
+                pauseOnHover={false}
             />
         </form>
     );
