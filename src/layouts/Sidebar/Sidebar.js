@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import classNames from 'classnames/bind';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBan, faEllipsis, faTrashCan } from '@fortawesome/free-solid-svg-icons';
@@ -8,6 +8,7 @@ import Button from '~/components/Button';
 import MessageItem from '~/components/MessageItem';
 import Menu from '~/components/Menu';
 import host from '~/ulties/serverHost';
+import { ChatContentContext } from '~/components/Context/ChatContentContext';
 
 const cx = classNames.bind(styles);
 
@@ -23,6 +24,7 @@ const actionsMessageItem = [
 ];
 
 function Sidebar() {
+    const UserChatContent = useContext(ChatContentContext);
     const [menuMessageItem, setmenuMessageItem] = useState(-1);
     const [listUser, setListUser] = useState([]);
 
@@ -33,7 +35,7 @@ function Sidebar() {
                 setListUser(data);
             })
             .catch((error) => {
-                console.log(error);
+                console.log('lỗi lấy user');
             });
     }, []);
 
@@ -45,12 +47,11 @@ function Sidebar() {
         });
     };
 
-    const handleClick = (e) => {
-        const target = e.target;
-        let userId = '';
-        if (target.className.indexOf('wrapper') > -1) {
-        } else if (target.parentNode.className.indexOf('wrapper') > -1) {
-        }
+    const handleClickMessageItem = (e) => {
+        // lấy root element
+        const rootdiv = e.currentTarget;
+        UserChatContent.handleDisplayChatContent(rootdiv.getAttribute('userid'));
+        // console.log(UserChatContent.reciever);
     };
 
     return (
@@ -68,13 +69,13 @@ function Sidebar() {
             </div>
             <div className={cx('content')}>
                 {listUser.map((item, index) => (
-                    <div key={index} className={cx('wrapper-message-item')}>
-                        <MessageItem
-                            onClick={handleClick}
-                            userId={item._id}
-                            avatar={item.avatar}
-                            username={item.username}
-                        />
+                    <div
+                        key={index}
+                        userid={item._id}
+                        className={cx('wrapper-message-item')}
+                        onClick={handleClickMessageItem}
+                    >
+                        <MessageItem avatar={item.avatar} username={item.username} />
                         <div id={index} className={cx('wrapper-btn')} onClick={handleDisplayMenu}>
                             <Button circle>
                                 <FontAwesomeIcon icon={faEllipsis} />

@@ -17,9 +17,10 @@ const Image = forwardRef(
             online = false,
             small = false,
             remove = false,
+            arounded = false,
+            noneReceiver = false,
             avatar,
             className,
-            arounded = false,
             onClick,
             handleRemove,
             ...passprops
@@ -44,6 +45,7 @@ const Image = forwardRef(
                         online,
                         small,
                         remove,
+                        noneReceiver,
                     })}
                     {...props}
                 />

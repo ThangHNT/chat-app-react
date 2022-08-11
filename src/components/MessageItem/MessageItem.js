@@ -6,9 +6,9 @@ import Image from '~/components/Image';
 
 const cx = classNames.bind(styles);
 
-function MessageItem({ userId, avatar, username, message, onClick }) {
+function MessageItem({ avatar, username, message }) {
     return (
-        <div className={cx('wrapper')} userid={userId} onClick={onClick}>
+        <div className={cx('wrapper-message-item')}>
             <div className={cx('avatar')}>
                 <Image src={avatar} avatar alt="avatar" />
                 <span className="online"></span>

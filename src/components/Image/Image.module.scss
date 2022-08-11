@@ -3,6 +3,7 @@
     align-items: center;
     justify-content: center;
     position: relative;
+    user-select: none;
 }
 
 .logo {
@@ -37,4 +38,10 @@
     position: absolute;
     right: -6px;
     top: -2px;
+}
+
+.noneReceiver {
+    width: 100%;
+    max-height: 85vh;
+    padding: 6%;
 }
