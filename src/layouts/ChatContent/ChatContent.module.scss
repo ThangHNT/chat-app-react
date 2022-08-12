@@ -72,7 +72,7 @@
 //  content
 
 .content {
-    max-height: 500px;
+    max-height: 480px;
     overflow-x: hidden;
     top: 126px;
     bottom: 50px;
@@ -81,58 +81,11 @@
 // send-message input
 
 .send-message {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
     max-height: 40px;
-    bottom: 40px;
+    bottom: 60px;
 }
 
-.chat-btns {
-    display: flex;
-}
-
-.chat-input {
-    flex: 1;
-}
-
-.image-list {
-    position: absolute;
-    display: flex;
-    padding: 10px;
-    bottom: 40px;
-    background-color: blue;
-    box-shadow: 0 0 2px 0 #ccc;
-    border-radius: 5px;
-}
-
-.image-list-item {
-    position: relative;
-    display: flex;
-    align-items: center;
-}
-
-.image-list-item + .image-list-item {
-    margin-left: 10px;
-}
-
-.close-image-list-item {
-    position: absolute;
-    right: -6px;
-    top: -2px;
-}
-
-.wrapper-emoji-btn {
-    position: relative;
-    z-index: 5;
-}
-
-.emoji-list {
-    position: absolute;
-    bottom: 40px;
-    right: 0;
-}
-
+// loading
 .loading {
     font-size: 25px;
     animation: spinner linear 1s infinite;

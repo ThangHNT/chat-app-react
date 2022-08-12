@@ -4,7 +4,7 @@ import Message from '~/components/Message';
 
 const cx = classNames.bind(styles);
 
-function Messages() {
+function Messages({ receiver }) {
     return (
         <div className={cx('wrapper')}>
             <div className={cx('message-item')}>
