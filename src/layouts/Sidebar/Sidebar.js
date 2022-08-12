@@ -58,7 +58,7 @@ function Sidebar() {
         <div className={cx('wrapper')}>
             <div className={cx('header')}>
                 <div className={cx('action')}>
-                    <h3>Chat</h3>
+                    <h3>USER</h3>
                     <Button circle>
                         <FontAwesomeIcon icon={faEllipsis} />
                     </Button>

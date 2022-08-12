@@ -17,6 +17,7 @@ const Input = forwardRef(
             chat = false,
             file = false,
             onInput,
+            onPaste,
             value,
             ...passprops
         },
@@ -37,6 +38,7 @@ const Input = forwardRef(
         const props = {
             ...passprops,
             onInput,
+            onPaste,
             value,
             maxLength: '100',
         };

@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef, useCallback, useContext } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleInfo, faMicrophone, faPhone, faVideo } from '@fortawesome/free-solid-svg-icons';
+import { faCircleInfo, faMicrophone, faPhone, faSpinner, faVideo } from '@fortawesome/free-solid-svg-icons';
 import { faFaceGrin, faImages } from '@fortawesome/free-regular-svg-icons';
 import classNames from 'classnames/bind';
 import Picker from 'emoji-picker-react';
 import styles from './ChatContent.module.scss';
 import Image from '~/components/Image';
 import Button from '~/components/Button';
-import Message from '~/components/Message';
+import Messages from '~/layouts/Messages';
 import Input from '~/components/Input';
 import { ChatContentContext } from '~/components/Context/ChatContentContext';
 import host from '~/ulties/serverHost';
@@ -22,12 +22,17 @@ function ChatContent() {
     const [displayEmojiList, setDisplayEmojiList] = useState(false);
     const [imgPasted, setImgPasted] = useState('');
     const [receiver, setReceiver] = useState();
+    const [loading, setLoading] = useState(false);
 
     const inputRef = useRef();
     const contentRef = useRef();
 
+    // lấy thông tin ng nhận khi ấn vào user bên sidebar
+    console.log('render');
     useEffect(() => {
         if (ChatContent.receiver) {
+            console.log('render-1');
+            setLoading(true);
             fetch(`${host}/api/receiver/${encodeURIComponent(ChatContent.receiver)}`)
                 .then((res) => res.json())
                 .then((data) => {
@@ -37,19 +42,28 @@ function ChatContent() {
                         alert(data.msg);
                     }
                 })
+                .then(() => {
+                    setLoading(false);
+                })
                 .catch((err) => {
                     console.log('Loi lay ng nhan');
                 });
         }
     }, [ChatContent.receiver]);
 
+    // cuộn tin nhắn xuống dưới cùng khi load xog đoạn chat
     useEffect(() => {
-        if (receiver) contentRef.current.scrollTop = contentRef.current.scrollHeight;
+        if (receiver) {
+            console.log('render-2');
+            contentRef.current.scrollTop = contentRef.current.scrollHeight;
+        }
         // eslint-disable-next-line
     }, [receiver]);
 
+    // mở rộng input
     useEffect(() => {
         if (receiver) {
+            console.log('render-3');
             let value = inputRef.current.value;
             if (value === ' ' || value === '' || value === '\n') {
                 inputRef.current.style.height = '34px';
@@ -60,18 +74,23 @@ function ChatContent() {
         // eslint-disable-next-line
     }, [inputValue]);
 
+    // xóa URL ảnh cũ khi chọn ảnh mới
     useEffect(() => {
-        if (receiver)
+        if (receiver) {
+            console.log('render-4');
             return () => {
                 if (imgPasted.length > 0) URL.revokeObjectURL(imgPasted);
             };
+        }
         // eslint-disable-next-line
     }, [imgPasted]);
 
     const handleRemoveImg = useCallback(() => {
+        console.log('render-5');
         setImgPasted('');
     }, []);
 
+    // chọn emoji
     const onEmojiClick = (event, emojiObject) => {
         setChosenEmoji(emojiObject);
         let emoji = emojiObject.emoji;
@@ -80,8 +99,14 @@ function ChatContent() {
         });
     };
 
-    const handleType = async (e) => {
+    // xử lý 2 chiều khi gõ vào input
+    const handleType = (e) => {
+        console.log('render-6');
         setInputValue(e.target.value);
+    };
+
+    // lắng nghe sự kiện paste
+    const handlePaste = async () => {
         const data = await navigator.clipboard.read();
         const clipboardContent = data[0];
         const type = clipboardContent.types[1];
@@ -92,13 +117,15 @@ function ChatContent() {
         }
     };
 
+    // hiển thị ds emoji
     const handlDisplayEmojiList = (e) => {
+        console.log('render-7');
         setDisplayEmojiList(!displayEmojiList);
     };
 
     return (
         <div className={cx('wrapper')}>
-            {receiver && (
+            {receiver && !loading && (
                 <div className={cx('header')}>
                     <div className={cx('receiver')}>
                         <div>
@@ -119,55 +146,12 @@ function ChatContent() {
                     </div>
                 </div>
             )}
-            {receiver && (
+            {receiver && !loading && (
                 <div ref={contentRef} className={cx('content')}>
-                    <div className={cx('messages')}>
-                        <div className={cx('message-item')}>
-                            <Message text>Hello 500 ae</Message>
-                        </div>
-                        <div className={cx('message-item')}>
-                            <Message receiver text>
-                                chao mn nha, minh la tvm
-                            </Message>
-                        </div>
-                        <div className={cx('message-item')}>
-                            <Message receiver text>
-                                CÔNG TY CỔ PHẦN MTV365 Địa chỉ: Tầng 3,số 1 Trần Nguyên Đán,Khu đô thị Định Công,Hoàng
-                                Mai,Hà Nội Vị trí : LẬP TRÌNH VIÊN NODE JS 1. Mô tả công việc - Phát triển phần mềm chat
-                                giữa ứng viên và nhà tuyển dụng trên nền tảng Javascrip cho website tuyển dụng. - Thực
-                                hiện code phần chat cho ứng viên chat với nhà tuyển dụng, chát dạng tex + truyền nhận
-                                file + video. - Phát triển các dự án mới, tư vấn giải pháp, xây dựng, thiết kế để tạo ra
-                                các sản phẩm phần mềm tối ưu, phù hợp với nhu cầu của khách hàng. 2.Yêu cầu: - Ko yêu
-                                cầu kinh nghiệm,có kiến thức cơ sở về Javascrip,C++,… - Có khả năng làm về ngôn ngữ lập
-                                trình nodejs, socket.io trong các dự án cá nhân hoặc thực tế - Có kiến thức về
-                                Javacrips, Database, C++ 3. Quyền lợi • Lương khởi điểm: thỏa thuận • Được ăn trưa tại
-                                công ty. • Được đóng bảo hiểm xã hội, y tế. • Có thưởng các ngày lễ tết. • Du lịch nghỉ
-                                dưỡng hằng năm cùng công ty. • Thưởng theo KPI hàng tuần ( max 500.000 đ). 4.Thời gian
-                                làm việc: Thứ 2 - Thứ 7 • Sáng 8h - 11h30 • Chiều 14h – 18h Ứng viên inbox trực tiếp để
-                                được trao đổi kỹ hơn hoặc gửi CV qua địa chỉ mail: tranmai96nd@gmail.com
-                            </Message>
-                        </div>
-                        <div className={cx('message-item')}>
-                            <Message receiver text>
-                                CÔNG TY CỔ PHẦN MTV365 Địa chỉ: Tầng 3,số 1 Trần Nguyên Đán,Khu đô thị Định Công,Hoàng
-                                Mai,Hà Nội Vị trí : LẬP TRÌNH VIÊN NODE JS 1. Mô tả công việc - Phát triển phần mềm chat
-                                giữa ứng viên và nhà tuyển dụng trên nền tảng Javascrip cho website tuyển dụng. - Thực
-                                hiện code phần chat cho ứng viên chat với nhà tuyển dụng, chát dạng tex + truyền nhận
-                                file + video. - Phát triển các dự án mới, tư vấn giải pháp, xây dựng, thiết kế để tạo ra
-                                các sản phẩm phần mềm tối ưu, phù hợp với nhu cầu của khách hàng. 2.Yêu cầu: - Ko yêu
-                                cầu kinh nghiệm,có kiến thức cơ sở về Javascrip,C++,… - Có khả năng làm về ngôn ngữ lập
-                                trình nodejs, socket.io trong các dự án cá nhân hoặc thực tế - Có kiến thức về
-                                Javacrips, Database, C++ 3. Quyền lợi • Lương khởi điểm: thỏa thuận • Được ăn trưa tại
-                                công ty. • Được đóng bảo hiểm xã hội, y tế. • Có thưởng các ngày lễ tết. • Du lịch nghỉ
-                                dưỡng hằng năm cùng công ty. • Thưởng theo KPI hàng tuần ( max 500.000 đ). 4.Thời gian
-                                làm việc: Thứ 2 - Thứ 7 • Sáng 8h - 11h30 • Chiều 14h – 18h Ứng viên inbox trực tiếp để
-                                được trao đổi kỹ hơn hoặc gửi CV qua địa chỉ mail: tranmai96nd@gmail.com
-                            </Message>
-                        </div>
-                    </div>
+                    <Messages />
                 </div>
             )}
-            {receiver && (
+            {receiver && !loading && (
                 <div className={cx('send-message')}>
                     <div className={cx('chat-btns')}>
                         <Button nestInput leftIcon={<FontAwesomeIcon icon={faImages} />}>
@@ -183,7 +167,14 @@ function ChatContent() {
                                 </div>
                             </div>
                         )}
-                        <Input ref={inputRef} type="text" value={inputValue} chat onInput={handleType} />
+                        <Input
+                            ref={inputRef}
+                            type="text"
+                            value={inputValue}
+                            chat
+                            onPaste={handlePaste}
+                            onInput={handleType}
+                        />
                     </div>
                     <div className={cx('chat-emoji')}>
                         <div className={cx('wrapper-emoji-btn')} onClick={handlDisplayEmojiList}>
@@ -197,9 +188,11 @@ function ChatContent() {
                     </div>
                 </div>
             )}
-            {!receiver && (
+            {!receiver && !loading && (
                 <Image noneReceiver src="https://cdn-icons-png.flaticon.com/512/2312/2312512.png" alt="no thing" />
             )}
+
+            {loading && <FontAwesomeIcon className={cx('loading')} icon={faSpinner} />}
         </div>
     );
 }

@@ -1,6 +1,9 @@
 .wrapper {
     width: 65%;
     position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     max-height: 100vh;
 }
 
@@ -128,4 +131,18 @@
     position: absolute;
     bottom: 40px;
     right: 0;
+}
+
+.loading {
+    font-size: 25px;
+    animation: spinner linear 1s infinite;
+}
+
+@keyframes spinner {
+    from {
+        transform: rotate(0);
+    }
+    to {
+        transform: rotate(360deg);
+    }
 }
