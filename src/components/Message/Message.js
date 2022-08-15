@@ -7,7 +7,7 @@ import { faEllipsisVertical, faFaceGrinWide, faReply } from '@fortawesome/free-s
 
 const cx = classNames.bind(styles);
 
-function Message({ receiver = false, text = false, children, onClick, img = false, ...passprops }) {
+function Message({ sender = false, text = false, children, onClick, img = false, ...passprops }) {
     const [actionMessage, setActionMessage] = useState(false);
 
     let Msg = 'p';
@@ -33,7 +33,7 @@ function Message({ receiver = false, text = false, children, onClick, img = fals
     };
 
     return (
-        <div className={cx('wrapper', { receiver })} onMouseOver={handleDisplayAction} onMouseOut={handleHideAction}>
+        <div className={cx('wrapper', { sender })} onMouseOver={handleDisplayAction} onMouseOut={handleHideAction}>
             <Msg className={cx(classname)} {...props}>
                 {children}
             </Msg>

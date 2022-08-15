@@ -70,14 +70,15 @@ function Form({ login, signup }) {
                     if (data.status === false) {
                         toast(data.msg);
                     } else {
-                        let account = localStorage.getItem('chat-app-hnt');
-                        if (!account) {
-                            localStorage.setItem('chat-app-hnt', JSON.stringify(data.user));
-                        }
+                        // let account = localStorage.getItem('chat-app-hnt');
+                        // if (!account) {
+                        //     localStorage.setItem('chat-app-hnt', JSON.stringify(data.user));
+                        // }
+                        localStorage.setItem('chat-app-hnt', JSON.stringify(data.user));
                         User.setUser(data.user);
                         toast('Chuyển hướng đến trang chủ');
                         setTimeout(function () {
-                            navigate('/home', { replace: true });
+                            navigate('/', { replace: true });
                         }, 2500);
                     }
                 } catch (e) {

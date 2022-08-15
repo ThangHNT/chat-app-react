@@ -80,8 +80,10 @@ function SendMessage({ receiver }) {
         if (e.shiftKey) shiftKey = 16;
         if (e.which === 13 && shiftKey !== 16) {
             e.preventDefault();
+            const senderId = JSON.parse(localStorage.getItem('chat-app-hnt'))._id;
             try {
                 axios.post(`${host}/api/send-message`, {
+                    sender: senderId,
                     receiver: receiver.id,
                     content: inputValue,
                     type: 'text',
@@ -112,6 +114,7 @@ function SendMessage({ receiver }) {
                 <Input
                     ref={inputRef}
                     type="text"
+                    placeholder="Chat here"
                     value={inputValue}
                     chat
                     onKeyDown={handleEnterSubmit}

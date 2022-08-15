@@ -11,6 +11,8 @@ import Button from '~/components/Button';
 const cx = classNames.bind(styles);
 
 function Header({ currentUser = true }) {
+    const user = JSON.parse(localStorage.getItem('chat-app-hnt'));
+
     return (
         <header className={cx('header', { 'wrapper-content': true })}>
             <Link to="/" className={cx('logo-link')}>
@@ -35,12 +37,16 @@ function Header({ currentUser = true }) {
                         </div>
                     )}
                 >
-                    <Image
-                        src="https://toanthaydinh.com/wp-content/uploads/2020/04/wallpaper-4k-hinh-nen-4k-hinh-anh-ve-ruong-bac-thang-dep_101311157-1400x788-1.jpg"
-                        alt="avatar"
-                        arounded
-                        className={cx('current-user')}
-                    />
+                    {user === null ? (
+                        <Image
+                            src="https://toanthaydinh.com/wp-content/uploads/2020/04/wallpaper-4k-hinh-nen-4k-hinh-anh-ve-ruong-bac-thang-dep_101311157-1400x788-1.jpg"
+                            alt="avatar"
+                            arounded
+                            className={cx('current-user')}
+                        />
+                    ) : (
+                        <Image src={user.avatar} alt="avatar" arounded className={cx('current-user')} />
+                    )}
                 </Tippy>
             ) : (
                 <div className={cx('help')}>

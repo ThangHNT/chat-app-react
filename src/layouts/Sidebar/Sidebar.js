@@ -32,7 +32,12 @@ function Sidebar() {
         fetch(`${host}/api/message-item`)
             .then((response) => response.json())
             .then((data) => {
-                setListUser(data);
+                const senderId = JSON.parse(localStorage.getItem('chat-app-hnt'))._id;
+                let users = [];
+                data.forEach((item) => {
+                    if (item._id !== senderId) users.push(item);
+                });
+                setListUser(users);
             })
             .catch((error) => {
                 console.log('lỗi lấy user');
@@ -51,7 +56,6 @@ function Sidebar() {
         // lấy root element
         const rootdiv = e.currentTarget;
         UserChatContent.handleDisplayChatContent(rootdiv.getAttribute('userid'));
-        // console.log(UserChatContent.reciever);
     };
 
     return (

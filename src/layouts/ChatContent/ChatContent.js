@@ -80,10 +80,12 @@ function ChatContent() {
             )}
             {receiver && !loading && (
                 <div className={cx('send-message')}>
-                    {/* send message area */}
+                    {/* phần soạn tin nhắn send message area */}
                     <SendMessage receiver={receiver} />
                 </div>
             )}
+
+            {/* khi chưa chọn messageItem(người nhận) hiện lên ảnh */}
             {!receiver && !loading && (
                 <Image noneReceiver src="https://cdn-icons-png.flaticon.com/512/2312/2312512.png" alt="no thing" />
             )}
