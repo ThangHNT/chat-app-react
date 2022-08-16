@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import classNames from 'classnames/bind';
+import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBan, faEllipsis, faTrashCan } from '@fortawesome/free-solid-svg-icons';
 import styles from './Sidebar.module.scss';
@@ -24,24 +25,21 @@ const actionsMessageItem = [
 ];
 
 function Sidebar() {
+    console.log('render');
     const UserChatContent = useContext(ChatContentContext);
     const [menuMessageItem, setmenuMessageItem] = useState(-1);
     const [listUser, setListUser] = useState([]);
 
     useEffect(() => {
-        fetch(`${host}/api/message-item`)
-            .then((response) => response.json())
-            .then((data) => {
-                const senderId = JSON.parse(localStorage.getItem('chat-app-hnt'))._id;
-                let users = [];
-                data.forEach((item) => {
-                    if (item._id !== senderId) users.push(item);
-                });
-                setListUser(users);
-            })
-            .catch((error) => {
-                console.log('lỗi lấy user');
-            });
+        const senderId = JSON.parse(localStorage.getItem('chat-app-hnt'))._id;
+        axios.post(`${host}/api/message-item`, { sender: senderId }).then((data) => {
+            const data2 = data.data;
+            if (data2.status) {
+                setListUser(data2.userList);
+            } else {
+                console.log('loi lay ds user');
+            }
+        });
     }, []);
 
     const handleDisplayMenu = (e) => {
@@ -75,11 +73,11 @@ function Sidebar() {
                 {listUser.map((item, index) => (
                     <div
                         key={index}
-                        userid={item._id}
+                        userid={item.id}
                         className={cx('wrapper-message-item')}
                         onClick={handleClickMessageItem}
                     >
-                        <MessageItem avatar={item.avatar} username={item.username} />
+                        <MessageItem receiver={item} avatar={item.avatar} username={item.username} />
                         <div id={index} className={cx('wrapper-btn')} onClick={handleDisplayMenu}>
                             <Button circle>
                                 <FontAwesomeIcon icon={faEllipsis} />
