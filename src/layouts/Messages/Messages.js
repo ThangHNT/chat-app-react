@@ -1,15 +1,29 @@
-import { useEffect, useState, memo } from 'react';
+import { useEffect, useState, memo, useContext } from 'react';
 import classNames from 'classnames/bind';
 import axios from 'axios';
 import styles from './Messages.module.scss';
 import Message from '~/components/Message';
 import host from '~/ulties/serverHost';
+import { ChatContentContext } from '~/components/Context/ChatContentContext';
 
 const cx = classNames.bind(styles);
 
 function Messages({ receiver }) {
+    const ChatContent = useContext(ChatContentContext);
+
     const sender = JSON.parse(localStorage.getItem('chat-app-hnt'))._id;
-    const [messages, setMessages] = useState();
+    const [messages, setMessages] = useState([]);
+
+    useEffect(() => {
+        const newMessage = {
+            content: ChatContent.messages,
+            sender,
+        };
+        setMessages((pre) => {
+            return [...pre, newMessage];
+        });
+        // eslint-disable-next-line
+    }, [ChatContent.messages]);
 
     useEffect(() => {
         const senderId = JSON.parse(localStorage.getItem('chat-app-hnt'))._id;

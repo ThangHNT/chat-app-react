@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useContext, memo } from 'react';
 import classNames from 'classnames/bind';
 import axios from 'axios';
 import Picker from 'emoji-picker-react';
@@ -10,10 +10,12 @@ import Button from '~/components/Button';
 import Input from '~/components/Input';
 import styles from './SendMessage.module.scss';
 import host from '~/ulties/serverHost';
+import { ChatContentContext } from '~/components/Context/ChatContentContext';
 
 const cx = classNames.bind(styles);
 
 function SendMessage({ receiver }) {
+    const ChatContent = useContext(ChatContentContext);
     // eslint-disable-next-line
     const [chosenEmoji, setChosenEmoji] = useState(null);
     const [imgPasted, setImgPasted] = useState('');
@@ -80,14 +82,15 @@ function SendMessage({ receiver }) {
         if (e.shiftKey) shiftKey = 16;
         if (e.which === 13 && shiftKey !== 16) {
             e.preventDefault();
+            ChatContent.handleAddMessage(inputValue);
             const senderId = JSON.parse(localStorage.getItem('chat-app-hnt'))._id;
             try {
-                axios.post(`${host}/api/send-message`, {
-                    sender: senderId,
-                    receiver: receiver.id,
-                    content: inputValue,
-                    type: 'text',
-                });
+                // axios.post(`${host}/api/send-message`, {
+                //     sender: senderId,
+                //     receiver: receiver.id,
+                //     content: inputValue,
+                //     type: 'text',
+                // });
                 setInputValue('');
             } catch (e) {
                 console.log('loi gui tin nhan');
@@ -136,4 +139,4 @@ function SendMessage({ receiver }) {
     );
 }
 
-export default SendMessage;
+export default memo(SendMessage);
