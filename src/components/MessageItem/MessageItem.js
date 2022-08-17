@@ -8,7 +8,6 @@ import host from '~/ulties/serverHost';
 const cx = classNames.bind(styles);
 
 function MessageItem({ receiver, avatar, username }) {
-    console.log('render-item');
     const [lastestMessage, setlastestMessage] = useState();
 
     useEffect(() => {
@@ -20,10 +19,17 @@ function MessageItem({ receiver, avatar, username }) {
             })
             .then((data) => {
                 const data2 = data.data;
+                console.log(data2);
                 if (data2.status) {
-                    data2.message.sender === senderId
-                        ? setlastestMessage('Ban: ' + data2.message.text)
-                        : setlastestMessage(data2.message.text);
+                    if (data2.message.message.sender === senderId) {
+                        if (data2.message.message.type === 'text') {
+                            setlastestMessage('Ban: ' + data2.message.message.text);
+                        } else {
+                            setlastestMessage('Ban gui 1 anh ');
+                        }
+                    } else {
+                        setlastestMessage(data2.message.message.text);
+                    }
                 }
             })
             .catch((error) => {

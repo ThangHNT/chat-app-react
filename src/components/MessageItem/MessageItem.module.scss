@@ -26,10 +26,20 @@
 }
 
 .info {
+    width: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     margin-left: 10px;
+
+    .username,
+    .message {
+        max-width: 80%;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+        user-select: none;
+    }
 }
 
 .username {
@@ -40,13 +50,5 @@
 
 .message {
     font-size: 14px;
-}
-
-.username,
-.message {
-    max-width: 260px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow-x: hidden;
-    user-select: none;
+    padding-right: 35px;
 }

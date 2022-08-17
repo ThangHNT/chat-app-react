@@ -25,7 +25,6 @@ const actionsMessageItem = [
 ];
 
 function Sidebar() {
-    console.log('render');
     const UserChatContent = useContext(ChatContentContext);
     const [menuMessageItem, setmenuMessageItem] = useState(-1);
     const [listUser, setListUser] = useState([]);
