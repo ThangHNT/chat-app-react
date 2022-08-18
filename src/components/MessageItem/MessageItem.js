@@ -19,7 +19,6 @@ function MessageItem({ receiver, avatar, username }) {
             })
             .then((data) => {
                 const data2 = data.data;
-                console.log(data2);
                 if (data2.status) {
                     if (data2.message.message.sender === senderId) {
                         if (data2.message.message.type === 'text') {

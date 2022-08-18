@@ -19,7 +19,8 @@ function SendMessage({ receiver }) {
     // eslint-disable-next-line
     const [chosenEmoji, setChosenEmoji] = useState(null);
     const [imgPasted, setImgPasted] = useState('');
-    const [inputValue, setInputValue] = useState('');
+    const [imgBase64, setImgBase64] = useState('');
+    const [inputValue, setInputValue] = useState();
     const [displayEmojiList, setDisplayEmojiList] = useState(false);
     const inputRef = useRef();
 
@@ -66,14 +67,23 @@ function SendMessage({ receiver }) {
     };
 
     // lắng nghe sự kiện paste
-    const handlePaste = async () => {
+    const handlePaste = async (e) => {
         const data = await navigator.clipboard.read();
-        const clipboardContent = data[0];
-        const type = clipboardContent.types[1];
-        if (type === 'image/png') {
-            const blob = await clipboardContent.getType('image/png');
-            const url = URL.createObjectURL(blob);
-            setImgPasted(url);
+        if (data) {
+            const clipboardContent = data[0];
+            const type = clipboardContent.types[1];
+            if (type === 'image/png') {
+                const blob = await clipboardContent.getType('image/png');
+                const url = URL.createObjectURL(blob);
+                setImgPasted(url);
+                let reader = new FileReader();
+                reader.readAsDataURL(blob);
+                let base64String = '';
+                reader.onload = () => {
+                    base64String = reader.result.replace('data:', '').replace(/^.+,/, '');
+                    setImgBase64(base64String);
+                };
+            }
         }
     };
 
@@ -82,15 +92,30 @@ function SendMessage({ receiver }) {
         if (e.shiftKey) shiftKey = 16;
         if (e.which === 13 && shiftKey !== 16) {
             e.preventDefault();
-            ChatContent.handleAddMessage(inputValue);
+            let messages = [];
+            let textMsg = inputValue.trim();
+            if (textMsg.length > 0) {
+                messages.push({
+                    msg: inputValue.trim(),
+                    type: 'text',
+                });
+            }
+            if (imgBase64.length > 0) {
+                messages.push({
+                    msg: imgBase64,
+                    type: 'img',
+                });
+            }
+            console.log(messages);
+            // ChatContent.handleAddMessage(textMsg);
+
             const senderId = JSON.parse(localStorage.getItem('chat-app-hnt'))._id;
             try {
-                // axios.post(`${host}/api/send-message`, {
-                //     sender: senderId,
-                //     receiver: receiver.id,
-                //     content: inputValue,
-                //     type: 'text',
-                // });
+                axios.post(`${host}/api/send-message`, {
+                    sender: senderId,
+                    receiver: receiver.id,
+                    messages,
+                });
                 setInputValue('');
             } catch (e) {
                 console.log('loi gui tin nhan');

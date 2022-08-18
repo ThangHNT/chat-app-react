@@ -10,14 +10,15 @@ const cx = classNames.bind(styles);
 
 function Messages({ receiver }) {
     const ChatContent = useContext(ChatContentContext);
-
     const sender = JSON.parse(localStorage.getItem('chat-app-hnt'))._id;
     const [messages, setMessages] = useState([]);
 
+    // hiện tin nhắn trên đoạn chat khi vừa ấn enter
     useEffect(() => {
         const newMessage = {
             content: ChatContent.messages,
             sender,
+            time: new Date().getTime(),
         };
         setMessages((pre) => {
             return [...pre, newMessage];
@@ -25,6 +26,7 @@ function Messages({ receiver }) {
         // eslint-disable-next-line
     }, [ChatContent.messages]);
 
+    // tải messages từ database
     useEffect(() => {
         const senderId = JSON.parse(localStorage.getItem('chat-app-hnt'))._id;
         axios
@@ -34,6 +36,7 @@ function Messages({ receiver }) {
             })
             .then((data) => {
                 let data2 = data.data.arr;
+                console.log(data2);
                 setMessages([...data2]);
             })
             .catch((error) => {
@@ -42,17 +45,21 @@ function Messages({ receiver }) {
         // eslint-disable-next-line
     }, []);
 
+    // chuyển đổi thời gian về dạng giờ phút cho mỗi tin nhắn
+    const getTime = (millisecond) => {
+        const date = new Date(millisecond);
+        return `${date.getHours()} : ${date.getMinutes()}`;
+    };
+
     return (
         <div className={cx('wrapper')}>
             {messages &&
                 messages.map((message, index) => (
                     <div key={index} className={cx('message-item')}>
                         {sender === message.sender ? (
-                            <Message sender text>
-                                {message.content}
-                            </Message>
+                            <Message time={getTime(messages[index].time)} sender text></Message>
                         ) : (
-                            <Message text>{message.content}</Message>
+                            <Message time={getTime(messages[index].time)} text></Message>
                         )}
                     </div>
                 ))}

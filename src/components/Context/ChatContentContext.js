@@ -4,7 +4,7 @@ const ChatContentContext = createContext();
 
 function ChatContentProvider({ children }) {
     const [receiver, setReciever] = useState();
-    const [messages, setMessages] = useState('');
+    const [messages, setMessages] = useState();
 
     const handleDisplayChatContent = (userId) => {
         setReciever(userId);
