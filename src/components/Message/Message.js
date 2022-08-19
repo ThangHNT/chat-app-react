@@ -6,16 +6,13 @@ import { faEllipsisVertical, faFaceGrinWide, faReply } from '@fortawesome/free-s
 import classNames from 'classnames/bind';
 import styles from './Message.module.scss';
 import Button from '~/components/Button';
-import Image from '~/components/Image';
 
 const cx = classNames.bind(styles);
 
-function Message({ sender = false, time, text = false, children, onClick, img = false, ...passprops }) {
+function Message({ sender = false, time, type, children, onClick, ...passprops }) {
     const [actionMessage, setActionMessage] = useState(false);
-
-    const classname = cx('content-message', {
-        text,
-    });
+    console.log('render');
+    const classname = cx('content-message', {});
 
     const props = {
         onClick,
@@ -30,6 +27,15 @@ function Message({ sender = false, time, text = false, children, onClick, img = 
         setActionMessage(false);
     };
 
+    const onload = (e) => {
+        const target = e.target;
+        // const naturalHeight = target.naturalHeight;
+        // const naturalWidth = target.naturalWidth;
+        // console.log(naturalWidth, naturalHeight);
+        target.style.width = `${480 * 0.6}px`;
+        target.style.height = `${480 * 0.6}px`;
+    };
+
     return (
         <div className={cx('wrapper', { sender })} onMouseOver={handleDisplayAction} onMouseOut={handleHideAction}>
             <Tippy
@@ -41,12 +47,18 @@ function Message({ sender = false, time, text = false, children, onClick, img = 
                     </div>
                 )}
             >
-                {!img && (
+                {type === 'text' ? (
                     <p className={cx(classname)} {...props}>
                         {children}
                     </p>
+                ) : (
+                    <img
+                        className={cx('img-message')}
+                        onLoad={onload}
+                        src={`data:image/jpeg;base64,${children}`}
+                        alt="message-img"
+                    />
                 )}
-                {img && <Image />}
             </Tippy>
             {actionMessage && (
                 <div className={cx('message-sended-actions')}>

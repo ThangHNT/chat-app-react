@@ -106,9 +106,8 @@ function SendMessage({ receiver }) {
                     type: 'img',
                 });
             }
-            console.log(messages);
-            // ChatContent.handleAddMessage(textMsg);
-
+            // console.log(messages);
+            ChatContent.handleAddMessage(messages);
             const senderId = JSON.parse(localStorage.getItem('chat-app-hnt'))._id;
             try {
                 axios.post(`${host}/api/send-message`, {
@@ -117,6 +116,7 @@ function SendMessage({ receiver }) {
                     messages,
                 });
                 setInputValue('');
+                setImgPasted('');
             } catch (e) {
                 console.log('loi gui tin nhan');
             }
