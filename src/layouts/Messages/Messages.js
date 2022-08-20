@@ -43,6 +43,7 @@ function Messages({ receiver }) {
             .then((data) => {
                 let data2 = data.data.arr;
                 // console.log(data2);
+                ChatContent.handleScroll(true);
                 setMessages([...data2]);
             })
             .catch((error) => {

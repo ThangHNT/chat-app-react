@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import Tippy from '@tippyjs/react/headless';
-import 'tippy.js/dist/tippy.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsisVertical, faFaceGrinWide, faReply } from '@fortawesome/free-solid-svg-icons';
 import classNames from 'classnames/bind';
@@ -11,7 +9,6 @@ const cx = classNames.bind(styles);
 
 function Message({ sender = false, time, type, children, onClick, ...passprops }) {
     const [actionMessage, setActionMessage] = useState(false);
-    console.log('render');
     const classname = cx('content-message', {});
 
     const props = {
@@ -38,28 +35,18 @@ function Message({ sender = false, time, type, children, onClick, ...passprops }
 
     return (
         <div className={cx('wrapper', { sender })} onMouseOver={handleDisplayAction} onMouseOut={handleHideAction}>
-            <Tippy
-                // visible
-                placement="bottom-start"
-                render={(attrs) => (
-                    <div className={cx('message-created')} tabIndex="-1" {...attrs}>
-                        {time}
-                    </div>
-                )}
-            >
-                {type === 'text' ? (
-                    <p className={cx(classname)} {...props}>
-                        {children}
-                    </p>
-                ) : (
-                    <img
-                        className={cx('img-message')}
-                        onLoad={onload}
-                        src={`data:image/jpeg;base64,${children}`}
-                        alt="message-img"
-                    />
-                )}
-            </Tippy>
+            {type === 'text' ? (
+                <p className={cx(classname)} {...props}>
+                    {children}
+                </p>
+            ) : (
+                <img
+                    className={cx('img-message')}
+                    onLoad={onload}
+                    src={`data:image/jpeg;base64,${children}`}
+                    alt="message-img"
+                />
+            )}
             {actionMessage && (
                 <div className={cx('message-sended-actions')}>
                     <Button message_sended leftIcon={<FontAwesomeIcon icon={faFaceGrinWide} />}></Button>
@@ -67,6 +54,7 @@ function Message({ sender = false, time, type, children, onClick, ...passprops }
                     <Button message_sended leftIcon={<FontAwesomeIcon icon={faEllipsisVertical} />}></Button>
                 </div>
             )}
+            {actionMessage && <span className={cx('time-message')}>{time}</span>}
         </div>
     );
 }

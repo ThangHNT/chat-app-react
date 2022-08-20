@@ -47,7 +47,15 @@ function ChatContent() {
             contentRef.current.scrollTop = contentRef.current.scrollHeight;
         }
         // eslint-disable-next-line
-    }, [receiver]);
+    }, [ChatContent.scrollContent]);
+
+    const handleScroll = () => {
+        let currentScrollTop = contentRef.current.scrollTop;
+        let firstScollTop = contentRef.current.scrollHeight - contentRef.current.clientHeight;
+        if (firstScollTop - currentScrollTop > 200) {
+            console.log('xg');
+        }
+    };
 
     return (
         <div className={cx('wrapper')}>
@@ -73,7 +81,7 @@ function ChatContent() {
                 </div>
             )}
             {receiver && !loading && (
-                <div ref={contentRef} className={cx('content')}>
+                <div ref={contentRef} onScroll={handleScroll} className={cx('content')}>
                     {/* Nội dung tin nhắn */}
                     <Messages receiver={receiver} />
                 </div>
@@ -84,7 +92,6 @@ function ChatContent() {
                     <SendMessage receiver={receiver} />
                 </div>
             )}
-
             {/* khi chưa chọn messageItem(người nhận) hiện lên ảnh */}
             {!receiver && !loading && (
                 <Image noneReceiver src="https://cdn-icons-png.flaticon.com/512/2312/2312512.png" alt="no thing" />
