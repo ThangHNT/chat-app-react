@@ -56,7 +56,7 @@ function SendMessage({ receiver }) {
         setChosenEmoji(emojiObject);
         let emoji = emojiObject.emoji;
         setInputValue((pre) => {
-            return pre + emoji;
+            return pre !== undefined ? pre + emoji : emoji;
         });
     };
 

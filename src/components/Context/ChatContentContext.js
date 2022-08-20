@@ -6,6 +6,7 @@ function ChatContentProvider({ children }) {
     const [receiver, setReciever] = useState();
     const [messages, setMessages] = useState();
     const [base64String, setbase64String] = useState('');
+    const [zoomImg, setZoomImg] = useState();
 
     const handleDisplayChatContent = (userId) => {
         setReciever(userId);
@@ -19,6 +20,10 @@ function ChatContentProvider({ children }) {
         setbase64String(string);
     };
 
+    const handleZoomImgae = (src) => {
+        setZoomImg(src);
+    };
+
     const values = {
         receiver,
         handleDisplayChatContent,
@@ -26,6 +31,8 @@ function ChatContentProvider({ children }) {
         handleAddMessage,
         base64String,
         handleGetBase64,
+        zoomImg,
+        handleZoomImgae,
     };
 
     return <ChatContentContext.Provider value={values}>{children}</ChatContentContext.Provider>;

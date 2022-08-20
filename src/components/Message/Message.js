@@ -1,16 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsisVertical, faFaceGrinWide, faReply } from '@fortawesome/free-solid-svg-icons';
 import classNames from 'classnames/bind';
 import styles from './Message.module.scss';
+import { ChatContentContext } from '~/components/Context/ChatContentContext';
 import Button from '~/components/Button';
 
 const cx = classNames.bind(styles);
 
 function Message({ sender = false, time, type, children, onClick, ...passprops }) {
-    const [actionMessage, setActionMessage] = useState(false);
-    const classname = cx('content-message', {});
+    const ChatContent = useContext(ChatContentContext);
 
+    const [actionMessage, setActionMessage] = useState(false);
+
+    const classname = cx('content-message', {});
     const props = {
         onClick,
         ...passprops,
@@ -24,6 +27,10 @@ function Message({ sender = false, time, type, children, onClick, ...passprops }
         setActionMessage(false);
     };
 
+    const handleZoomImg = (e) => {
+        ChatContent.handleZoomImgae(e.target.src);
+    };
+
     return (
         <div className={cx('wrapper', { sender })} onMouseOver={handleDisplayAction} onMouseOut={handleHideAction}>
             {type === 'text' ? (
@@ -31,7 +38,12 @@ function Message({ sender = false, time, type, children, onClick, ...passprops }
                     {children}
                 </p>
             ) : (
-                <img className={cx('img-message')} src={`data:image/jpeg;base64,${children}`} alt="message-img" />
+                <img
+                    className={cx('img-message')}
+                    onClick={handleZoomImg}
+                    src={`data:image/jpeg;base64,${children}`}
+                    alt="message-img"
+                />
             )}
             {actionMessage && (
                 <div className={cx('message-sended-actions')}>

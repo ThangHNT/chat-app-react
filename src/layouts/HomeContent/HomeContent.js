@@ -1,18 +1,57 @@
+import { useContext, useRef, useState, useEffect } from 'react';
 import classNames from 'classnames/bind';
 import ChatContent from '~/layouts/ChatContent';
 import Sidebar from '~/layouts/Sidebar';
 import styles from './HomeContent.module.scss';
-import { ChatContentProvider } from '~/components/Context/ChatContentContext';
+import { ChatContentContext } from '~/components/Context/ChatContentContext';
 
 const cx = classNames.bind(styles);
 
 function HomeContent() {
+    const ChatContentMsg = useContext(ChatContentContext);
+    // console.log(ChatContentMsg.zoomImg);
+
+    const [zoomImg, setZoomImg] = useState(false);
+    const [imgScr, setImgScr] = useState('');
+
+    const imgRef = useRef();
+    document.addEventListener('click', (e) => {
+        if (imgRef.current) {
+            let isClickInside = imgRef.current.contains(e.target);
+            if (!isClickInside) {
+                setZoomImg(false);
+                ChatContentMsg.handleZoomImgae('');
+            }
+        }
+    });
+
+    useEffect(() => {
+        if (ChatContentMsg.zoomImg) {
+            setZoomImg(true);
+            setImgScr(ChatContentMsg.zoomImg);
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    setZoomImg(false);
+                    ChatContentMsg.handleZoomImgae('');
+                    // console.log('sadfd');
+                }
+            });
+        }
+        // eslint-disable-next-line
+    }, [ChatContentMsg.zoomImg]);
+
     return (
         <div className={cx('wrapper')}>
-            <ChatContentProvider>
-                <Sidebar className={cx('sidebar')} />
-                <ChatContent className={cx('chat-content')} />
-            </ChatContentProvider>
+            <Sidebar className={cx('sidebar')} />
+            <ChatContent className={cx('chat-content')} />
+            {zoomImg && (
+                <div className={cx('modal')}>
+                    <div className={cx('modal-overlay')}></div>
+                    <div className={cx('modal-content')}>
+                        <img ref={imgRef} className={cx('img')} src={imgScr} alt="anh dep" />
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

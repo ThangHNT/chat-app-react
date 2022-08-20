@@ -40,7 +40,6 @@ const Input = forwardRef(
                 reader.readAsDataURL(e.target.files[0]);
                 reader.onload = () => {
                     let base64String = reader.result;
-                    // let base64String = reader.result.replace('data:', '').replace(/^.+,/, '');
                     ChatContent.handleGetBase64(base64String);
                     // console.log(base64String);
                 };

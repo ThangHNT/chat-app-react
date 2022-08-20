@@ -3,14 +3,17 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import GlobalStyles from '~/components/GloblaStyles';
 import { UserProvider } from './components/Context/UserContext';
+import { ChatContentProvider } from '~/components/Context/ChatContentContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     // <React.StrictMode>
     <UserProvider>
-        <GlobalStyles>
-            <App />
-        </GlobalStyles>
+        <ChatContentProvider>
+            <GlobalStyles>
+                <App />
+            </GlobalStyles>
+        </ChatContentProvider>
     </UserProvider>,
     // </React.StrictMode>,
 );

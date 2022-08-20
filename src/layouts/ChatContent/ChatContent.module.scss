@@ -28,7 +28,7 @@
     background-color: #ccc;
     padding: 0 10px;
     top: 70px;
-    z-index: 5;
+    // z-index: 5;
     box-shadow: 0 1px 4px 0px #000;
 }
 
@@ -81,6 +81,7 @@
 .send-message {
     max-height: 40px;
     bottom: 60px;
+    z-index: 1;
 }
 
 // loading
