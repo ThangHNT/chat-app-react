@@ -1,5 +1,6 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useContext } from 'react';
 import classNames from 'classnames/bind';
+import { ChatContentContext } from '~/components/Context/ChatContentContext';
 import styles from './Input.module.scss';
 
 const cx = classNames.bind(styles);
@@ -24,6 +25,8 @@ const Input = forwardRef(
         },
         ref,
     ) => {
+        const ChatContent = useContext(ChatContentContext);
+
         const handleChange = (e) => {
             if (chat) {
                 let value = e.target.value;
@@ -32,6 +35,15 @@ const Input = forwardRef(
                 }
                 let height = e.target.scrollHeight;
                 e.target.style.height = `${height + 2}px`;
+            } else {
+                const reader = new FileReader();
+                reader.readAsDataURL(e.target.files[0]);
+                reader.onload = () => {
+                    let base64String = reader.result;
+                    // let base64String = reader.result.replace('data:', '').replace(/^.+,/, '');
+                    ChatContent.handleGetBase64(base64String);
+                    // console.log(base64String);
+                };
             }
         };
 

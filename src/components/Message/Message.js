@@ -24,15 +24,6 @@ function Message({ sender = false, time, type, children, onClick, ...passprops }
         setActionMessage(false);
     };
 
-    const onload = (e) => {
-        const target = e.target;
-        // const naturalHeight = target.naturalHeight;
-        // const naturalWidth = target.naturalWidth;
-        // console.log(naturalWidth, naturalHeight);
-        target.style.width = `${480 * 0.6}px`;
-        target.style.height = `${480 * 0.6}px`;
-    };
-
     return (
         <div className={cx('wrapper', { sender })} onMouseOver={handleDisplayAction} onMouseOut={handleHideAction}>
             {type === 'text' ? (
@@ -40,12 +31,7 @@ function Message({ sender = false, time, type, children, onClick, ...passprops }
                     {children}
                 </p>
             ) : (
-                <img
-                    className={cx('img-message')}
-                    onLoad={onload}
-                    src={`data:image/jpeg;base64,${children}`}
-                    alt="message-img"
-                />
+                <img className={cx('img-message')} src={`data:image/jpeg;base64,${children}`} alt="message-img" />
             )}
             {actionMessage && (
                 <div className={cx('message-sended-actions')}>

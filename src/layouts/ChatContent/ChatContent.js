@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleInfo, faPhone, faSpinner, faVideo } from '@fortawesome/free-solid-svg-icons';
 import classNames from 'classnames/bind';
@@ -16,8 +16,6 @@ function ChatContent() {
     const ChatContent = useContext(ChatContentContext);
     const [receiver, setReceiver] = useState();
     const [loading, setLoading] = useState(false);
-
-    const contentRef = useRef();
 
     // lấy thông tin ng nhận khi ấn vào user bên sidebar
     useEffect(() => {
@@ -40,22 +38,6 @@ function ChatContent() {
                 });
         }
     }, [ChatContent.receiver]);
-
-    // cuộn tin nhắn xuống dưới cùng khi load xog đoạn chat
-    useEffect(() => {
-        if (receiver) {
-            contentRef.current.scrollTop = contentRef.current.scrollHeight;
-        }
-        // eslint-disable-next-line
-    }, [ChatContent.scrollContent]);
-
-    const handleScroll = () => {
-        let currentScrollTop = contentRef.current.scrollTop;
-        let firstScollTop = contentRef.current.scrollHeight - contentRef.current.clientHeight;
-        if (firstScollTop - currentScrollTop > 200) {
-            console.log('xg');
-        }
-    };
 
     return (
         <div className={cx('wrapper')}>
@@ -81,7 +63,7 @@ function ChatContent() {
                 </div>
             )}
             {receiver && !loading && (
-                <div ref={contentRef} onScroll={handleScroll} className={cx('content')}>
+                <div className={cx('content')}>
                     {/* Nội dung tin nhắn */}
                     <Messages receiver={receiver} />
                 </div>

@@ -5,7 +5,7 @@ const ChatContentContext = createContext();
 function ChatContentProvider({ children }) {
     const [receiver, setReciever] = useState();
     const [messages, setMessages] = useState();
-    const [scrollContent, setScrollContent] = useState(false);
+    const [base64String, setbase64String] = useState('');
 
     const handleDisplayChatContent = (userId) => {
         setReciever(userId);
@@ -15,8 +15,8 @@ function ChatContentProvider({ children }) {
         setMessages(message);
     };
 
-    const handleScroll = () => {
-        setScrollContent(true);
+    const handleGetBase64 = (string) => {
+        setbase64String(string);
     };
 
     const values = {
@@ -24,8 +24,8 @@ function ChatContentProvider({ children }) {
         handleDisplayChatContent,
         messages,
         handleAddMessage,
-        scrollContent,
-        handleScroll,
+        base64String,
+        handleGetBase64,
     };
 
     return <ChatContentContext.Provider value={values}>{children}</ChatContentContext.Provider>;

@@ -28,6 +28,10 @@ function SendMessage({ receiver }) {
         setImgPasted('');
     }, []);
 
+    useEffect(() => {
+        setImgPasted(ChatContent.base64String);
+    }, [ChatContent.base64String]);
+
     // mở rộng input
     useEffect(() => {
         let value = inputRef.current.value;
@@ -127,7 +131,7 @@ function SendMessage({ receiver }) {
         <div className={cx('wrapper')}>
             <div className={cx('chat-btns')}>
                 <Button nestInput leftIcon={<FontAwesomeIcon icon={faImages} />}>
-                    <Input noLabel file type="file" input name="file" autoComplete="off" />
+                    <Input noLabel file type="file" input name="file" autoComplete="off" accept="image/*" />
                 </Button>
                 <Button nestInput leftIcon={<FontAwesomeIcon icon={faMicrophone} />}></Button>
             </div>

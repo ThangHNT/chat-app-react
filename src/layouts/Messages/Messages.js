@@ -1,10 +1,13 @@
-import { useEffect, useState, memo, useContext } from 'react';
+import { useEffect, useState, memo, useContext, useRef } from 'react';
 import classNames from 'classnames/bind';
 import axios from 'axios';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styles from './Messages.module.scss';
 import Message from '~/components/Message';
 import host from '~/ulties/serverHost';
 import { ChatContentContext } from '~/components/Context/ChatContentContext';
+import Button from '~/components/Button';
+import { faArrowDown } from '@fortawesome/free-solid-svg-icons';
 
 const cx = classNames.bind(styles);
 
@@ -12,6 +15,15 @@ function Messages({ receiver }) {
     const ChatContent = useContext(ChatContentContext);
     const sender = JSON.parse(localStorage.getItem('chat-app-hnt'))._id;
     const [messages, setMessages] = useState([]);
+
+    const contentRef = useRef();
+    const [scrollDown, setScrollDown] = useState(false);
+
+    // cuộn tin nhắn xuống dưới cùng khi load xog đoạn chat
+    useEffect(() => {
+        contentRef.current.scrollTop = contentRef.current.scrollHeight;
+        // eslint-disable-next-line
+    }, [messages]);
 
     // hiện tin nhắn trên đoạn chat khi vừa ấn enter
     useEffect(() => {
@@ -43,7 +55,6 @@ function Messages({ receiver }) {
             .then((data) => {
                 let data2 = data.data.arr;
                 // console.log(data2);
-                ChatContent.handleScroll(true);
                 setMessages([...data2]);
             })
             .catch((error) => {
@@ -58,8 +69,22 @@ function Messages({ receiver }) {
         return `${date.getHours()} : ${date.getMinutes()}`;
     };
 
+    const handleScroll = () => {
+        let currentScrollTop = contentRef.current.scrollTop;
+        let firstScollTop = contentRef.current.scrollHeight - contentRef.current.clientHeight;
+        if (firstScollTop - currentScrollTop > 350) {
+            setScrollDown(true);
+        } else {
+            setScrollDown(false);
+        }
+    };
+
+    const handleScrollDown = () => {
+        contentRef.current.scrollTop = contentRef.current.scrollHeight;
+    };
+
     return (
-        <div className={cx('wrapper')}>
+        <div ref={contentRef} onScroll={handleScroll} className={cx('wrapper')}>
             {messages.length > 0 &&
                 messages.map((message, index) => (
                     <div key={index} className={cx('message-item')}>
@@ -72,6 +97,11 @@ function Messages({ receiver }) {
                         </Message>
                     </div>
                 ))}
+            {scrollDown && (
+                <div onClick={handleScrollDown} className={cx('scroll-down-btn')}>
+                    <Button noTitle scrollDown normal circle leftIcon={<FontAwesomeIcon icon={faArrowDown} />} />
+                </div>
+            )}
         </div>
     );
 }
