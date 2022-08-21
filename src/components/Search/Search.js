@@ -7,15 +7,7 @@ const cx = classNames.bind(styles);
 function Search() {
     return (
         <div className={cx('wrapper')}>
-            <Input
-                type="text"
-                noLabel
-                arounded
-                placeholder="Tìm kiếm tin nhắn"
-                input
-                name="search"
-                autoComplete="off"
-            />
+            <Input type="text" noLabel arounded placeholder="Tìm kiếm bạn bè" input name="search" autoComplete="off" />
         </div>
     );
 }

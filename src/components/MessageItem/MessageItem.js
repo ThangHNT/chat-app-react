@@ -1,14 +1,32 @@
-import { useEffect, useState, memo } from 'react';
+import { useEffect, useState, useRef, memo } from 'react';
 import classNames from 'classnames/bind';
 import axios from 'axios';
 import styles from './MessageItem.module.scss';
 import Image from '~/components/Image';
 import host from '~/ulties/serverHost';
+import Button from '~/components/Button';
+import Menu from '~/components/Menu';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBan, faEllipsis, faTrashCan } from '@fortawesome/free-solid-svg-icons';
 
 const cx = classNames.bind(styles);
 
+const actionsMessageItem = [
+    {
+        text: 'Chan',
+        icon: <FontAwesomeIcon icon={faBan} />,
+    },
+    {
+        text: 'Xoa doan chat',
+        icon: <FontAwesomeIcon icon={faTrashCan} />,
+    },
+];
+
 function MessageItem({ receiver, avatar, username }) {
     const [lastestMessage, setlastestMessage] = useState();
+    const [menuMessageItem, setmenuMessageItem] = useState(false);
+
+    const btnRef = useRef();
 
     useEffect(() => {
         const senderId = JSON.parse(localStorage.getItem('chat-app-hnt'))._id;
@@ -36,6 +54,21 @@ function MessageItem({ receiver, avatar, username }) {
             });
     }, [receiver.id]);
 
+    useEffect(() => {
+        document.addEventListener('click', (e) => {
+            if (btnRef.current) {
+                if (!btnRef.current.contains(e.target)) {
+                    setmenuMessageItem(false);
+                }
+            }
+        });
+    }, []);
+
+    // display menu-action
+    const handleDisplayMenu = (e) => {
+        setmenuMessageItem(!menuMessageItem);
+    };
+
     return (
         <div className={cx('wrapper-message-item')}>
             <div className={cx('avatar')}>
@@ -45,6 +78,18 @@ function MessageItem({ receiver, avatar, username }) {
             <div className={cx('info')}>
                 <span className={cx('username')}>{username}</span>
                 <p className={cx('message')}>{lastestMessage}</p>
+            </div>
+            <div className={cx('action-btns')}>
+                <div className={cx('wrapper-btn')} ref={btnRef} onClick={handleDisplayMenu}>
+                    <Button circle>
+                        <FontAwesomeIcon icon={faEllipsis} />
+                    </Button>
+                </div>
+                {menuMessageItem && (
+                    <div className={cx('message-item-action-menu')}>
+                        <Menu elements={actionsMessageItem} />
+                    </div>
+                )}
             </div>
         </div>
     );

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, memo } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleInfo, faPhone, faSpinner, faVideo } from '@fortawesome/free-solid-svg-icons';
 import classNames from 'classnames/bind';
@@ -84,4 +84,4 @@ function ChatContent() {
     );
 }
 
-export default ChatContent;
+export default memo(ChatContent);

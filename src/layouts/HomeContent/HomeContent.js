@@ -9,21 +9,26 @@ const cx = classNames.bind(styles);
 
 function HomeContent() {
     const ChatContentMsg = useContext(ChatContentContext);
-    // console.log(ChatContentMsg.zoomImg);
 
     const [zoomImg, setZoomImg] = useState(false);
     const [imgScr, setImgScr] = useState('');
 
     const imgRef = useRef();
-    document.addEventListener('click', (e) => {
-        if (imgRef.current) {
-            let isClickInside = imgRef.current.contains(e.target);
-            if (!isClickInside) {
-                setZoomImg(false);
-                ChatContentMsg.handleZoomImgae('');
+    useEffect(() => {
+        document.addEventListener('click', (e) => {
+            if (imgRef.current) {
+                let isClickInside = imgRef.current.contains(e.target);
+                if (!isClickInside) {
+                    setZoomImg(false);
+                    ChatContentMsg.handleZoomImgae('');
+                }
             }
-        }
-    });
+        });
+        return () => {
+            document.removeEventListener('click', (e) => {});
+        };
+        // eslint-disable-next-line
+    }, []);
 
     useEffect(() => {
         if (ChatContentMsg.zoomImg) {
@@ -33,7 +38,6 @@ function HomeContent() {
                 if (e.key === 'Escape') {
                     setZoomImg(false);
                     ChatContentMsg.handleZoomImgae('');
-                    // console.log('sadfd');
                 }
             });
         }

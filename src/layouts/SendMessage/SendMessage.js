@@ -23,9 +23,25 @@ function SendMessage({ receiver }) {
     const [inputValue, setInputValue] = useState();
     const [displayEmojiList, setDisplayEmojiList] = useState(false);
     const inputRef = useRef();
+    const emojiListBtnRef = useRef();
+    const emojiRef = useRef();
 
     const handleRemoveImg = useCallback(() => {
         setImgPasted('');
+    }, []);
+
+    useEffect(() => {
+        document.addEventListener('click', (e) => {
+            if (emojiListBtnRef.current && emojiRef.current) {
+                if (!emojiListBtnRef.current.contains(e.target) && !emojiRef.current.contains(e.target)) {
+                    setDisplayEmojiList(false);
+                }
+            }
+        });
+
+        return () => {
+            document.removeEventListener('click', (e) => {});
+        };
     }, []);
 
     useEffect(() => {
@@ -114,11 +130,11 @@ function SendMessage({ receiver }) {
             ChatContent.handleAddMessage(messages);
             const senderId = JSON.parse(localStorage.getItem('chat-app-hnt'))._id;
             try {
-                // axios.post(`${host}/api/send-message`, {
-                //     sender: senderId,
-                //     receiver: receiver.id,
-                //     messages,
-                // });
+                axios.post(`${host}/api/send-message`, {
+                    sender: senderId,
+                    receiver: receiver.id,
+                    messages,
+                });
                 setInputValue('');
                 setImgPasted('');
             } catch (e) {
@@ -155,11 +171,11 @@ function SendMessage({ receiver }) {
                 />
             </div>
             <div className={cx('chat-emoji')}>
-                <div className={cx('wrapper-emoji-btn')} onClick={handlDisplayEmojiList}>
+                <div className={cx('wrapper-emoji-btn')} ref={emojiListBtnRef} onClick={handlDisplayEmojiList}>
                     <Button noTitle leftIcon={<FontAwesomeIcon icon={faFaceGrin} />} />
                 </div>
                 {displayEmojiList && (
-                    <div className={cx('emoji-list')}>
+                    <div className={cx('emoji-list')} ref={emojiRef}>
                         <Picker native searchPlaceholder="smile" disableAutoFocus onEmojiClick={onEmojiClick} />
                     </div>
                 )}

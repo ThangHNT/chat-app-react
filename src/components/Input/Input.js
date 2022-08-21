@@ -37,12 +37,14 @@ const Input = forwardRef(
                 e.target.style.height = `${height + 2}px`;
             } else {
                 const reader = new FileReader();
-                reader.readAsDataURL(e.target.files[0]);
-                reader.onload = () => {
-                    let base64String = reader.result;
-                    ChatContent.handleGetBase64(base64String);
-                    // console.log(base64String);
-                };
+                if (e.target.files) {
+                    reader.readAsDataURL(e.target.files[0]);
+                    reader.onload = () => {
+                        let base64String = reader.result;
+                        ChatContent.handleGetBase64(base64String);
+                        // console.log(base64String);
+                    };
+                }
             }
         };
 
