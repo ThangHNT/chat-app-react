@@ -1,4 +1,4 @@
-import React, { forwardRef, useContext } from 'react';
+import React, { forwardRef, useContext, memo } from 'react';
 import classNames from 'classnames/bind';
 import { ChatContentContext } from '~/components/Context/ChatContentContext';
 import styles from './Input.module.scss';
@@ -20,6 +20,7 @@ const Input = forwardRef(
             onInput,
             onKeyDown,
             onPaste,
+            handleType,
             value,
             ...passprops
         },
@@ -79,8 +80,9 @@ const Input = forwardRef(
                     title={title}
                     type={type}
                     placeholder={placeholder}
-                    {...props}
                     onChange={handleChange}
+                    onInput={handleType}
+                    {...props}
                 />
                 {!noLabel && (
                     <label className={cx(`label`)} htmlFor={name}>
@@ -92,4 +94,4 @@ const Input = forwardRef(
     },
 );
 
-export default Input;
+export default memo(Input);

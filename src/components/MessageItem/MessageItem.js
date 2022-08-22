@@ -62,6 +62,10 @@ function MessageItem({ receiver, avatar, username }) {
                 }
             }
         });
+
+        return () => {
+            document.removeEventListener('click', (e) => {});
+        };
     }, []);
 
     // display menu-action

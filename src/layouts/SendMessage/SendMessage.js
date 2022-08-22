@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback, useContext, memo } from 'react';
+import { useState, useEffect, useRef, useContext, memo } from 'react';
 import classNames from 'classnames/bind';
 import axios from 'axios';
 import Picker from 'emoji-picker-react';
@@ -15,6 +15,7 @@ import { ChatContentContext } from '~/components/Context/ChatContentContext';
 const cx = classNames.bind(styles);
 
 function SendMessage({ receiver }) {
+    console.log('render-send-message');
     const ChatContent = useContext(ChatContentContext);
     // eslint-disable-next-line
     const [chosenEmoji, setChosenEmoji] = useState(null);
@@ -26,11 +27,12 @@ function SendMessage({ receiver }) {
     const emojiListBtnRef = useRef();
     const emojiRef = useRef();
 
-    const handleRemoveImg = useCallback(() => {
+    const handleRemoveImg = () => {
         setImgPasted('');
-    }, []);
+    };
 
     useEffect(() => {
+        inputRef.current.focus();
         document.addEventListener('click', (e) => {
             if (emojiListBtnRef.current && emojiRef.current) {
                 if (!emojiListBtnRef.current.contains(e.target) && !emojiRef.current.contains(e.target)) {
