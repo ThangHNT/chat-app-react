@@ -15,7 +15,6 @@ import { ChatContentContext } from '~/components/Context/ChatContentContext';
 const cx = classNames.bind(styles);
 
 function SendMessage({ receiver }) {
-    console.log('render-send-message');
     const ChatContent = useContext(ChatContentContext);
     // eslint-disable-next-line
     const [chosenEmoji, setChosenEmoji] = useState(null);

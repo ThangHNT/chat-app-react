@@ -18,6 +18,7 @@ const Input = forwardRef(
             chat = false,
             file = false,
             onInput,
+            onFocus,
             onKeyDown,
             onPaste,
             handleType,
@@ -53,6 +54,7 @@ const Input = forwardRef(
         const props = {
             ...passprops,
             onInput,
+            onFocus,
             onPaste,
             onKeyDown,
             value,

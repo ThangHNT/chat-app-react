@@ -62,7 +62,7 @@ function Sidebar() {
                         className={cx('wrapper-message-item')}
                         onClick={handleClickMessageItem}
                     >
-                        <MessageItem receiver={item} avatar={item.avatar} username={item.username} />
+                        <MessageItem receiver={item.id} avatar={item.avatar} username={item.username} />
                     </div>
                 ))}
             </div>

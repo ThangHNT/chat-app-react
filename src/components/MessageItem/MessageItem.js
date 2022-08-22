@@ -32,7 +32,7 @@ function MessageItem({ receiver, avatar, username }) {
         const senderId = JSON.parse(localStorage.getItem('chat-app-hnt'))._id;
         axios
             .post(`${host}/api/lastest-message`, {
-                receiver: receiver.id,
+                receiver: receiver,
                 sender: senderId,
             })
             .then((data) => {
@@ -52,8 +52,10 @@ function MessageItem({ receiver, avatar, username }) {
             .catch((error) => {
                 console.log('loi lay tin nhan gan nhat');
             });
-    }, [receiver.id]);
+        // eslint-disable-next-line
+    }, []);
 
+    // ẩn menu messageItem khi click chỗ khác
     useEffect(() => {
         document.addEventListener('click', (e) => {
             if (btnRef.current) {
