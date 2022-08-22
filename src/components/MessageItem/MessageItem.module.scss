@@ -1,4 +1,4 @@
-.wrapper-message-item {
+.wrapper {
     height: var(--message-item-height);
     border-radius: 10px;
     border: 1px solid #aaa;
@@ -16,6 +16,11 @@
 }
 .wrapper + .wrapper {
     margin-top: 5px;
+}
+
+.searchResult {
+    height: 48px;
+    border: none;
 }
 
 .avatar {
@@ -40,12 +45,13 @@
         overflow: hidden;
         user-select: none;
     }
-}
 
-.username {
-    font-size: 16px;
-    font-weight: 500;
-    font-family: var(--font-family-primary);
+    .username {
+        max-width: 70%;
+        font-size: 16px;
+        font-weight: 500;
+        font-family: var(--font-family-primary);
+    }
 }
 
 .message {

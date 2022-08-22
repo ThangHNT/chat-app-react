@@ -1,5 +1,7 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useContext, useRef, useMemo } from 'react';
 import classNames from 'classnames/bind';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import Tippy from '@tippyjs/react/headless';
 import 'tippy.js/dist/tippy.css';
@@ -7,13 +9,20 @@ import styles from './Search.module.scss';
 import Input from '~/components/Input';
 import { useDebounce } from '~/hooks';
 import host from '~/ulties/serverHost';
+import MessageItem from '~/components/MessageItem';
+import { ChatContentContext } from '~/components/Context/ChatContentContext';
 
 const cx = classNames.bind(styles);
 
 function Search() {
+    // console.log('Search');
+    const UserChatContent = useContext(ChatContentContext);
     const [searchValue, setSearchValue] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const [showResults, setShowResults] = useState(false);
+    const currentUser = useMemo(() => {
+        return JSON.parse(localStorage.getItem('chat-app-hnt'))._id;
+    }, []);
 
     const inputRef = useRef();
     const debounce = useDebounce(searchValue, 800);
@@ -21,21 +30,21 @@ function Search() {
     useEffect(() => {
         if (!debounce.trim()) return;
         axios
-            .get(`${host}/api/search`, { params: { q: debounce } })
+            .get(`${host}/api/search`, { params: { q: debounce, exceptUser: currentUser } })
             .then((data) => {
-                console.log(data.data.listUser);
                 const data2 = data.data;
+                // console.log(data2.listUser);
                 if (data2.status) {
-                    setSearchResults(data.data.listUser);
+                    setSearchResults(data2.listUser);
                     setShowResults(true);
                 } else {
-                    alert(data2.msg);
+                    toast.warning(data2.msg);
                 }
             })
             .catch((err) => {
                 console.log('loi tim nguoi dung');
             });
-        // console.log(debounce);
+        // eslint-disable-next-line
     }, [debounce]);
 
     const handleType = useCallback((e) => {
@@ -52,37 +61,69 @@ function Search() {
         setShowResults(false);
     };
 
+    const handleClickMessageItem = (e) => {
+        // lấy root element
+        const rootdiv = e.currentTarget;
+        UserChatContent.handleDisplayChatContent(rootdiv.getAttribute('userid'));
+    };
+
     return (
         <div className={cx('wrapper')}>
-            <Tippy
-                interactive
-                placement="bottom"
-                visible={searchResults.length > 0 && showResults}
-                render={(attrs) => (
-                    <div className="box" tabIndex="-1" {...attrs}>
-                        My tippy box
+            <div>
+                <Tippy
+                    interactive
+                    placement="bottom"
+                    visible={searchResults.length > 0 && showResults}
+                    render={(attrs) => (
+                        <div className={cx('search-results')} tabIndex="-1" {...attrs}>
+                            {searchResults.length > 0 &&
+                                searchResults.map((item, index) => (
+                                    <div
+                                        key={index}
+                                        userid={item.userId}
+                                        onClick={handleClickMessageItem}
+                                        className={cx('wrapper-result')}
+                                    >
+                                        <MessageItem
+                                            searchResult
+                                            receiver={item.userId}
+                                            avatar={item.avatar}
+                                            username={item.username}
+                                        />
+                                    </div>
+                                ))}
+                        </div>
+                    )}
+                    onClickOutside={handleHideResults}
+                >
+                    <div className={cx('wrapper-input')}>
+                        <Input
+                            ref={inputRef}
+                            type="text"
+                            noLabel
+                            onInput={handleType}
+                            arounded
+                            placeholder="Tìm kiếm bạn bè"
+                            input
+                            name="search"
+                            autoComplete="off"
+                            onFocus={() => {
+                                setShowResults(true);
+                            }}
+                        />
                     </div>
-                )}
-                onClickOutside={handleHideResults}
-            >
-                <div className={cx('wrapper-input')}>
-                    <Input
-                        ref={inputRef}
-                        type="text"
-                        noLabel
-                        onInput={handleType}
-                        arounded
-                        placeholder="Tìm kiếm bạn bè"
-                        input
-                        name="search"
-                        autoComplete="off"
-                        onFocus={() => {
-                            console.log('focus');
-                            setShowResults(true);
-                        }}
-                    />
-                </div>
-            </Tippy>
+                </Tippy>
+            </div>
+            <ToastContainer
+                position="bottom-center"
+                autoClose={2500}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover={false}
+            />
         </div>
     );
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, memo } from 'react';
+import { useEffect, useState, useRef, memo, useMemo } from 'react';
 import classNames from 'classnames/bind';
 import axios from 'axios';
 import styles from './MessageItem.module.scss';
@@ -22,36 +22,42 @@ const actionsMessageItem = [
     },
 ];
 
-function MessageItem({ receiver, avatar, username }) {
+function MessageItem({ receiver, avatar, username, searchResult = false }) {
+    // console.log('message-item');
     const [lastestMessage, setlastestMessage] = useState();
     const [menuMessageItem, setmenuMessageItem] = useState(false);
+    const senderId = useMemo(() => {
+        return JSON.parse(localStorage.getItem('chat-app-hnt'))._id;
+    }, []);
 
     const btnRef = useRef();
 
+    // lấy tin nhắn mới nhất
     useEffect(() => {
-        const senderId = JSON.parse(localStorage.getItem('chat-app-hnt'))._id;
-        axios
-            .post(`${host}/api/lastest-message`, {
-                receiver: receiver,
-                sender: senderId,
-            })
-            .then((data) => {
-                const data2 = data.data;
-                if (data2.status) {
-                    if (data2.message.message.sender === senderId) {
-                        if (data2.message.message.type === 'text') {
-                            setlastestMessage('Ban: ' + data2.message.message.text);
+        if (!searchResult) {
+            axios
+                .post(`${host}/api/lastest-message`, {
+                    receiver: receiver,
+                    sender: senderId,
+                })
+                .then((data) => {
+                    const data2 = data.data;
+                    if (data2.status) {
+                        if (data2.message.message.sender === senderId) {
+                            if (data2.message.message.type === 'text') {
+                                setlastestMessage('Ban: ' + data2.message.message.text);
+                            } else {
+                                setlastestMessage('Ban gui 1 anh ');
+                            }
                         } else {
-                            setlastestMessage('Ban gui 1 anh ');
+                            setlastestMessage(data2.message.message.text);
                         }
-                    } else {
-                        setlastestMessage(data2.message.message.text);
                     }
-                }
-            })
-            .catch((error) => {
-                console.log('loi lay tin nhan gan nhat');
-            });
+                })
+                .catch((error) => {
+                    console.log('loi lay tin nhan gan nhat');
+                });
+        }
         // eslint-disable-next-line
     }, []);
 
@@ -76,27 +82,29 @@ function MessageItem({ receiver, avatar, username }) {
     };
 
     return (
-        <div className={cx('wrapper-message-item')}>
+        <div className={cx('wrapper', { searchResult })}>
             <div className={cx('avatar')}>
-                <Image src={avatar} avatar alt="avatar" />
-                <span className="online"></span>
+                <Image small={searchResult ? true : false} src={avatar} avatar alt="avatar" />
+                {!searchResult && <span className="online"></span>}
             </div>
             <div className={cx('info')}>
                 <span className={cx('username')}>{username}</span>
-                <p className={cx('message')}>{lastestMessage}</p>
+                {!searchResult && <p className={cx('message')}>{lastestMessage}</p>}
             </div>
-            <div className={cx('action-btns')}>
-                <div className={cx('wrapper-btn')} ref={btnRef} onClick={handleDisplayMenu}>
-                    <Button circle>
-                        <FontAwesomeIcon icon={faEllipsis} />
-                    </Button>
-                </div>
-                {menuMessageItem && (
-                    <div className={cx('message-item-action-menu')}>
-                        <Menu elements={actionsMessageItem} />
+            {!searchResult && (
+                <div className={cx('action-btns')}>
+                    <div className={cx('wrapper-btn')} ref={btnRef} onClick={handleDisplayMenu}>
+                        <Button circle>
+                            <FontAwesomeIcon icon={faEllipsis} />
+                        </Button>
                     </div>
-                )}
-            </div>
+                    {menuMessageItem && (
+                        <div className={cx('message-item-action-menu')}>
+                            <Menu elements={actionsMessageItem} />
+                        </div>
+                    )}
+                </div>
+            )}
         </div>
     );
 }

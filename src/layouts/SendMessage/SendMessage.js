@@ -156,7 +156,7 @@ function SendMessage({ receiver }) {
                 {imgPasted.length > 0 && (
                     <div className={cx('image-list')}>
                         <div className={cx('image-list-item')}>
-                            <Image handleRemove={handleRemoveImg} small remove src={imgPasted}></Image>
+                            <Image handleRemove={handleRemoveImg} pasted remove src={imgPasted}></Image>
                         </div>
                     </div>
                 )}

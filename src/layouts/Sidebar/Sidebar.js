@@ -1,4 +1,4 @@
-import React, { useState, memo, useEffect, useContext, useRef } from 'react';
+import React, { useState, memo, useEffect, useMemo, useContext, useRef } from 'react';
 import classNames from 'classnames/bind';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -13,9 +13,12 @@ import { ChatContentContext } from '~/components/Context/ChatContentContext';
 const cx = classNames.bind(styles);
 
 function Sidebar() {
-    // console.log('render-sidebar');
+    // console.log('sidebar');
     const UserChatContent = useContext(ChatContentContext);
     const [listUser, setListUser] = useState([]);
+    const senderId = useMemo(() => {
+        return JSON.parse(localStorage.getItem('chat-app-hnt'))._id;
+    }, []);
 
     const sidebarContentRef = useRef();
 
@@ -24,7 +27,6 @@ function Sidebar() {
     });
 
     useEffect(() => {
-        const senderId = JSON.parse(localStorage.getItem('chat-app-hnt'))._id;
         axios.post(`${host}/api/message-item`, { sender: senderId }).then((data) => {
             const data2 = data.data;
             if (data2.status) {
@@ -33,7 +35,7 @@ function Sidebar() {
                 console.log('loi lay ds user');
             }
         });
-    }, []);
+    }, [senderId]);
 
     const handleClickMessageItem = (e) => {
         // lấy root element
@@ -45,7 +47,7 @@ function Sidebar() {
         <div className={cx('wrapper')}>
             <div className={cx('header')}>
                 <div className={cx('action')}>
-                    <h3>USER</h3>
+                    <h3>USERS</h3>
                     <Button circle>
                         <FontAwesomeIcon icon={faEllipsis} />
                     </Button>
