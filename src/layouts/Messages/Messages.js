@@ -1,4 +1,4 @@
-import { useEffect, useState, memo, useContext, useRef } from 'react';
+import { useEffect, useState, useMemo, memo, useContext, useRef } from 'react';
 import classNames from 'classnames/bind';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -12,9 +12,11 @@ import { faArrowDown } from '@fortawesome/free-solid-svg-icons';
 const cx = classNames.bind(styles);
 
 function Messages({ receiver }) {
-    console.log('Messagessss');
+    // console.log('Messagessss');
     const ChatContent = useContext(ChatContentContext);
-    const sender = JSON.parse(localStorage.getItem('chat-app-hnt'))._id;
+    const sender = useMemo(() => {
+        return JSON.parse(localStorage.getItem('chat-app-hnt'))._id;
+    }, []);
     const [messages, setMessages] = useState([]);
 
     const contentRef = useRef();

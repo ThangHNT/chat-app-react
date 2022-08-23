@@ -9,7 +9,7 @@ import Button from '~/components/Button';
 const cx = classNames.bind(styles);
 
 function Message({ sender = false, time, type, children, onClick, ...passprops }) {
-    console.log('message');
+    // console.log('message');
     const ChatContent = useContext(ChatContentContext);
 
     const btnRef = useRef();
