@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useEffect, useContext, memo, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsisVertical, faFaceGrinWide, faReply } from '@fortawesome/free-solid-svg-icons';
 import classNames from 'classnames/bind';
@@ -9,9 +9,16 @@ import Button from '~/components/Button';
 const cx = classNames.bind(styles);
 
 function Message({ sender = false, time, type, children, onClick, ...passprops }) {
+    console.log('message');
     const ChatContent = useContext(ChatContentContext);
 
-    const [actionMessage, setActionMessage] = useState(false);
+    const btnRef = useRef();
+    const timeRef = useRef();
+
+    useEffect(() => {
+        timeRef.current.style.display = 'none';
+        btnRef.current.style.display = 'none';
+    }, []);
 
     const classname = cx('content-message', {});
     const props = {
@@ -20,11 +27,13 @@ function Message({ sender = false, time, type, children, onClick, ...passprops }
     };
 
     const handleDisplayAction = () => {
-        setActionMessage(true);
+        timeRef.current.style.display = 'flex';
+        btnRef.current.style.display = 'flex';
     };
 
     const handleHideAction = () => {
-        setActionMessage(false);
+        timeRef.current.style.display = 'none';
+        btnRef.current.style.display = 'none';
     };
 
     const handleZoomImg = (e) => {
@@ -45,16 +54,16 @@ function Message({ sender = false, time, type, children, onClick, ...passprops }
                     alt="message-img"
                 />
             )}
-            {actionMessage && (
-                <div className={cx('message-sended-actions')}>
-                    <Button message_sended leftIcon={<FontAwesomeIcon icon={faFaceGrinWide} />}></Button>
-                    <Button message_sended leftIcon={<FontAwesomeIcon icon={faReply} />}></Button>
-                    <Button message_sended leftIcon={<FontAwesomeIcon icon={faEllipsisVertical} />}></Button>
-                </div>
-            )}
-            {actionMessage && <span className={cx('time-message')}>{time}</span>}
+            <div ref={btnRef} className={cx('message-sended-actions')}>
+                <Button message_sended leftIcon={<FontAwesomeIcon icon={faFaceGrinWide} />}></Button>
+                <Button message_sended leftIcon={<FontAwesomeIcon icon={faReply} />}></Button>
+                <Button message_sended leftIcon={<FontAwesomeIcon icon={faEllipsisVertical} />}></Button>
+            </div>
+            <span ref={timeRef} className={cx('time-message')}>
+                {time}
+            </span>
         </div>
     );
 }
 
-export default Message;
+export default memo(Message);

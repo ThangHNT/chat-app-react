@@ -131,11 +131,11 @@ function SendMessage({ receiver }) {
             ChatContent.handleAddMessage(messages);
             const senderId = JSON.parse(localStorage.getItem('chat-app-hnt'))._id;
             try {
-                axios.post(`${host}/api/send-message`, {
-                    sender: senderId,
-                    receiver: receiver.id,
-                    messages,
-                });
+                // axios.post(`${host}/api/send-message`, {
+                //     sender: senderId,
+                //     receiver: receiver.id,
+                //     messages,
+                // });
                 setInputValue('');
                 setImgPasted('');
             } catch (e) {

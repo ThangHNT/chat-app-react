@@ -12,6 +12,7 @@ import { faArrowDown } from '@fortawesome/free-solid-svg-icons';
 const cx = classNames.bind(styles);
 
 function Messages({ receiver }) {
+    console.log('Messagessss');
     const ChatContent = useContext(ChatContentContext);
     const sender = JSON.parse(localStorage.getItem('chat-app-hnt'))._id;
     const [messages, setMessages] = useState([]);

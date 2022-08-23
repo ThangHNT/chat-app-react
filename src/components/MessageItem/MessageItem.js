@@ -88,7 +88,11 @@ function MessageItem({ receiver, avatar, username, searchResult = false }) {
                 {!searchResult && <span className="online"></span>}
             </div>
             <div className={cx('info')}>
-                <span className={cx('username')}>{username}</span>
+                {searchResult ? (
+                    <span className={cx('long-name')}>{username}</span>
+                ) : (
+                    <span className={cx('username')}>{username}</span>
+                )}
                 {!searchResult && <p className={cx('message')}>{lastestMessage}</p>}
             </div>
             {!searchResult && (

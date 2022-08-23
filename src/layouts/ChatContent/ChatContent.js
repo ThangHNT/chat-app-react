@@ -13,6 +13,7 @@ import host from '~/ulties/serverHost';
 const cx = classNames.bind(styles);
 
 function ChatContent() {
+    console.log('ChatContent');
     const ChatContent = useContext(ChatContentContext);
     const [receiver, setReceiver] = useState();
     const [loading, setLoading] = useState(false);
