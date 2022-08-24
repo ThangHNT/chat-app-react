@@ -1,7 +1,8 @@
-import { useState, useEffect, useRef, useContext, memo } from 'react';
+import { useState, useEffect, useRef, useMemo, useContext, memo } from 'react';
 import classNames from 'classnames/bind';
 import axios from 'axios';
 import Picker from 'emoji-picker-react';
+import { io } from 'socket.io-client';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFaceGrin, faImages } from '@fortawesome/free-regular-svg-icons';
 import { faMicrophone } from '@fortawesome/free-solid-svg-icons';
@@ -22,14 +23,36 @@ function SendMessage({ receiver }) {
     const [imgBase64, setImgBase64] = useState('');
     const [inputValue, setInputValue] = useState();
     const [displayEmojiList, setDisplayEmojiList] = useState(false);
+    const currentUser = useMemo(() => {
+        return JSON.parse(localStorage.getItem('chat-app-hnt'));
+    }, []);
+
     const inputRef = useRef();
     const emojiListBtnRef = useRef();
     const emojiRef = useRef();
+    const socket = useRef();
+
+    useEffect(() => {
+        socket.current = io(host);
+        // socket.current.auth = { username: currentUser._id };
+        // // console.log(socket.current);
+        // socket.current.on('user connected', (user) => {
+        //     console.log(user);
+        // });
+        socket.current.on('users', (users) => {
+            console.log(users);
+        });
+        socket.current.emit('send message', {
+            content: 'hello',
+        });
+        // eslint-disable-next-line
+    }, []);
 
     const handleRemoveImg = () => {
         setImgPasted('');
     };
 
+    // click bên ra ngoài để đóng emoji list
     useEffect(() => {
         inputRef.current.focus();
         document.addEventListener('click', (e) => {
@@ -128,11 +151,10 @@ function SendMessage({ receiver }) {
                 });
             }
             // console.log(messages);
-            ChatContent.handleAddMessage(messages);
-            const senderId = JSON.parse(localStorage.getItem('chat-app-hnt'))._id;
+            // ChatContent.handleAddMessage(messages);
             try {
                 // axios.post(`${host}/api/send-message`, {
-                //     sender: senderId,
+                //     sender: currentUser._id,
                 //     receiver: receiver.id,
                 //     messages,
                 // });

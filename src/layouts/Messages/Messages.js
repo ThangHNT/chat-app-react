@@ -31,19 +31,19 @@ function Messages({ receiver }) {
     // hiện tin nhắn trên đoạn chat khi vừa ấn enter
     useEffect(() => {
         // console.log(ChatContent.messages);
-        // let msg = ChatContent.messages;
-        // if (msg) {
-        //     const newMessage = {
-        //         text: msg.msg,
-        //         img: msg.msg,
-        //         sender,
-        //         time: new Date().getTime(),
-        //         type: msg.type,
-        //     };
-        //     setMessages((pre) => {
-        //         return [...pre, newMessage];
-        //     });
-        // }
+        const msg = ChatContent.messages;
+        if (msg) {
+            const newMessage = {
+                text: msg[0].msg,
+                img: msg[0].msg ? msg[0].msg : '',
+                sender,
+                time: new Date().getTime(),
+                type: msg[0].type,
+            };
+            setMessages((pre) => {
+                return [...pre, newMessage];
+            });
+        }
         // eslint-disable-next-line
     }, [ChatContent.messages]);
 

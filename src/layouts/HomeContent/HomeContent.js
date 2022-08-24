@@ -22,14 +22,9 @@ function HomeContent() {
 
     useEffect(() => {
         socket.current = io(host);
+        socket.current.auth = { username: currentUser._id };
+
         // console.log(socket.current);
-        socket.current.auth = { username: currentUser.username };
-        socket.current.on('user connected', (user) => {
-            // console.log(user);
-        });
-        socket.current.on('users', (users) => {
-            console.log(users);
-        });
         // eslint-disable-next-line
     }, []);
 
