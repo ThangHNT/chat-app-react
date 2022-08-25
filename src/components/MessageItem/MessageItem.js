@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef, memo, useMemo } from 'react';
 import classNames from 'classnames/bind';
 import axios from 'axios';
+import { io } from 'socket.io-client';
 import styles from './MessageItem.module.scss';
 import Image from '~/components/Image';
 import host from '~/ulties/serverHost';
@@ -31,6 +32,11 @@ function MessageItem({ receiver, avatar, username, searchResult = false }) {
     }, []);
 
     const btnRef = useRef();
+    const socket = useRef();
+
+    useEffect(() => {
+        socket.current = io(host);
+    }, []);
 
     // lấy tin nhắn mới nhất
     useEffect(() => {

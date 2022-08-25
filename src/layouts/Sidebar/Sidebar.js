@@ -1,6 +1,7 @@
 import React, { useState, memo, useEffect, useMemo, useContext, useRef } from 'react';
 import classNames from 'classnames/bind';
 import axios from 'axios';
+import { io } from 'socket.io-client';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsis } from '@fortawesome/free-solid-svg-icons';
 import styles from './Sidebar.module.scss';
@@ -16,18 +17,38 @@ function Sidebar() {
     // console.log('sidebar');
     const UserChatContent = useContext(ChatContentContext);
     const [listUser, setListUser] = useState([]);
-    const senderId = useMemo(() => {
-        return JSON.parse(localStorage.getItem('chat-app-hnt'))._id;
+    const currentUser = useMemo(() => {
+        return JSON.parse(localStorage.getItem('chat-app-hnt'));
     }, []);
 
     const sidebarContentRef = useRef();
+    const socket = useRef();
+
+    useEffect(() => {
+        socket.current = io(host);
+        socket.current.auth = { userId: currentUser._id };
+        socket.current.on('connect_error', (err) => {
+            if (err.message === 'invalid userId') {
+                console.log('id ng dung ko hop le');
+            }
+        });
+        // socket.current.on('users', (users) => {
+        //     console.log(users);
+        // });
+        // socket.current.on('user connected', (user) => {
+        //     console.log(user);
+        // });
+
+        // console.log(socket.current);
+        // eslint-disable-next-line
+    }, []);
 
     useEffect(() => {
         sidebarContentRef.current.scrollTop = sidebarContentRef.current.scrollHeight;
     });
 
     useEffect(() => {
-        axios.post(`${host}/api/message-item`, { sender: senderId }).then((data) => {
+        axios.post(`${host}/api/message-item`, { sender: currentUser._id }).then((data) => {
             const data2 = data.data;
             if (data2.status) {
                 setListUser(data2.userList);
@@ -35,7 +56,7 @@ function Sidebar() {
                 console.log('loi lay ds user');
             }
         });
-    }, [senderId]);
+    }, [currentUser._id]);
 
     const handleClickMessageItem = (e) => {
         // lấy root element

@@ -1,32 +1,19 @@
-import { useContext, useRef, useState, useEffect, useMemo } from 'react';
+import { useContext, useRef, useState, useEffect } from 'react';
 import classNames from 'classnames/bind';
-import { io } from 'socket.io-client';
 import ChatContent from '~/layouts/ChatContent';
 import Sidebar from '~/layouts/Sidebar';
 import styles from './HomeContent.module.scss';
 import { ChatContentContext } from '~/components/Context/ChatContentContext';
-import host from '~/ulties/serverHost';
 
 const cx = classNames.bind(styles);
 
 function HomeContent() {
     const ChatContentMsg = useContext(ChatContentContext);
-    const currentUser = useMemo(() => {
-        return JSON.parse(localStorage.getItem('chat-app-hnt'));
-    }, []);
+
     const [zoomImg, setZoomImg] = useState(false);
     const [imgScr, setImgScr] = useState('');
 
     const imgRef = useRef();
-    const socket = useRef();
-
-    useEffect(() => {
-        socket.current = io(host);
-        socket.current.auth = { username: currentUser._id };
-
-        // console.log(socket.current);
-        // eslint-disable-next-line
-    }, []);
 
     useEffect(() => {
         document.addEventListener('click', (e) => {

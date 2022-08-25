@@ -1,8 +1,8 @@
-import { useState, useEffect, useRef, useMemo, useContext, memo } from 'react';
+import { useState, useEffect, useRef, useContext, memo } from 'react';
 import classNames from 'classnames/bind';
 import axios from 'axios';
-import Picker from 'emoji-picker-react';
 import { io } from 'socket.io-client';
+import Picker from 'emoji-picker-react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFaceGrin, faImages } from '@fortawesome/free-regular-svg-icons';
 import { faMicrophone } from '@fortawesome/free-solid-svg-icons';
@@ -16,6 +16,7 @@ import { ChatContentContext } from '~/components/Context/ChatContentContext';
 const cx = classNames.bind(styles);
 
 function SendMessage({ receiver }) {
+    // console.log('Send-message');
     const ChatContent = useContext(ChatContentContext);
     // eslint-disable-next-line
     const [chosenEmoji, setChosenEmoji] = useState(null);
@@ -23,33 +24,21 @@ function SendMessage({ receiver }) {
     const [imgBase64, setImgBase64] = useState('');
     const [inputValue, setInputValue] = useState();
     const [displayEmojiList, setDisplayEmojiList] = useState(false);
-    const currentUser = useMemo(() => {
-        return JSON.parse(localStorage.getItem('chat-app-hnt'));
-    }, []);
 
     const inputRef = useRef();
     const emojiListBtnRef = useRef();
     const emojiRef = useRef();
-    const socket = useRef();
+    const socketRef = useRef();
 
     useEffect(() => {
-        socket.current = io(host);
-        // socket.current.auth = { username: currentUser._id };
-        // // console.log(socket.current);
-        // socket.current.on('user connected', (user) => {
-        //     console.log(user);
-        // });
-        socket.current.on('users', (users) => {
-            console.log(users);
+        socketRef.current = io(host);
+        socketRef.current.on('user connected', (user) => {
+            console.log(user);
         });
-        socket.current.emit('send message', {
-            content: 'hello',
-        });
-        // eslint-disable-next-line
     }, []);
 
-    const handleRemoveImg = () => {
-        setImgPasted('');
+    const sendMessage = () => {
+        socketRef.current.emit('send message', { msg: inputValue });
     };
 
     // click bên ra ngoài để đóng emoji list
@@ -90,6 +79,10 @@ function SendMessage({ receiver }) {
         };
         // eslint-disable-next-line
     }, [imgPasted]);
+
+    const handleRemoveImg = () => {
+        setImgPasted('');
+    };
 
     // chọn emoji
     const onEmojiClick = (event, emojiObject) => {
@@ -136,6 +129,7 @@ function SendMessage({ receiver }) {
         if (e.shiftKey) shiftKey = 16;
         if (e.which === 13 && shiftKey !== 16) {
             e.preventDefault();
+            sendMessage();
             let messages = [];
             let textMsg = inputValue.trim();
             if (textMsg.length > 0) {
@@ -151,7 +145,7 @@ function SendMessage({ receiver }) {
                 });
             }
             // console.log(messages);
-            // ChatContent.handleAddMessage(messages);
+            ChatContent.handleAddMessage(messages);
             try {
                 // axios.post(`${host}/api/send-message`, {
                 //     sender: currentUser._id,
