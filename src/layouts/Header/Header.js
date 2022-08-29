@@ -1,8 +1,10 @@
+import { useMemo, memo } from 'react';
 import classNames from 'classnames/bind';
 import Tippy from '@tippyjs/react/headless';
 import 'tippy.js/dist/tippy.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRightFromBracket, faCircleQuestion, faUser } from '@fortawesome/free-solid-svg-icons';
+
 import { Link } from 'react-router-dom';
 import styles from './Header.module.scss';
 import Image from '~/components/Image';
@@ -11,7 +13,15 @@ import Button from '~/components/Button';
 const cx = classNames.bind(styles);
 
 function Header({ currentUser = true }) {
-    const user = JSON.parse(localStorage.getItem('chat-app-hnt'));
+    // console.log('Header');
+
+    const user = useMemo(() => {
+        return JSON.parse(localStorage.getItem('chat-app-hnt'));
+    }, []);
+
+    const handleLogout = () => {
+        localStorage.removeItem('chat-app-hnt');
+    };
 
     return (
         <header className={cx('header', { 'wrapper-content': true })}>
@@ -29,6 +39,7 @@ function Header({ currentUser = true }) {
                         <div className={cx('current-user-menu')} tabIndex="-1" {...attrs}>
                             <Button children="Tài khoản" text leftIcon={<FontAwesomeIcon icon={faUser} />} />
                             <Button
+                                onClick={handleLogout}
                                 children="Đăng xuất"
                                 text
                                 to="/login"
@@ -58,4 +69,4 @@ function Header({ currentUser = true }) {
     );
 }
 
-export default Header;
+export default memo(Header);

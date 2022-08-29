@@ -4,16 +4,19 @@ import App from './App';
 import GlobalStyles from '~/components/GloblaStyles';
 import { UserProvider } from './components/Context/UserContext';
 import { ChatContentProvider } from '~/components/Context/ChatContentContext';
+import { SocketContextProvider } from '~/components/Context/SocketContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     // <React.StrictMode>
     <UserProvider>
-        <ChatContentProvider>
-            <GlobalStyles>
-                <App />
-            </GlobalStyles>
-        </ChatContentProvider>
+        <SocketContextProvider>
+            <ChatContentProvider>
+                <GlobalStyles>
+                    <App />
+                </GlobalStyles>
+            </ChatContentProvider>
+        </SocketContextProvider>
     </UserProvider>,
     // </React.StrictMode>,
 );

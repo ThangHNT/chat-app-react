@@ -1,7 +1,6 @@
-import { useState, useEffect, useRef, useContext, memo } from 'react';
+import { useState, useEffect, useRef, useMemo, useContext, memo } from 'react';
 import classNames from 'classnames/bind';
 import axios from 'axios';
-import { io } from 'socket.io-client';
 import Picker from 'emoji-picker-react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFaceGrin, faImages } from '@fortawesome/free-regular-svg-icons';
@@ -12,34 +11,28 @@ import Input from '~/components/Input';
 import styles from './SendMessage.module.scss';
 import host from '~/ulties/serverHost';
 import { ChatContentContext } from '~/components/Context/ChatContentContext';
+import { SocketContext } from '~/components/Context/SocketContext';
 
 const cx = classNames.bind(styles);
 
 function SendMessage({ receiver }) {
     // console.log('Send-message');
     const ChatContent = useContext(ChatContentContext);
+    const { handleSendMessage } = useContext(SocketContext);
     // eslint-disable-next-line
     const [chosenEmoji, setChosenEmoji] = useState(null);
     const [imgPasted, setImgPasted] = useState('');
     const [imgBase64, setImgBase64] = useState('');
-    const [inputValue, setInputValue] = useState();
+    const [inputValue, setInputValue] = useState('');
     const [displayEmojiList, setDisplayEmojiList] = useState(false);
+
+    const currentUser = useMemo(() => {
+        return JSON.parse(localStorage.getItem('chat-app-hnt'));
+    }, []);
 
     const inputRef = useRef();
     const emojiListBtnRef = useRef();
     const emojiRef = useRef();
-    const socketRef = useRef();
-
-    useEffect(() => {
-        socketRef.current = io(host);
-        socketRef.current.on('user connected', (user) => {
-            console.log(user);
-        });
-    }, []);
-
-    const sendMessage = () => {
-        socketRef.current.emit('send message', { msg: inputValue });
-    };
 
     // click bên ra ngoài để đóng emoji list
     useEffect(() => {
@@ -129,9 +122,8 @@ function SendMessage({ receiver }) {
         if (e.shiftKey) shiftKey = 16;
         if (e.which === 13 && shiftKey !== 16) {
             e.preventDefault();
-            sendMessage();
             let messages = [];
-            let textMsg = inputValue.trim();
+            let textMsg = inputValue.length > 0 ? inputValue.trim() : '';
             if (textMsg.length > 0) {
                 messages.push({
                     msg: inputValue.trim(),
@@ -145,17 +137,22 @@ function SendMessage({ receiver }) {
                 });
             }
             // console.log(messages);
-            ChatContent.handleAddMessage(messages);
-            try {
-                // axios.post(`${host}/api/send-message`, {
-                //     sender: currentUser._id,
-                //     receiver: receiver.id,
-                //     messages,
-                // });
-                setInputValue('');
-                setImgPasted('');
-            } catch (e) {
-                console.log('loi gui tin nhan');
+            if (messages.length > 0) {
+                ChatContent.handleAddMessage(messages);
+                const data = { from: currentUser._id, to: receiver.id, content: inputValue };
+                // console.log('send message');
+                handleSendMessage(data);
+                try {
+                    // axios.post(`${host}/api/send-message`, {
+                    //     sender: currentUser._id,
+                    //     receiver: receiver.id,
+                    //     messages,
+                    // });
+                    setInputValue('');
+                    setImgPasted('');
+                } catch (e) {
+                    console.log('loi gui tin nhan');
+                }
             }
         }
     };

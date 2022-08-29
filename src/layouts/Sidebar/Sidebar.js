@@ -1,7 +1,6 @@
 import React, { useState, memo, useEffect, useMemo, useContext, useRef } from 'react';
 import classNames from 'classnames/bind';
 import axios from 'axios';
-import { io } from 'socket.io-client';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsis } from '@fortawesome/free-solid-svg-icons';
 import styles from './Sidebar.module.scss';
@@ -9,11 +8,13 @@ import Search from '~/components/Search';
 import MessageItem from '~/components/MessageItem';
 import Button from '~/components/Button';
 import host from '~/ulties/serverHost';
+import { SocketContext } from '~/components/Context/SocketContext';
 import { ChatContentContext } from '~/components/Context/ChatContentContext';
 
 const cx = classNames.bind(styles);
 
 function Sidebar() {
+    // const { socket } = useContext(SocketContext);
     // console.log('sidebar');
     const UserChatContent = useContext(ChatContentContext);
     const [listUser, setListUser] = useState([]);
@@ -22,24 +23,8 @@ function Sidebar() {
     }, []);
 
     const sidebarContentRef = useRef();
-    const socket = useRef();
 
     useEffect(() => {
-        socket.current = io(host);
-        socket.current.auth = { userId: currentUser._id };
-        socket.current.on('connect_error', (err) => {
-            if (err.message === 'invalid userId') {
-                console.log('id ng dung ko hop le');
-            }
-        });
-        // socket.current.on('users', (users) => {
-        //     console.log(users);
-        // });
-        // socket.current.on('user connected', (user) => {
-        //     console.log(user);
-        // });
-
-        // console.log(socket.current);
         // eslint-disable-next-line
     }, []);
 

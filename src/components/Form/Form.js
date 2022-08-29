@@ -8,11 +8,13 @@ import styles from './Form.module.scss';
 import Input from '~/components/Input';
 import Button from '~/components/Button';
 import { UserContext } from '../Context/UserContext';
+import { SocketContext } from '../Context/SocketContext';
 
 const cx = classNames.bind(styles);
 
 function Form({ login, signup }) {
     const User = useContext(UserContext);
+    const Socket = useContext(SocketContext);
 
     // eslint-disable-next-line
     const navigate = useNavigate();
@@ -44,6 +46,7 @@ function Form({ login, signup }) {
         return true;
     };
 
+    // ấn enter để đăng nhập
     const handlSubmit = async (e) => {
         e.preventDefault();
         if (checkValues()) {
@@ -76,10 +79,11 @@ function Form({ login, signup }) {
                         // }
                         localStorage.setItem('chat-app-hnt', JSON.stringify(data.user));
                         User.setUser(data.user);
+                        Socket.handleSetCurrentUser(data.user);
                         toast('Chuyển hướng đến trang chủ');
                         setTimeout(function () {
                             navigate('/', { replace: true });
-                        }, 2500);
+                        }, 1500);
                     }
                 } catch (e) {
                     alert('login req failed, start server');
@@ -95,7 +99,7 @@ function Form({ login, signup }) {
                     value={values.username}
                     onInput={(e) => {
                         setValues((pre) => {
-                            pre.username = e.target.value;
+                            pre.username = e.target.value.trim();
                             return {
                                 ...pre,
                             };
@@ -114,7 +118,7 @@ function Form({ login, signup }) {
                     value={values.password}
                     onInput={(e) => {
                         setValues((pre) => {
-                            pre.password = e.target.value;
+                            pre.password = e.target.value.trim();
                             return {
                                 ...pre,
                             };

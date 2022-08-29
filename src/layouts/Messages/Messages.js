@@ -14,6 +14,7 @@ const cx = classNames.bind(styles);
 function Messages({ receiver }) {
     // console.log('Messagessss');
     const ChatContent = useContext(ChatContentContext);
+
     const sender = useMemo(() => {
         return JSON.parse(localStorage.getItem('chat-app-hnt'))._id;
     }, []);

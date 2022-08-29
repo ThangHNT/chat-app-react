@@ -3,7 +3,7 @@ import { useState, createContext } from 'react';
 const ChatContentContext = createContext();
 
 function ChatContentProvider({ children }) {
-    // console.log('context');
+    // console.log('chat-context');
     const [receiver, setReciever] = useState();
     const [messages, setMessages] = useState();
     const [base64String, setbase64String] = useState('');

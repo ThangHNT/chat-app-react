@@ -1,19 +1,19 @@
 import React, { useState, useEffect, useContext, memo } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleInfo, faPhone, faSpinner, faVideo } from '@fortawesome/free-solid-svg-icons';
+import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import classNames from 'classnames/bind';
 import styles from './ChatContent.module.scss';
 import Image from '~/components/Image';
-import Button from '~/components/Button';
 import Messages from '~/layouts/Messages';
 import { ChatContentContext } from '~/components/Context/ChatContentContext';
 import SendMessage from '~/layouts/SendMessage';
 import host from '~/ulties/serverHost';
+import HeaderChat from '~/layouts/HeaderChat';
 
 const cx = classNames.bind(styles);
 
 function ChatContent() {
-    // console.log('ChatContent');
+    // console.log('Chat-content');
     const ChatContent = useContext(ChatContentContext);
     const [receiver, setReceiver] = useState();
     const [loading, setLoading] = useState(false);
@@ -42,27 +42,7 @@ function ChatContent() {
 
     return (
         <div className={cx('wrapper')}>
-            {receiver && !loading && (
-                <div className={cx('header')}>
-                    <div className={cx('receiver')}>
-                        <div>
-                            <div className={cx('wrapper-img')}>
-                                <Image arounded src={receiver.avatar} />
-                                <span className="online"></span>
-                            </div>
-                        </div>
-                        <div className={cx('info')}>
-                            <span>{receiver.username}</span>
-                            <p>Dang hoat dong</p>
-                        </div>
-                    </div>
-                    <div className={cx('action-btns')}>
-                        <Button noTitle leftIcon={<FontAwesomeIcon icon={faPhone} />}></Button>
-                        <Button noTitle leftIcon={<FontAwesomeIcon icon={faVideo} />}></Button>
-                        <Button noTitle leftIcon={<FontAwesomeIcon icon={faCircleInfo} />}></Button>
-                    </div>
-                </div>
-            )}
+            {receiver && !loading && <HeaderChat receiver={receiver} />}
             {receiver && !loading && (
                 <div className={cx('content')}>
                     {/* Nội dung tin nhắn */}

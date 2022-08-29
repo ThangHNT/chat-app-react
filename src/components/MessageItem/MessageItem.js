@@ -1,14 +1,14 @@
 import { useEffect, useState, useRef, memo, useMemo } from 'react';
 import classNames from 'classnames/bind';
 import axios from 'axios';
-import { io } from 'socket.io-client';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBan, faEllipsis, faTrashCan } from '@fortawesome/free-solid-svg-icons';
 import styles from './MessageItem.module.scss';
 import Image from '~/components/Image';
 import host from '~/ulties/serverHost';
 import Button from '~/components/Button';
 import Menu from '~/components/Menu';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBan, faEllipsis, faTrashCan } from '@fortawesome/free-solid-svg-icons';
+import PositiveStatus from '~/components/PositiveStatus';
 
 const cx = classNames.bind(styles);
 
@@ -32,11 +32,6 @@ function MessageItem({ receiver, avatar, username, searchResult = false }) {
     }, []);
 
     const btnRef = useRef();
-    const socket = useRef();
-
-    useEffect(() => {
-        socket.current = io(host);
-    }, []);
 
     // lấy tin nhắn mới nhất
     useEffect(() => {
@@ -91,7 +86,7 @@ function MessageItem({ receiver, avatar, username, searchResult = false }) {
         <div className={cx('wrapper', { searchResult })}>
             <div className={cx('avatar')}>
                 <Image small={searchResult ? true : false} src={avatar} avatar alt="avatar" />
-                {!searchResult && <span className="online"></span>}
+                <PositiveStatus receiver={receiver} />
             </div>
             <div className={cx('info')}>
                 {searchResult ? (
