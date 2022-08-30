@@ -15,7 +15,7 @@ import { SocketContext } from '~/components/Context/SocketContext';
 const cx = classNames.bind(styles);
 
 function Header({ currentUser = true }) {
-    // console.log('Header');
+    console.log('Header');
     const { handleInitSocket } = useContext(SocketContext);
 
     const user = useMemo(() => {
@@ -28,6 +28,7 @@ function Header({ currentUser = true }) {
             socket.auth = { userId: user._id };
             handleInitSocket(socket);
         }
+        // eslint-disable-next-line
     }, [user]);
 
     const handleLogout = () => {

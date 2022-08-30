@@ -12,7 +12,7 @@ function PositiveStatus({ receiver }) {
     // console.log(receiver);
 
     useEffect(() => {
-        console.log(userList);
+        // console.log(userList);
         if (userList.length > 0) {
             setPositive(
                 userList.some((user) => {
@@ -20,10 +20,10 @@ function PositiveStatus({ receiver }) {
                 }),
             );
         }
+        // eslint-disable-next-line
     }, [userList]);
 
     useEffect(() => {
-        console.log(userList);
         if (newUser) {
             setPositive(receiver === newUser.userId);
         }

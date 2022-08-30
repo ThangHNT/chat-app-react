@@ -139,8 +139,7 @@ function SendMessage({ receiver }) {
             // console.log(messages);
             if (messages.length > 0) {
                 ChatContent.handleAddMessage(messages);
-                const data = { from: currentUser._id, to: receiver.id, content: inputValue };
-                // console.log('send message');
+                const data = { sender: currentUser._id, receiver: receiver.id, content: inputValue };
                 handleSendMessage(data);
                 try {
                     // axios.post(`${host}/api/send-message`, {
