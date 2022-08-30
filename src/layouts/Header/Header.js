@@ -1,23 +1,34 @@
-import { useMemo, memo } from 'react';
+import { useMemo, memo, useEffect, useContext } from 'react';
 import classNames from 'classnames/bind';
 import Tippy from '@tippyjs/react/headless';
 import 'tippy.js/dist/tippy.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRightFromBracket, faCircleQuestion, faUser } from '@fortawesome/free-solid-svg-icons';
-
+import { io } from 'socket.io-client';
+import host from '~/ulties/serverHost';
 import { Link } from 'react-router-dom';
 import styles from './Header.module.scss';
 import Image from '~/components/Image';
 import Button from '~/components/Button';
+import { SocketContext } from '~/components/Context/SocketContext';
 
 const cx = classNames.bind(styles);
 
 function Header({ currentUser = true }) {
     // console.log('Header');
+    const { handleInitSocket } = useContext(SocketContext);
 
     const user = useMemo(() => {
         return JSON.parse(localStorage.getItem('chat-app-hnt'));
     }, []);
+
+    useEffect(() => {
+        if (user) {
+            const socket = io(host);
+            socket.auth = { userId: user._id };
+            handleInitSocket(socket);
+        }
+    }, [user]);
 
     const handleLogout = () => {
         localStorage.removeItem('chat-app-hnt');

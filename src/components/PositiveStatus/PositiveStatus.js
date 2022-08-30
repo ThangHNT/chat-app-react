@@ -10,20 +10,25 @@ function PositiveStatus({ receiver }) {
     const [positive, setPositive] = useState(false);
 
     // console.log(receiver);
+
     useEffect(() => {
+        console.log(userList);
+        if (userList.length > 0) {
+            setPositive(
+                userList.some((user) => {
+                    return receiver === user.userId;
+                }),
+            );
+        }
+    }, [userList]);
+
+    useEffect(() => {
+        console.log(userList);
         if (newUser) {
-            if (receiver === newUser.userId) {
-                setPositive(true);
-            } else if (userList.length > 0) {
-                setPositive(
-                    userList.some((user) => {
-                        return receiver === user.userId;
-                    }),
-                );
-            }
+            setPositive(receiver === newUser.userId);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [newUser, userList]);
+    }, [newUser]);
 
     return <div className={cx('wrapper')}>{positive && <span className={cx('online')}></span>}</div>;
 }

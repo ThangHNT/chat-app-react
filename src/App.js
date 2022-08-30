@@ -5,7 +5,6 @@ import Login from '~/pages/Login';
 
 function App() {
     // console.log('App');
-
     return (
         <BrowserRouter>
             <Routes>

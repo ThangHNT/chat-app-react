@@ -21,7 +21,7 @@ function Search() {
     const [searchResults, setSearchResults] = useState([]);
     const [showResults, setShowResults] = useState(false);
     const currentUser = useMemo(() => {
-        return JSON.parse(localStorage.getItem('chat-app-hnt'))._id;
+        return JSON.parse(localStorage.getItem('chat-app-hnt'));
     }, []);
 
     const inputRef = useRef();
@@ -30,7 +30,7 @@ function Search() {
     useEffect(() => {
         if (!debounce.trim()) return;
         axios
-            .get(`${host}/api/search`, { params: { q: debounce, exceptUser: currentUser } })
+            .get(`${host}/api/search`, { params: { q: debounce, exceptUser: currentUser._id } })
             .then((data) => {
                 const data2 = data.data;
                 // console.log(data2.listUser);

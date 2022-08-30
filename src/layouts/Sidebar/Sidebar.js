@@ -8,13 +8,11 @@ import Search from '~/components/Search';
 import MessageItem from '~/components/MessageItem';
 import Button from '~/components/Button';
 import host from '~/ulties/serverHost';
-import { SocketContext } from '~/components/Context/SocketContext';
 import { ChatContentContext } from '~/components/Context/ChatContentContext';
 
 const cx = classNames.bind(styles);
 
 function Sidebar() {
-    // const { socket } = useContext(SocketContext);
     // console.log('sidebar');
     const UserChatContent = useContext(ChatContentContext);
     const [listUser, setListUser] = useState([]);
@@ -33,15 +31,17 @@ function Sidebar() {
     });
 
     useEffect(() => {
-        axios.post(`${host}/api/message-item`, { sender: currentUser._id }).then((data) => {
-            const data2 = data.data;
-            if (data2.status) {
-                setListUser(data2.userList);
-            } else {
-                console.log('loi lay ds user');
-            }
-        });
-    }, [currentUser._id]);
+        if (currentUser) {
+            axios.post(`${host}/api/message-item`, { sender: currentUser._id }).then((data) => {
+                const data2 = data.data;
+                if (data2.status) {
+                    setListUser(data2.userList);
+                } else {
+                    console.log('loi lay ds user');
+                }
+            });
+        }
+    }, [currentUser]);
 
     const handleClickMessageItem = (e) => {
         // lấy root element
