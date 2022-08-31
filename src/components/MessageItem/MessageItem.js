@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, memo, useMemo } from 'react';
+import { useEffect, useState, useRef, memo, useMemo, useContext } from 'react';
 import classNames from 'classnames/bind';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -9,6 +9,7 @@ import host from '~/ulties/serverHost';
 import Button from '~/components/Button';
 import Menu from '~/components/Menu';
 import PositiveStatus from '~/components/PositiveStatus';
+import { SocketContext } from '~/components/Context/SocketContext';
 
 const cx = classNames.bind(styles);
 
@@ -25,6 +26,7 @@ const actionsMessageItem = [
 
 function MessageItem({ receiver, avatar, username, searchResult = false }) {
     // console.log('message-item');
+    const { newMessage } = useContext(SocketContext);
     const [lastestMessage, setlastestMessage] = useState();
     const [menuMessageItem, setmenuMessageItem] = useState(false);
     const senderId = useMemo(() => {
@@ -32,6 +34,18 @@ function MessageItem({ receiver, avatar, username, searchResult = false }) {
     }, []);
 
     const btnRef = useRef();
+
+    useEffect(() => {
+        if (newMessage) {
+            if (newMessage.sender === receiver) {
+                if (newMessage.content.type === 'text') {
+                    setlastestMessage(newMessage.content.msg);
+                } else {
+                    setlastestMessage('Ban nhan 1 anh moi');
+                }
+            }
+        }
+    }, [newMessage]);
 
     // lấy tin nhắn mới nhất
     useEffect(() => {

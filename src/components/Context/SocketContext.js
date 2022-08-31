@@ -3,12 +3,12 @@ import { createContext, useEffect, useState } from 'react';
 const SocketContext = createContext();
 
 function SocketContextProvider({ children }) {
-    console.log('socket-context');
+    // console.log('socket-context');
 
     const [newUser, setNewUser] = useState();
     const [userList, setUserList] = useState([]);
     const [socket, setSocket] = useState();
-    const [newMessage, setNewMessage] = useState('');
+    const [newMessage, setNewMessage] = useState();
 
     const handleInitSocket = (socket) => {
         setSocket(socket);
@@ -27,7 +27,7 @@ function SocketContextProvider({ children }) {
             });
             socket.on('private message', (data) => {
                 // console.log(data.content);
-                setNewMessage(data.content);
+                setNewMessage(data);
             });
             socket.on('user disconnected', (socketId) => {
                 let newUsers = [];
@@ -44,7 +44,7 @@ function SocketContextProvider({ children }) {
 
     const handleSendMessage = (data) => {
         if (userList.length > 0) {
-            const { receiver, content } = data;
+            const { receiver, content, sender } = data;
             let to = '';
             for (let i = 0; i < userList.length; i++) {
                 if (userList[i].userId === receiver) {
@@ -53,6 +53,7 @@ function SocketContextProvider({ children }) {
                 }
             }
             const message = {
+                sender,
                 to,
                 from: socket.id,
                 content,
@@ -63,7 +64,7 @@ function SocketContextProvider({ children }) {
         }
     };
 
-    const values = { newUser, userList, newMessage, handleSendMessage, handleInitSocket };
+    const values = { socket, newUser, userList, newMessage, handleSendMessage, handleInitSocket };
 
     return <SocketContext.Provider value={values}>{children}</SocketContext.Provider>;
 }

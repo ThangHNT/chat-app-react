@@ -13,7 +13,7 @@ import { SocketContext } from '~/components/Context/SocketContext';
 const cx = classNames.bind(styles);
 
 function Messages({ receiver }) {
-    console.log('Messages');
+    // console.log('Messages');
     const ChatContent = useContext(ChatContentContext);
     const { newMessage } = useContext(SocketContext);
 
@@ -27,13 +27,12 @@ function Messages({ receiver }) {
 
     useEffect(() => {
         if (newMessage) {
-            console.log(newMessage);
             const msg = {
                 sender: '',
-                type: newMessage.type,
-                img: newMessage.type === 'img' ? newMessage.msg : '',
-                text: newMessage.type === 'text' ? newMessage.msg : '',
-                time: newMessage.time,
+                type: newMessage.content.type,
+                img: newMessage.content.type === 'img' ? newMessage.content.msg : '',
+                text: newMessage.content.type === 'text' ? newMessage.content.msg : '',
+                time: newMessage.content.time,
             };
             setMessages((pre) => {
                 return [...pre, msg];
