@@ -15,7 +15,7 @@ import { SocketContext } from '~/components/Context/SocketContext';
 const cx = classNames.bind(styles);
 
 function Header({ currentUser = true }) {
-    console.log('Header');
+    // console.log('Header');
     const { handleInitSocket } = useContext(SocketContext);
 
     const user = useMemo(() => {

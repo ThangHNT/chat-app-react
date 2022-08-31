@@ -44,6 +44,7 @@ function MessageItem({ receiver, avatar, username, searchResult = false }) {
                 .then((data) => {
                     const data2 = data.data;
                     if (data2.status) {
+                        // console.log(data2);
                         if (data2.message.message.sender === senderId) {
                             if (data2.message.message.type === 'text') {
                                 setlastestMessage('Ban: ' + data2.message.message.text);

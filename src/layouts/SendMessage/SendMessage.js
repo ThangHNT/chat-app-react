@@ -66,12 +66,12 @@ function SendMessage({ receiver }) {
     }, [inputValue]);
 
     // xóa URL ảnh cũ khi chọn ảnh mới
-    useEffect(() => {
-        return () => {
-            if (imgPasted.length > 0) URL.revokeObjectURL(imgPasted);
-        };
-        // eslint-disable-next-line
-    }, [imgPasted]);
+    // useEffect(() => {
+    //     return () => {
+    //         if (imgPasted.length > 0) URL.revokeObjectURL(imgPasted);
+    //     };
+    //     // eslint-disable-next-line
+    // }, [imgPasted]);
 
     const handleRemoveImg = () => {
         setImgPasted('');
@@ -139,7 +139,21 @@ function SendMessage({ receiver }) {
             // console.log(messages);
             if (messages.length > 0) {
                 ChatContent.handleAddMessage(messages);
-                const data = { sender: currentUser._id, receiver: receiver.id, content: inputValue };
+                let content;
+                if (imgBase64.length > 0) {
+                    content = {
+                        msg: imgBase64,
+                        type: 'img',
+                        time: new Date().getTime(),
+                    };
+                } else {
+                    content = {
+                        type: 'text',
+                        msg: inputValue.trim(),
+                        time: new Date().getTime(),
+                    };
+                }
+                const data = { sender: currentUser._id, receiver: receiver.id, content };
                 handleSendMessage(data);
                 try {
                     // axios.post(`${host}/api/send-message`, {

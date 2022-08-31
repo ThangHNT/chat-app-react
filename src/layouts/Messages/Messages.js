@@ -2,18 +2,20 @@ import { useEffect, useState, useMemo, memo, useContext, useRef } from 'react';
 import classNames from 'classnames/bind';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowDown } from '@fortawesome/free-solid-svg-icons';
 import styles from './Messages.module.scss';
 import Message from '~/components/Message';
 import host from '~/ulties/serverHost';
-import { ChatContentContext } from '~/components/Context/ChatContentContext';
 import Button from '~/components/Button';
-import { faArrowDown } from '@fortawesome/free-solid-svg-icons';
+import { ChatContentContext } from '~/components/Context/ChatContentContext';
+import { SocketContext } from '~/components/Context/SocketContext';
 
 const cx = classNames.bind(styles);
 
 function Messages({ receiver }) {
-    // console.log('Messagessss');
+    console.log('Messages');
     const ChatContent = useContext(ChatContentContext);
+    const { newMessage } = useContext(SocketContext);
 
     const sender = useMemo(() => {
         return JSON.parse(localStorage.getItem('chat-app-hnt'))._id;
@@ -22,6 +24,22 @@ function Messages({ receiver }) {
 
     const contentRef = useRef();
     const [scrollDown, setScrollDown] = useState(false);
+
+    useEffect(() => {
+        if (newMessage) {
+            console.log(newMessage);
+            const msg = {
+                sender: '',
+                type: newMessage.type,
+                img: newMessage.type === 'img' ? newMessage.msg : '',
+                text: newMessage.type === 'text' ? newMessage.msg : '',
+                time: newMessage.time,
+            };
+            setMessages((pre) => {
+                return [...pre, msg];
+            });
+        }
+    }, [newMessage]);
 
     // cuộn tin nhắn xuống dưới cùng khi load xog đoạn chat
     useEffect(() => {

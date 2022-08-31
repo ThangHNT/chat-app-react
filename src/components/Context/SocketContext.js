@@ -3,17 +3,16 @@ import { createContext, useEffect, useState } from 'react';
 const SocketContext = createContext();
 
 function SocketContextProvider({ children }) {
-    // console.log('socket-context');
+    console.log('socket-context');
 
     const [newUser, setNewUser] = useState();
     const [userList, setUserList] = useState([]);
     const [socket, setSocket] = useState();
+    const [newMessage, setNewMessage] = useState('');
 
     const handleInitSocket = (socket) => {
         setSocket(socket);
     };
-
-    console.log(userList);
 
     useEffect(() => {
         if (socket) {
@@ -27,9 +26,20 @@ function SocketContextProvider({ children }) {
                 setUserList((pre) => [...pre, user]);
             });
             socket.on('private message', (data) => {
-                console.log(data);
+                // console.log(data.content);
+                setNewMessage(data.content);
+            });
+            socket.on('user disconnected', (socketId) => {
+                let newUsers = [];
+                userList.forEach((user) => {
+                    if (user.socketId !== socketId) {
+                        newUsers.push(user);
+                    }
+                });
+                setUserList(newUsers);
             });
         }
+        // eslint-disable-next-line
     }, [socket]);
 
     const handleSendMessage = (data) => {
@@ -42,19 +52,18 @@ function SocketContextProvider({ children }) {
                     break;
                 }
             }
-            // console.log(userList);
-            // console.log('from', socket.id);
-            // console.log('to', to);
-            const data2 = {
-                to: to,
+            const message = {
+                to,
                 from: socket.id,
                 content,
             };
-            socket.emit('send message', data2);
+            socket.emit('send message', message);
+            // console.log('from', socket.id);
+            // console.log('to', to);
         }
     };
 
-    const values = { newUser, userList, handleSendMessage, handleInitSocket };
+    const values = { newUser, userList, newMessage, handleSendMessage, handleInitSocket };
 
     return <SocketContext.Provider value={values}>{children}</SocketContext.Provider>;
 }

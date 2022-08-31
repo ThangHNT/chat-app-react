@@ -37,9 +37,14 @@
     justify-content: center;
     margin-left: 10px;
 
+    .message {
+        font-size: 14px;
+        padding-right: 35px;
+    }
+
     .username,
     .message {
-        max-width: 85%;
+        max-width: 70%;
         text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden;
@@ -47,7 +52,6 @@
     }
 
     .username {
-        max-width: 70%;
         font-size: 16px;
         font-weight: 500;
         font-family: var(--font-family-primary);
@@ -58,11 +62,6 @@
         font-weight: 500;
         font-family: var(--font-family-primary);
     }
-}
-
-.message {
-    font-size: 14px;
-    padding-right: 35px;
 }
 
 .wrapper-btn {
