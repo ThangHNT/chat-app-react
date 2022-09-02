@@ -10,6 +10,8 @@ function SocketContextProvider({ children }) {
     const [socket, setSocket] = useState();
     const [newMessage, setNewMessage] = useState();
 
+    // console.log(socket);
+
     const handleInitSocket = (socket) => {
         setSocket(socket);
     };
@@ -57,6 +59,7 @@ function SocketContextProvider({ children }) {
                 to,
                 from: socket.id,
                 content,
+                receiver,
             };
             socket.emit('send message', message);
             // console.log('from', socket.id);

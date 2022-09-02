@@ -16,7 +16,7 @@ const cx = classNames.bind(styles);
 
 function Header({ currentUser = true }) {
     // console.log('Header');
-    const { handleInitSocket } = useContext(SocketContext);
+    const { handleInitSocket, socket } = useContext(SocketContext);
 
     const user = useMemo(() => {
         return JSON.parse(localStorage.getItem('chat-app-hnt'));
@@ -24,6 +24,7 @@ function Header({ currentUser = true }) {
 
     useEffect(() => {
         if (user) {
+            // console.log('set socket');
             const socket = io(host);
             socket.auth = { userId: user._id };
             handleInitSocket(socket);
@@ -33,6 +34,7 @@ function Header({ currentUser = true }) {
 
     const handleLogout = () => {
         localStorage.removeItem('chat-app-hnt');
+        socket.close();
     };
 
     return (

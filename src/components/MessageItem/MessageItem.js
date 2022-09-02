@@ -10,6 +10,7 @@ import Button from '~/components/Button';
 import Menu from '~/components/Menu';
 import PositiveStatus from '~/components/PositiveStatus';
 import { SocketContext } from '~/components/Context/SocketContext';
+import { ChatContentContext } from '~/components/Context/ChatContentContext';
 
 const cx = classNames.bind(styles);
 
@@ -26,6 +27,7 @@ const actionsMessageItem = [
 
 function MessageItem({ receiver, avatar, username, searchResult = false }) {
     // console.log('message-item');
+    // const { messages } = useContext(ChatContentContext);
     const { newMessage } = useContext(SocketContext);
     const [lastestMessage, setlastestMessage] = useState();
     const [menuMessageItem, setmenuMessageItem] = useState(false);
@@ -46,6 +48,10 @@ function MessageItem({ receiver, avatar, username, searchResult = false }) {
             }
         }
     }, [newMessage]);
+
+    // useEffect(() => {
+    //     setlastestMessage(messages);
+    // }, [messages]);
 
     // lấy tin nhắn mới nhất
     useEffect(() => {
