@@ -25,23 +25,26 @@ function Messages({ receiver }) {
     const contentRef = useRef();
     const [scrollDown, setScrollDown] = useState(false);
 
+    // nhận tin nhắn mới nhất từ socket
     useEffect(() => {
         if (newMessage) {
             // console.log(newMessage);
-            const message = newMessage.content.map((msg) => {
-                return {
-                    type: msg.type,
-                    img: msg.type === 'img' ? msg.msg : '',
-                    text: msg.type === 'text' ? msg.msg : '',
-                    time: msg.time,
-                    sender: newMessage.sender,
-                };
-            });
-            // console.log(message);
-            setMessages((pre) => {
-                return [...pre, ...message];
-            });
+            if (newMessage.sender === receiver.id) {
+                const message = newMessage.content.map((msg) => {
+                    return {
+                        type: msg.type,
+                        img: msg.type === 'img' ? msg.msg : '',
+                        text: msg.type === 'text' ? msg.msg : '',
+                        time: msg.time,
+                        sender: newMessage.sender,
+                    };
+                });
+                setMessages((pre) => {
+                    return [...pre, ...message];
+                });
+            }
         }
+        // eslint-disable-next-line
     }, [newMessage]);
 
     // cuộn tin nhắn xuống dưới cùng khi load xog đoạn chat

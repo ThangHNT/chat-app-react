@@ -1,4 +1,4 @@
-import React, { useState, memo, useEffect, useMemo, useContext, useRef } from 'react';
+import React, { useState, memo, useEffect, useMemo, useRef } from 'react';
 import classNames from 'classnames/bind';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -8,13 +8,11 @@ import Search from '~/components/Search';
 import MessageItem from '~/components/MessageItem';
 import Button from '~/components/Button';
 import host from '~/ulties/serverHost';
-import { ChatContentContext } from '~/components/Context/ChatContentContext';
 
 const cx = classNames.bind(styles);
 
 function Sidebar() {
     // console.log('sidebar');
-    const UserChatContent = useContext(ChatContentContext);
     const [listUser, setListUser] = useState([]);
     const currentUser = useMemo(() => {
         return JSON.parse(localStorage.getItem('chat-app-hnt'));
@@ -43,12 +41,6 @@ function Sidebar() {
         }
     }, [currentUser]);
 
-    const handleClickMessageItem = (e) => {
-        // lấy root element
-        const rootdiv = e.currentTarget;
-        UserChatContent.handleDisplayChatContent(rootdiv.getAttribute('userid'));
-    };
-
     return (
         <div className={cx('wrapper')}>
             <div className={cx('header')}>
@@ -64,12 +56,7 @@ function Sidebar() {
             </div>
             <div ref={sidebarContentRef} className={cx('content')}>
                 {listUser.map((item, index) => (
-                    <div
-                        key={index}
-                        userid={item.id}
-                        className={cx('wrapper-message-item')}
-                        onClick={handleClickMessageItem}
-                    >
+                    <div key={index} userid={item.id} className={cx('wrapper-message-item')}>
                         <MessageItem receiver={item.id} avatar={item.avatar} username={item.username} />
                     </div>
                 ))}

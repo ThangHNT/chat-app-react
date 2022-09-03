@@ -64,9 +64,20 @@
     }
 }
 
+.message-notification {
+    width: 12px;
+    height: 12px;
+    background-color: var(--primary);
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    right: 18%;
+    transform: translateY(-50%);
+}
+
 .wrapper-btn {
     position: absolute;
-    right: 15px;
+    right: 5px;
     top: 50%;
     transform: translateY(-50%);
 }

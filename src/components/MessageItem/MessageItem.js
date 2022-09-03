@@ -27,10 +27,12 @@ const actionsMessageItem = [
 
 function MessageItem({ receiver, avatar, username, searchResult = false }) {
     // console.log('message-item');
-    const { messages } = useContext(ChatContentContext);
+    const { messages, handleDisplayChatContent } = useContext(ChatContentContext);
+    const ChatContent = useContext(ChatContentContext);
     const { newMessage } = useContext(SocketContext);
     const [lastestMessage, setlastestMessage] = useState();
     const [menuMessageItem, setmenuMessageItem] = useState(false);
+    const [messageNotify, setMessageNotify] = useState(false);
     const senderId = useMemo(() => {
         return JSON.parse(localStorage.getItem('chat-app-hnt'))._id;
     }, []);
@@ -41,7 +43,10 @@ function MessageItem({ receiver, avatar, username, searchResult = false }) {
     useEffect(() => {
         if (newMessage) {
             if (newMessage.sender === receiver) {
-                console.log(newMessage);
+                // console.log(newMessage);
+                if (ChatContent.receiver !== receiver) {
+                    setMessageNotify(true);
+                }
                 const newestMessage = newMessage.content[newMessage.content.length - 1];
                 if (newestMessage.type === 'text') {
                     setlastestMessage(newestMessage.msg);
@@ -119,8 +124,14 @@ function MessageItem({ receiver, avatar, username, searchResult = false }) {
         setmenuMessageItem(!menuMessageItem);
     };
 
+    // click để hiện ra đoạn chat và tắt thông báo tin nhắn mới
+    const handleClick = () => {
+        setMessageNotify(false);
+        handleDisplayChatContent(receiver);
+    };
+
     return (
-        <div className={cx('wrapper', { searchResult })}>
+        <div className={cx('wrapper', { searchResult })} onClick={handleClick}>
             <div className={cx('avatar')}>
                 <Image small={searchResult ? true : false} src={avatar} avatar alt="avatar" />
                 <PositiveStatus receiver={receiver} />
@@ -133,6 +144,7 @@ function MessageItem({ receiver, avatar, username, searchResult = false }) {
                 )}
                 {!searchResult && <p className={cx('message')}>{lastestMessage}</p>}
             </div>
+            {messageNotify && <div className={cx('message-notification')}></div>}
             {!searchResult && (
                 <div className={cx('action-btns')}>
                     <div className={cx('wrapper-btn')} ref={btnRef} onClick={handleDisplayMenu}>
