@@ -122,36 +122,32 @@ function SendMessage({ receiver }) {
         if (e.shiftKey) shiftKey = 16;
         if (e.which === 13 && shiftKey !== 16) {
             e.preventDefault();
-            let messages = [];
+            let content = [];
+            let messages = {
+                receiver: receiver.id,
+                sender: currentUser._id,
+                content,
+            };
             let textMsg = inputValue.length > 0 ? inputValue.trim() : '';
-            let content;
-            if (textMsg.length > 0) {
-                content = {
-                    type: 'text',
-                    msg: inputValue.trim(),
+            // let content;
+            if (imgBase64.length > 0) {
+                content.push({
+                    msg: imgBase64,
+                    type: 'img',
                     time: new Date().getTime(),
-                };
-                messages.push({
-                    msg: inputValue.trim(),
-                    type: 'text',
                 });
             }
-            if (imgBase64.length > 0) {
-                content = {
-                    msg: imgBase64,
-                    type: 'img',
+            if (textMsg.length > 0) {
+                content.push({
+                    msg: inputValue.trim(),
+                    type: 'text',
                     time: new Date().getTime(),
-                };
-                messages.push({
-                    msg: imgBase64,
-                    type: 'img',
                 });
             }
             // console.log(messages);
-            if (messages.length > 0) {
+            if (messages.content.length > 0) {
+                handleSendMessage(messages);
                 ChatContent.handleAddMessage(messages);
-                const data = { sender: currentUser._id, receiver: receiver.id, content };
-                handleSendMessage(data);
                 try {
                     // axios.post(`${host}/api/send-message`, {
                     //     sender: currentUser._id,

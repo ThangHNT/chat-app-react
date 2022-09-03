@@ -47,6 +47,7 @@ function SocketContextProvider({ children }) {
     const handleSendMessage = (data) => {
         if (userList.length > 0) {
             const { receiver, content, sender } = data;
+            console.log(content);
             let to = '';
             for (let i = 0; i < userList.length; i++) {
                 if (userList[i].userId === receiver) {

@@ -13,8 +13,8 @@ function ChatContentProvider({ children }) {
         setReciever(userId);
     };
 
-    const handleAddMessage = (message) => {
-        setMessages(message);
+    const handleAddMessage = (messages) => {
+        setMessages(messages);
     };
 
     const handleGetBase64 = (string) => {

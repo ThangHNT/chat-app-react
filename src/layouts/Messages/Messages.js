@@ -48,18 +48,19 @@ function Messages({ receiver }) {
 
     // hiện tin nhắn trên đoạn chat khi vừa ấn enter
     useEffect(() => {
-        // console.log(ChatContent.messages);
         const msg = ChatContent.messages;
         if (msg) {
-            const newMessage = {
-                text: msg[0].msg,
-                img: msg[0].msg ? msg[0].msg : '',
-                sender,
-                time: new Date().getTime(),
-                type: msg[0].type,
-            };
+            const arr = msg.content.map((message) => {
+                return {
+                    text: message.msg,
+                    img: message.msg ? message.msg : '',
+                    sender,
+                    time: new Date().getTime(),
+                    type: message.type,
+                };
+            });
             setMessages((pre) => {
-                return [...pre, newMessage];
+                return [...pre, ...arr];
             });
         }
         // eslint-disable-next-line

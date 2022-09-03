@@ -27,7 +27,7 @@ const actionsMessageItem = [
 
 function MessageItem({ receiver, avatar, username, searchResult = false }) {
     // console.log('message-item');
-    // const { messages } = useContext(ChatContentContext);
+    const { messages } = useContext(ChatContentContext);
     const { newMessage } = useContext(SocketContext);
     const [lastestMessage, setlastestMessage] = useState();
     const [menuMessageItem, setmenuMessageItem] = useState(false);
@@ -37,23 +37,38 @@ function MessageItem({ receiver, avatar, username, searchResult = false }) {
 
     const btnRef = useRef();
 
+    // nhận tin nhắn mới nhất từ socket
     useEffect(() => {
         if (newMessage) {
             if (newMessage.sender === receiver) {
-                if (newMessage.content.type === 'text') {
-                    setlastestMessage(newMessage.content.msg);
-                } else {
-                    setlastestMessage('Ban nhan 1 anh moi');
-                }
+                console.log(newMessage);
+                // if (newMessage.content.type === 'text') {
+                //     setlastestMessage(newMessage.content.msg);
+                // } else {
+                //     setlastestMessage('Ban nhan 1 anh moi');
+                // }
             }
         }
+        // eslint-disable-next-line
     }, [newMessage]);
 
-    // useEffect(() => {
-    //     setlastestMessage(messages);
-    // }, [messages]);
+    //  hiển thị tin nhắn khi vừa ấn enter
+    useEffect(() => {
+        if (messages) {
+            if (messages.receiver === receiver) {
+                // console.log(messages);
+                let lastestMessage = messages.content[messages.content.length - 1];
+                let msg = 'Ban da gui 1 anh';
+                if (lastestMessage.type === 'text') {
+                    msg = 'Ban: ' + lastestMessage.msg;
+                }
+                setlastestMessage(msg);
+            }
+        }
+        // eslint-disable-next-line
+    }, [messages]);
 
-    // lấy tin nhắn mới nhất
+    // lấy tin nhắn mới nhất từ db
     useEffect(() => {
         if (!searchResult) {
             axios
