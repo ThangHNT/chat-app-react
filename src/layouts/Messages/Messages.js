@@ -27,15 +27,19 @@ function Messages({ receiver }) {
 
     useEffect(() => {
         if (newMessage) {
-            const msg = {
-                sender: '',
-                type: newMessage.content.type,
-                img: newMessage.content.type === 'img' ? newMessage.content.msg : '',
-                text: newMessage.content.type === 'text' ? newMessage.content.msg : '',
-                time: newMessage.content.time,
-            };
+            // console.log(newMessage);
+            const message = newMessage.content.map((msg) => {
+                return {
+                    type: msg.type,
+                    img: msg.type === 'img' ? msg.msg : '',
+                    text: msg.type === 'text' ? msg.msg : '',
+                    time: msg.time,
+                    sender: newMessage.sender,
+                };
+            });
+            // console.log(message);
             setMessages((pre) => {
-                return [...pre, msg];
+                return [...pre, ...message];
             });
         }
     }, [newMessage]);

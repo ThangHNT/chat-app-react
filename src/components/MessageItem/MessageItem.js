@@ -37,22 +37,23 @@ function MessageItem({ receiver, avatar, username, searchResult = false }) {
 
     const btnRef = useRef();
 
-    // nhận tin nhắn mới nhất từ socket
+    // nhận tin nhắn mới nhất từ socket và hiển thị bên sidebar
     useEffect(() => {
         if (newMessage) {
             if (newMessage.sender === receiver) {
                 console.log(newMessage);
-                // if (newMessage.content.type === 'text') {
-                //     setlastestMessage(newMessage.content.msg);
-                // } else {
-                //     setlastestMessage('Ban nhan 1 anh moi');
-                // }
+                const newestMessage = newMessage.content[newMessage.content.length - 1];
+                if (newestMessage.type === 'text') {
+                    setlastestMessage(newestMessage.msg);
+                } else {
+                    setlastestMessage('Ban nhan dc 1 anh');
+                }
             }
         }
         // eslint-disable-next-line
     }, [newMessage]);
 
-    //  hiển thị tin nhắn khi vừa ấn enter
+    //  hiển thị tin nhắn mới nhất khi vừa ấn enter
     useEffect(() => {
         if (messages) {
             if (messages.receiver === receiver) {
