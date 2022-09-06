@@ -9,11 +9,38 @@ function SocketContextProvider({ children }) {
     const [userList, setUserList] = useState([]);
     const [socket, setSocket] = useState();
     const [newMessage, setNewMessage] = useState();
-
-    // console.log(socket);
+    const [messageSended, setMessageSended] = useState(new Map());
+    const [checkGetDataFromDB, setCheckGetDataFromDB] = useState([]);
 
     const handleInitSocket = (socket) => {
         setSocket(socket);
+    };
+
+    const handleCheckGetDataFromDB = (userId) => {
+        setCheckGetDataFromDB((pre) => [...pre, userId]);
+    };
+
+    const handlSetMessageSended = (key, value, fromDB = false) => {
+        const checkKey = messageSended.has(key);
+        if (!checkKey) {
+            messageSended.set(key, value);
+        } else {
+            if (fromDB) {
+                const oldData = messageSended.get(key);
+                setMessageSended(() => {
+                    return messageSended.set(key, [...value, ...oldData]);
+                });
+            } else {
+                const oldData = messageSended.get(key);
+                setMessageSended(() => {
+                    return messageSended.set(key, [...oldData, ...value]);
+                });
+            }
+        }
+    };
+
+    const handleSetNewMessage = (message) => {
+        setNewMessage(message);
     };
 
     useEffect(() => {
@@ -67,7 +94,19 @@ function SocketContextProvider({ children }) {
         }
     };
 
-    const values = { socket, newUser, userList, newMessage, handleSendMessage, handleInitSocket };
+    const values = {
+        socket,
+        newUser,
+        userList,
+        newMessage,
+        messageSended,
+        checkGetDataFromDB,
+        handlSetMessageSended,
+        handleSendMessage,
+        handleSetNewMessage,
+        handleInitSocket,
+        handleCheckGetDataFromDB,
+    };
 
     return <SocketContext.Provider value={values}>{children}</SocketContext.Provider>;
 }

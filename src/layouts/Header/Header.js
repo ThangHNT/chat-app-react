@@ -16,7 +16,7 @@ const cx = classNames.bind(styles);
 
 function Header({ currentUser = true }) {
     // console.log('Header');
-    const { handleInitSocket, socket } = useContext(SocketContext);
+    const { handleInitSocket, socket, messageSended } = useContext(SocketContext);
 
     const user = useMemo(() => {
         return JSON.parse(localStorage.getItem('chat-app-hnt'));
@@ -35,6 +35,7 @@ function Header({ currentUser = true }) {
     const handleLogout = () => {
         localStorage.removeItem('chat-app-hnt');
         socket.close();
+        messageSended.clear();
     };
 
     return (

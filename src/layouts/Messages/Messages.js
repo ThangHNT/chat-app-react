@@ -15,7 +15,14 @@ const cx = classNames.bind(styles);
 function Messages({ receiver }) {
     // console.log('Messages');
     const ChatContent = useContext(ChatContentContext);
-    const { newMessage } = useContext(SocketContext);
+    const {
+        newMessage,
+        handlSetMessageSended,
+        checkGetDataFromDB,
+        handleCheckGetDataFromDB,
+        handleSetNewMessage,
+        messageSended,
+    } = useContext(SocketContext);
 
     const sender = useMemo(() => {
         return JSON.parse(localStorage.getItem('chat-app-hnt'))._id;
@@ -28,7 +35,7 @@ function Messages({ receiver }) {
     // nhận tin nhắn mới nhất từ socket
     useEffect(() => {
         if (newMessage) {
-            // console.log(newMessage);
+            // console.log('new msg', newMessage);
             if (newMessage.sender === receiver.id) {
                 const message = newMessage.content.map((msg) => {
                     return {
@@ -42,16 +49,12 @@ function Messages({ receiver }) {
                 setMessages((pre) => {
                     return [...pre, ...message];
                 });
+                handlSetMessageSended(receiver.id, message);
+                handleSetNewMessage(undefined);
             }
         }
         // eslint-disable-next-line
     }, [newMessage]);
-
-    // cuộn tin nhắn xuống dưới cùng khi load xog đoạn chat
-    useEffect(() => {
-        contentRef.current.scrollTop = contentRef.current.scrollHeight;
-        // eslint-disable-next-line
-    }, [messages]);
 
     // hiện tin nhắn trên đoạn chat khi vừa ấn enter
     useEffect(() => {
@@ -73,22 +76,58 @@ function Messages({ receiver }) {
         // eslint-disable-next-line
     }, [ChatContent.messages]);
 
+    // cuộn tin nhắn xuống dưới cùng khi load xog đoạn chat
+    useEffect(() => {
+        contentRef.current.scrollTop = contentRef.current.scrollHeight;
+        // eslint-disable-next-line
+    }, [messages]);
+
     // tải messages từ database
     useEffect(() => {
-        const senderId = JSON.parse(localStorage.getItem('chat-app-hnt'))._id;
-        axios
-            .post(`${host}/api/get-messages`, {
-                sender: senderId,
-                receiver: receiver.id,
-            })
-            .then((data) => {
-                let data2 = data.data.arr;
-                // console.log(data2);
-                setMessages([...data2]);
-            })
-            .catch((error) => {
-                console.log('loi lay tin nhan');
+        const messagesSended = messageSended.get(receiver.id);
+        if (messagesSended) {
+            const checkGetData = checkGetDataFromDB.some((userId) => {
+                return userId === receiver.id;
             });
+            if (!checkGetData) {
+                // console.log('can goi api');
+                axios
+                    .post(`${host}/api/get-messages`, {
+                        sender: sender,
+                        receiver: receiver.id,
+                    })
+                    .then((data) => {
+                        let data2 = data.data.arr;
+                        // console.log('data from db', data2);
+                        setMessages([...data2, ...messagesSended]);
+                        handleCheckGetDataFromDB(receiver.id);
+                        handlSetMessageSended(receiver.id, data2, true);
+                    })
+                    .catch((error) => {
+                        console.log('loi lay tin nhan');
+                    });
+            } else {
+                // console.log('ko can goi api');
+                setMessages([...messagesSended]);
+            }
+        } else {
+            // console.log('get data from db');
+            axios
+                .post(`${host}/api/get-messages`, {
+                    sender: sender,
+                    receiver: receiver.id,
+                })
+                .then((data) => {
+                    let data2 = data.data.arr;
+                    // console.log('data from db', data2);
+                    setMessages([...data2]);
+                    handlSetMessageSended(receiver.id, data2);
+                    handleCheckGetDataFromDB(receiver.id);
+                })
+                .catch((error) => {
+                    console.log('loi lay tin nhan');
+                });
+        }
         // eslint-disable-next-line
     }, []);
 
