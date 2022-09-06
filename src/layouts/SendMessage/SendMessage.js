@@ -132,14 +132,14 @@ function SendMessage({ receiver }) {
             // let content;
             if (imgBase64.length > 0) {
                 content.push({
-                    msg: imgBase64,
+                    img: imgBase64,
                     type: 'img',
                     time: new Date().getTime(),
                 });
             }
             if (textMsg.length > 0) {
                 content.push({
-                    msg: inputValue.trim(),
+                    text: inputValue.trim(),
                     type: 'text',
                     time: new Date().getTime(),
                 });

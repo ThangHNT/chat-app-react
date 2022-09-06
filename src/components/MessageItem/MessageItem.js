@@ -49,7 +49,7 @@ function MessageItem({ receiver, avatar, username, searchResult = false }) {
                 }
                 const newestMessage = newMessage.content[newMessage.content.length - 1];
                 if (newestMessage.type === 'text') {
-                    setlastestMessage(newestMessage.msg);
+                    setlastestMessage(newestMessage.text);
                 } else {
                     setlastestMessage('Ban nhan dc 1 anh');
                 }
@@ -66,7 +66,7 @@ function MessageItem({ receiver, avatar, username, searchResult = false }) {
                 let lastestMessage = messages.content[messages.content.length - 1];
                 let msg = 'Ban da gui 1 anh';
                 if (lastestMessage.type === 'text') {
-                    msg = 'Ban: ' + lastestMessage.msg;
+                    msg = 'Ban: ' + lastestMessage.text;
                 }
                 setlastestMessage(msg);
             }

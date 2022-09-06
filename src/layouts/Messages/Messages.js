@@ -37,19 +37,10 @@ function Messages({ receiver }) {
         if (newMessage) {
             // console.log('new msg', newMessage);
             if (newMessage.sender === receiver.id) {
-                const message = newMessage.content.map((msg) => {
-                    return {
-                        type: msg.type,
-                        img: msg.type === 'img' ? msg.msg : '',
-                        text: msg.type === 'text' ? msg.msg : '',
-                        time: msg.time,
-                        sender: newMessage.sender,
-                    };
-                });
                 setMessages((pre) => {
-                    return [...pre, ...message];
+                    return [...pre, ...newMessage.content];
                 });
-                handlSetMessageSended(receiver.id, message);
+                handlSetMessageSended(receiver.id, newMessage.content);
                 handleSetNewMessage(undefined);
             }
         }
@@ -62,8 +53,8 @@ function Messages({ receiver }) {
         if (msg) {
             const arr = msg.content.map((message) => {
                 return {
-                    text: message.msg,
-                    img: message.msg ? message.msg : '',
+                    text: message.type === 'text' ? message.text : '',
+                    img: message.type === 'img' ? message.img : '',
                     sender,
                     time: new Date().getTime(),
                     type: message.type,
@@ -86,10 +77,12 @@ function Messages({ receiver }) {
     useEffect(() => {
         const messagesSended = messageSended.get(receiver.id);
         if (messagesSended) {
+            // click vào messageItem lần đầu khi có tin nhắn mới
             const checkGetData = checkGetDataFromDB.some((userId) => {
                 return userId === receiver.id;
             });
             if (!checkGetData) {
+                // nếu chưa load data from db lần đầu
                 // console.log('can goi api');
                 axios
                     .post(`${host}/api/get-messages`, {
@@ -107,10 +100,12 @@ function Messages({ receiver }) {
                         console.log('loi lay tin nhan');
                     });
             } else {
+                // từ lần 2 chỉ load data từ bộ nhớ client
                 // console.log('ko can goi api');
                 setMessages([...messagesSended]);
             }
         } else {
+            // click vào messageItem khi chưa có tn mới và load data from db
             // console.log('get data from db');
             axios
                 .post(`${host}/api/get-messages`, {

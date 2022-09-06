@@ -88,6 +88,13 @@ function SocketContextProvider({ children }) {
                 content,
                 receiver,
             };
+            const formatMessage = content.map((msg) => {
+                return {
+                    ...msg,
+                    sender,
+                };
+            });
+            handlSetMessageSended(receiver, formatMessage);
             socket.emit('send message', message);
             // console.log('from', socket.id);
             // console.log('to', to);
