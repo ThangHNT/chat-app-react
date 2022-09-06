@@ -11,12 +11,14 @@ import styles from './Header.module.scss';
 import Image from '~/components/Image';
 import Button from '~/components/Button';
 import { SocketContext } from '~/components/Context/SocketContext';
+import { ChatContentContext } from '~/components/Context/ChatContentContext';
 
 const cx = classNames.bind(styles);
 
 function Header({ currentUser = true }) {
     // console.log('Header');
     const { handleInitSocket, socket, messageSended } = useContext(SocketContext);
+    const { handleDisplayChatContent, handleAddMessage } = useContext(ChatContentContext);
 
     const user = useMemo(() => {
         return JSON.parse(localStorage.getItem('chat-app-hnt'));
@@ -36,6 +38,8 @@ function Header({ currentUser = true }) {
         localStorage.removeItem('chat-app-hnt');
         socket.close();
         messageSended.clear();
+        handleDisplayChatContent('');
+        handleAddMessage('');
     };
 
     return (
@@ -57,7 +61,7 @@ function Header({ currentUser = true }) {
                                 onClick={handleLogout}
                                 children="Đăng xuất"
                                 text
-                                to="/login"
+                                href="/login"
                                 leftIcon={<FontAwesomeIcon icon={faArrowRightFromBracket} />}
                             />
                         </div>

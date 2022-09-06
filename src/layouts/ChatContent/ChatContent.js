@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext, memo } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import classNames from 'classnames/bind';
+import axios from 'axios';
 import styles from './ChatContent.module.scss';
 import Image from '~/components/Image';
 import Messages from '~/layouts/Messages';
@@ -22,13 +23,15 @@ function ChatContent() {
     useEffect(() => {
         if (ChatContent.receiver) {
             setLoading(true);
-            fetch(`${host}/api/receiver/${encodeURIComponent(ChatContent.receiver)}`)
-                .then((res) => res.json())
+            axios
+                .get(`${host}/api/receiver/${ChatContent.receiver}`)
                 .then((data) => {
-                    if (data.status) {
-                        setReceiver(data.data);
+                    const data2 = data.data;
+                    if (data2.status) {
+                        // console.log(data2.data);
+                        setReceiver(data2.data);
                     } else {
-                        alert(data.msg);
+                        alert(data2.msg);
                     }
                 })
                 .then(() => {

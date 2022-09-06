@@ -13,7 +13,7 @@ function PositiveStatus({ receiver }) {
 
     useEffect(() => {
         // console.log(userList);
-        if (userList.length > 0) {
+        if (userList.length >= 0) {
             setPositive(
                 userList.some((user) => {
                     return receiver === user.userId;

@@ -21,7 +21,7 @@ function SendMessage({ receiver }) {
     const { handleSendMessage } = useContext(SocketContext);
     // eslint-disable-next-line
     const [chosenEmoji, setChosenEmoji] = useState(null);
-    const [imgPasted, setImgPasted] = useState('');
+    const [blobUrlImg, setBlobUrlImg] = useState('');
     const [imgBase64, setImgBase64] = useState('');
     const [inputValue, setInputValue] = useState('');
     const [displayEmojiList, setDisplayEmojiList] = useState(false);
@@ -47,11 +47,17 @@ function SendMessage({ receiver }) {
 
         return () => {
             document.removeEventListener('click', (e) => {});
+            ChatContent.handleGetBase64('');
         };
+        // eslint-disable-next-line
     }, []);
 
     useEffect(() => {
-        setImgPasted(ChatContent.base64String);
+        if (ChatContent.base64String.length > 0) {
+            // console.log(ChatContent.base64String);
+            setImgBase64(ChatContent.base64String);
+            inputRef.current.focus();
+        }
     }, [ChatContent.base64String]);
 
     // mở rộng input
@@ -68,13 +74,13 @@ function SendMessage({ receiver }) {
     // xóa URL ảnh cũ khi chọn ảnh mới
     useEffect(() => {
         return () => {
-            if (imgPasted.length > 0) URL.revokeObjectURL(imgPasted);
+            if (blobUrlImg.length > 0) URL.revokeObjectURL(blobUrlImg);
         };
         // eslint-disable-next-line
-    }, [imgPasted]);
+    }, [blobUrlImg]);
 
     const handleRemoveImg = () => {
-        setImgPasted('');
+        setImgBase64('');
     };
 
     // chọn emoji
@@ -105,7 +111,7 @@ function SendMessage({ receiver }) {
             if (type === 'image/png') {
                 const blob = await clipboardContent.getType('image/png');
                 const url = URL.createObjectURL(blob);
-                setImgPasted(url);
+                setBlobUrlImg(url);
                 let reader = new FileReader();
                 reader.readAsDataURL(blob);
                 let base64String = '';
@@ -155,7 +161,7 @@ function SendMessage({ receiver }) {
                     //     messages,
                     // });
                     setInputValue('');
-                    setImgPasted('');
+                    setBlobUrlImg('');
                     setImgBase64('');
                 } catch (e) {
                     console.log('loi gui tin nhan');
@@ -173,10 +179,15 @@ function SendMessage({ receiver }) {
                 <Button nestInput leftIcon={<FontAwesomeIcon icon={faMicrophone} />}></Button>
             </div>
             <div className={cx('chat-input')}>
-                {imgPasted.length > 0 && (
+                {imgBase64.length > 0 && (
                     <div className={cx('image-list')}>
                         <div className={cx('image-list-item')}>
-                            <Image handleRemove={handleRemoveImg} pasted remove src={imgPasted}></Image>
+                            <Image
+                                handleRemove={handleRemoveImg}
+                                pasted
+                                remove
+                                src={`data:image/jpeg;base64,${imgBase64}`}
+                            ></Image>
                         </div>
                     </div>
                 )}

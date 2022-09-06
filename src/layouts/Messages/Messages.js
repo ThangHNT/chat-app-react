@@ -17,11 +17,11 @@ function Messages({ receiver }) {
     const ChatContent = useContext(ChatContentContext);
     const {
         newMessage,
-        handlSetMessageSended,
+        messageSended,
         checkGetDataFromDB,
+        handlSetMessageSended,
         handleCheckGetDataFromDB,
         handleSetNewMessage,
-        messageSended,
     } = useContext(SocketContext);
 
     const sender = useMemo(() => {
@@ -40,17 +40,19 @@ function Messages({ receiver }) {
                 setMessages((pre) => {
                     return [...pre, ...newMessage.content];
                 });
-                // khi chua goi api send message
+                // console.log(messageSended);
+
+                // khi chua goi api send message : ${host}/api/send-message
                 handlSetMessageSended(receiver.id, newMessage.content);
 
-                // khi goi api send message
-                /*
-                const checkGetData = checkGetDataFromDB.some((userId) => {
-                    return userId === receiver.id;
-                });
-                if (checkGetData) {
-                    handlSetMessageSended(receiver.id, newMessage.content);
-                } */
+                // khi goi api send message: ${host}/api/send-message
+                // const checkGetData = checkGetDataFromDB.some((userId) => {
+                //     return userId === receiver.id;
+                // });
+                // if (checkGetData) {
+                //     handlSetMessageSended(receiver.id, newMessage.content);
+                // }
+
                 handleSetNewMessage(undefined);
             }
         }
@@ -87,6 +89,7 @@ function Messages({ receiver }) {
     useEffect(() => {
         const messagesSended = messageSended.get(receiver.id);
         if (messagesSended) {
+            // console.log(messagesSended);
             // click vào messageItem lần đầu khi có tin nhắn mới
             const checkGetData = checkGetDataFromDB.some((userId) => {
                 return userId === receiver.id;

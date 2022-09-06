@@ -65,7 +65,8 @@ function SocketContextProvider({ children }) {
                         newUsers.push(user);
                     }
                 });
-                setUserList(newUsers);
+                // console.log(socketId);
+                setUserList([...newUsers]);
             });
         }
         // eslint-disable-next-line
