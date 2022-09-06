@@ -40,7 +40,17 @@ function Messages({ receiver }) {
                 setMessages((pre) => {
                     return [...pre, ...newMessage.content];
                 });
+                // khi chua goi api send message
                 handlSetMessageSended(receiver.id, newMessage.content);
+
+                // khi goi api send message
+                /*
+                const checkGetData = checkGetDataFromDB.some((userId) => {
+                    return userId === receiver.id;
+                });
+                if (checkGetData) {
+                    handlSetMessageSended(receiver.id, newMessage.content);
+                } */
                 handleSetNewMessage(undefined);
             }
         }

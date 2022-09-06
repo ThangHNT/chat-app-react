@@ -93,7 +93,11 @@ function MessageItem({ receiver, avatar, username, searchResult = false }) {
                                 setlastestMessage('Ban gui 1 anh ');
                             }
                         } else {
-                            setlastestMessage(data2.message.message.text);
+                            if (data2.message.message.type === 'text') {
+                                setlastestMessage(data2.message.message.text);
+                            } else {
+                                setlastestMessage('Ban nhan 1 anh');
+                            }
                         }
                     }
                 })
