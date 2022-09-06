@@ -42,17 +42,23 @@ function Message({ sender = false, time, type, children, onClick, ...passprops }
 
     return (
         <div className={cx('wrapper', { sender })} onMouseOver={handleDisplayAction} onMouseOut={handleHideAction}>
-            {type === 'text' ? (
+            {type === 'text' && (
                 <p className={cx(classname)} {...props}>
                     {children}
                 </p>
-            ) : (
+            )}
+            {type === 'img' && (
                 <img
                     className={cx('img-message')}
                     onClick={handleZoomImg}
                     src={`data:image/jpeg;base64,${children}`}
                     alt="message-img"
                 />
+            )}
+            {type === 'file' && (
+                <a href={`data:text/plain;charset=utf-8,${encodeURIComponent(children)}`} download="text.txt">
+                    text-file
+                </a>
             )}
             <div ref={btnRef} className={cx('message-sended-actions')}>
                 <Button message_sended leftIcon={<FontAwesomeIcon icon={faFaceGrinWide} />}></Button>

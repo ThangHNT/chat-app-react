@@ -24,6 +24,7 @@ function SendMessage({ receiver }) {
     const [blobUrlImg, setBlobUrlImg] = useState('');
     const [imgBase64, setImgBase64] = useState('');
     const [inputValue, setInputValue] = useState('');
+    const [file, setFile] = useState('');
     const [displayEmojiList, setDisplayEmojiList] = useState(false);
 
     const currentUser = useMemo(() => {
@@ -55,7 +56,25 @@ function SendMessage({ receiver }) {
     useEffect(() => {
         if (ChatContent.base64String.length > 0) {
             // console.log(ChatContent.base64String);
-            setImgBase64(ChatContent.base64String);
+            let base64String = ChatContent.base64String;
+            let checkFileImage = base64String.includes('image');
+            base64String = base64String.replace('data:', '').replace(/^.+,/, '');
+            if (checkFileImage) {
+                setImgBase64(base64String);
+            } else {
+                console.log('file text');
+                // let text = window.atob(base64String);
+                const percentEncodedStr = window
+                    .atob(base64String)
+                    .split('')
+                    .map(function (c) {
+                        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                    })
+                    .join('');
+                let text = decodeURIComponent(percentEncodedStr);
+                // console.log(text);
+                setFile(text);
+            }
             inputRef.current.focus();
         }
     }, [ChatContent.base64String]);
@@ -150,16 +169,23 @@ function SendMessage({ receiver }) {
                     time: new Date().getTime(),
                 });
             }
+            if (file.length > 0) {
+                content.push({
+                    file: file.trim(),
+                    type: 'file',
+                    time: new Date().getTime(),
+                });
+            }
             // console.log(messages);
             if (messages.content.length > 0) {
                 handleSendMessage(messages);
                 ChatContent.handleAddMessage(messages);
                 try {
-                    // axios.post(`${host}/api/send-message`, {
-                    //     sender: currentUser._id,
-                    //     receiver: receiver.id,
-                    //     messages,
-                    // });
+                    axios.post(`${host}/api/send-message`, {
+                        sender: currentUser._id,
+                        receiver: receiver.id,
+                        messages,
+                    });
                     setInputValue('');
                     setBlobUrlImg('');
                     setImgBase64('');
@@ -174,7 +200,7 @@ function SendMessage({ receiver }) {
         <div className={cx('wrapper')}>
             <div className={cx('chat-btns')}>
                 <Button nestInput leftIcon={<FontAwesomeIcon icon={faImages} />}>
-                    <Input noLabel file type="file" input name="file" autoComplete="off" accept="image/*" />
+                    <Input noLabel file type="file" input name="file" autoComplete="off" />
                 </Button>
                 <Button nestInput leftIcon={<FontAwesomeIcon icon={faMicrophone} />}></Button>
             </div>

@@ -169,7 +169,11 @@ function Messages({ receiver }) {
                             time={getTime(messages[index].time)}
                             sender={sender === message.sender}
                         >
-                            {message.type === 'text' ? message.text : message.img}
+                            {message.type === 'text'
+                                ? message.text
+                                : message.type === 'img'
+                                ? message.img
+                                : message.file}
                         </Message>
                     </div>
                 ))}
