@@ -19,7 +19,6 @@ function Button({
     message_sended = false,
     noTitle = false,
     nestInput = false,
-    closeImage = false,
     scrollDown = false,
     children,
     onClick,
@@ -57,7 +56,6 @@ function Button({
         noTitle,
         message_sended,
         nestInput,
-        closeImage,
         scrollDown,
     });
 

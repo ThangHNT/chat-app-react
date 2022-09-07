@@ -1,6 +1,6 @@
 import React, { useEffect, useContext, memo, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEllipsisVertical, faFaceGrinWide, faReply } from '@fortawesome/free-solid-svg-icons';
+import { faEllipsisVertical, faFaceGrinWide, faReply, faFileLines } from '@fortawesome/free-solid-svg-icons';
 import classNames from 'classnames/bind';
 import styles from './Message.module.scss';
 import { ChatContentContext } from '~/components/Context/ChatContentContext';
@@ -11,7 +11,6 @@ const cx = classNames.bind(styles);
 function Message({ sender = false, time, type, children, onClick, ...passprops }) {
     // console.log('message==');
     const ChatContent = useContext(ChatContentContext);
-
     const btnRef = useRef();
     const timeRef = useRef();
 
@@ -55,9 +54,14 @@ function Message({ sender = false, time, type, children, onClick, ...passprops }
                     alt="message-img"
                 />
             )}
-            {type === 'file' && (
-                <a href={`data:text/plain;charset=utf-8,${encodeURIComponent(children)}`} download="text.txt">
-                    text-file
+            {type === 'text-file' && (
+                <a
+                    className={cx('wrapper-file-message')}
+                    href={`data:attachment/text,${encodeURIComponent(children.content)}`}
+                    download="text.txt"
+                >
+                    <FontAwesomeIcon className={cx('file-icon')} icon={faFileLines} />
+                    <p>{children.filename}</p>
                 </a>
             )}
             <div ref={btnRef} className={cx('message-sended-actions')}>

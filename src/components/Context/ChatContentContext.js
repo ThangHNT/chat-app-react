@@ -6,7 +6,7 @@ function ChatContentProvider({ children }) {
     // console.log('chat-context');
     const [receiver, setReciever] = useState();
     const [messages, setMessages] = useState();
-    const [base64String, setbase64String] = useState('');
+    const [fileInput, setFileInput] = useState('');
     const [zoomImg, setZoomImg] = useState();
 
     const handleDisplayChatContent = (userId) => {
@@ -17,8 +17,8 @@ function ChatContentProvider({ children }) {
         setMessages(messages);
     };
 
-    const handleGetBase64 = (string) => {
-        setbase64String(string);
+    const handleGetFileInput = (string) => {
+        setFileInput(string);
     };
 
     const handleZoomImgae = (src) => {
@@ -27,12 +27,12 @@ function ChatContentProvider({ children }) {
 
     const values = {
         receiver,
-        handleDisplayChatContent,
-        messages,
-        handleAddMessage,
-        base64String,
-        handleGetBase64,
         zoomImg,
+        messages,
+        fileInput,
+        handleDisplayChatContent,
+        handleAddMessage,
+        handleGetFileInput,
         handleZoomImgae,
     };
 

@@ -3,8 +3,9 @@ import classNames from 'classnames/bind';
 import axios from 'axios';
 import Picker from 'emoji-picker-react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faXmarkCircle } from '@fortawesome/free-solid-svg-icons';
 import { faFaceGrin, faImages } from '@fortawesome/free-regular-svg-icons';
-import { faMicrophone } from '@fortawesome/free-solid-svg-icons';
+import { faFileLines, faMicrophone } from '@fortawesome/free-solid-svg-icons';
 import Image from '~/components/Image';
 import Button from '~/components/Button';
 import Input from '~/components/Input';
@@ -48,22 +49,22 @@ function SendMessage({ receiver }) {
 
         return () => {
             document.removeEventListener('click', (e) => {});
-            ChatContent.handleGetBase64('');
+            ChatContent.handleGetFileInput('');
         };
         // eslint-disable-next-line
     }, []);
 
     useEffect(() => {
-        if (ChatContent.base64String.length > 0) {
-            // console.log(ChatContent.base64String);
-            let base64String = ChatContent.base64String;
-            let checkFileImage = base64String.includes('image');
+        if (ChatContent.fileInput) {
+            let newFile = ChatContent.fileInput;
+            // console.log(newFile);
+            let base64String = newFile.content;
+            let checkFileImage = newFile.type.includes('image');
             base64String = base64String.replace('data:', '').replace(/^.+,/, '');
+            // console.log(base64String);
             if (checkFileImage) {
                 setImgBase64(base64String);
-            } else {
-                console.log('file text');
-                // let text = window.atob(base64String);
+            } else if (newFile.type === 'text/plain') {
                 const percentEncodedStr = window
                     .atob(base64String)
                     .split('')
@@ -73,11 +74,14 @@ function SendMessage({ receiver }) {
                     .join('');
                 let text = decodeURIComponent(percentEncodedStr);
                 // console.log(text);
-                setFile(text);
+                setFile({
+                    filename: newFile.filename,
+                    text,
+                });
             }
             inputRef.current.focus();
         }
-    }, [ChatContent.base64String]);
+    }, [ChatContent.fileInput]);
 
     // mở rộng input
     useEffect(() => {
@@ -100,6 +104,7 @@ function SendMessage({ receiver }) {
 
     const handleRemoveImg = () => {
         setImgBase64('');
+        setFile('');
     };
 
     // chọn emoji
@@ -169,10 +174,10 @@ function SendMessage({ receiver }) {
                     time: new Date().getTime(),
                 });
             }
-            if (file.length > 0) {
+            if (file.text.length > 0) {
                 content.push({
-                    file: file.trim(),
-                    type: 'file',
+                    file: { content: file.text, filename: file.filename },
+                    type: 'text-file',
                     time: new Date().getTime(),
                 });
             }
@@ -181,14 +186,15 @@ function SendMessage({ receiver }) {
                 handleSendMessage(messages);
                 ChatContent.handleAddMessage(messages);
                 try {
-                    axios.post(`${host}/api/send-message`, {
-                        sender: currentUser._id,
-                        receiver: receiver.id,
-                        messages,
-                    });
+                    // axios.post(`${host}/api/send-message`, {
+                    //     sender: currentUser._id,
+                    //     receiver: receiver.id,
+                    //     messages,
+                    // });
                     setInputValue('');
                     setBlobUrlImg('');
                     setImgBase64('');
+                    setFile('');
                 } catch (e) {
                     console.log('loi gui tin nhan');
                 }
@@ -206,14 +212,27 @@ function SendMessage({ receiver }) {
             </div>
             <div className={cx('chat-input')}>
                 {imgBase64.length > 0 && (
-                    <div className={cx('image-list')}>
-                        <div className={cx('image-list-item')}>
-                            <Image
-                                handleRemove={handleRemoveImg}
-                                pasted
-                                remove
-                                src={`data:image/jpeg;base64,${imgBase64}`}
-                            ></Image>
+                    <div className={cx('attachment-list')}>
+                        <div className={cx('attachment-item')}>
+                            <div className={cx('remove-attachment-item')} onClick={handleRemoveImg}>
+                                <FontAwesomeIcon className={cx('remove-attachment-icon')} icon={faXmarkCircle} />
+                            </div>
+                            {imgBase64.length > 0 && <Image pasted src={`data:image/jpeg;base64,${imgBase64}`}></Image>}
+                        </div>
+                    </div>
+                )}
+                {file && (
+                    <div className={cx('attachment-list')}>
+                        <div className={cx('attachment-item')}>
+                            <div className={cx('remove-attachment-item')} onClick={handleRemoveImg}>
+                                <FontAwesomeIcon className={cx('remove-attachment-icon')} icon={faXmarkCircle} />
+                            </div>
+                            {file.text.length > 0 && (
+                                <div className={cx('wrapper-name-icon-file')}>
+                                    <FontAwesomeIcon className={cx('file-icon')} icon={faFileLines} />
+                                    <span>{file.filename}</span>
+                                </div>
+                            )}
                         </div>
                     </div>
                 )}

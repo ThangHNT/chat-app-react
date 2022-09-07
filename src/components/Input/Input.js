@@ -40,11 +40,18 @@ const Input = forwardRef(
             } else {
                 const reader = new FileReader();
                 if (e.target.files) {
-                    reader.readAsDataURL(e.target.files[0]);
+                    let file = e.target.files[0];
+                    // console.log(e.target.files);
+                    reader.readAsDataURL(file);
                     reader.onload = () => {
                         let base64String = reader.result;
                         // console.log(base64String);
-                        ChatContent.handleGetBase64(base64String);
+                        ChatContent.handleGetFileInput({
+                            content: base64String,
+                            filename: file.name,
+                            size: file.size,
+                            type: file.type,
+                        });
                     };
                 }
             }

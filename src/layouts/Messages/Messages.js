@@ -63,10 +63,15 @@ function Messages({ receiver }) {
     useEffect(() => {
         const msg = ChatContent.messages;
         if (msg) {
+            // console.log(msg);
             const arr = msg.content.map((message) => {
                 return {
                     text: message.type === 'text' ? message.text : '',
                     img: message.type === 'img' ? message.img : '',
+                    file:
+                        message.type === 'text-file'
+                            ? { content: message.file.content, filename: message.file.filename }
+                            : '',
                     sender,
                     time: new Date().getTime(),
                     type: message.type,
@@ -85,7 +90,7 @@ function Messages({ receiver }) {
         // eslint-disable-next-line
     }, [messages]);
 
-    // tải messages từ database
+    // tải messages từ database lần đầu, lần sau lấy từ client store
     useEffect(() => {
         const messagesSended = messageSended.get(receiver.id);
         if (messagesSended) {
