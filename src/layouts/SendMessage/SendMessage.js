@@ -61,7 +61,6 @@ function SendMessage({ receiver }) {
             let base64String = newFile.content;
             let checkFileImage = newFile.type.includes('image');
             base64String = base64String.replace('data:', '').replace(/^.+,/, '');
-            // console.log(base64String);
             if (checkFileImage) {
                 setImgBase64(base64String);
             } else if (newFile.type === 'text/plain') {
@@ -77,6 +76,7 @@ function SendMessage({ receiver }) {
                 setFile({
                     filename: newFile.filename,
                     text,
+                    size: newFile.size,
                 });
             }
             inputRef.current.focus();
@@ -176,7 +176,7 @@ function SendMessage({ receiver }) {
             }
             if (file.text.length > 0) {
                 content.push({
-                    file: { content: file.text, filename: file.filename },
+                    file: { content: file.text, filename: file.filename, size: file.size },
                     type: 'text-file',
                     time: new Date().getTime(),
                 });

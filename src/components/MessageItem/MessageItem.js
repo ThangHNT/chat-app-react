@@ -50,8 +50,10 @@ function MessageItem({ receiver, avatar, username, searchResult = false }) {
                 const newestMessage = newMessage.content[newMessage.content.length - 1];
                 if (newestMessage.type === 'text') {
                     setlastestMessage(newestMessage.text);
-                } else {
+                } else if (newestMessage.type === 'img') {
                     setlastestMessage('Ban nhan dc 1 anh');
+                } else if (newestMessage.type === 'text-file') {
+                    setlastestMessage('Ban nhan dc 1 file');
                 }
             }
         }
@@ -64,9 +66,11 @@ function MessageItem({ receiver, avatar, username, searchResult = false }) {
             if (messages.receiver === receiver) {
                 // console.log(messages);
                 let lastestMessage = messages.content[messages.content.length - 1];
-                let msg = 'Ban da gui 1 anh';
+                let msg = 'Ban da gui 1 file';
                 if (lastestMessage.type === 'text') {
                     msg = 'Ban: ' + lastestMessage.text;
+                } else if (lastestMessage.type === 'img') {
+                    msg = 'Ban da gui 1 anh';
                 }
                 setlastestMessage(msg);
             }
@@ -86,17 +90,22 @@ function MessageItem({ receiver, avatar, username, searchResult = false }) {
                     const data2 = data.data;
                     if (data2.status) {
                         // console.log(data2);
+                        let typeMsg = data2.message.message.type;
                         if (data2.message.message.sender === senderId) {
-                            if (data2.message.message.type === 'text') {
+                            if (typeMsg === 'text') {
                                 setlastestMessage('Ban: ' + data2.message.message.text);
-                            } else {
+                            } else if (typeMsg === 'img') {
                                 setlastestMessage('Ban gui 1 anh ');
+                            } else if (typeMsg === 'text-file') {
+                                setlastestMessage('Ban da gui 1 file');
                             }
                         } else {
-                            if (data2.message.message.type === 'text') {
+                            if (typeMsg === 'text') {
                                 setlastestMessage(data2.message.message.text);
-                            } else {
+                            } else if (typeMsg === 'img') {
                                 setlastestMessage('Ban nhan 1 anh');
+                            } else if (typeMsg === 'text-file') {
+                                setlastestMessage('Ban nhan 1 file');
                             }
                         }
                     }

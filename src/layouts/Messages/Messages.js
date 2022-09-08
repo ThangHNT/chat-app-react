@@ -70,7 +70,11 @@ function Messages({ receiver }) {
                     img: message.type === 'img' ? message.img : '',
                     file:
                         message.type === 'text-file'
-                            ? { content: message.file.content, filename: message.file.filename }
+                            ? {
+                                  content: message.file.content,
+                                  filename: message.file.filename,
+                                  size: message.file.size,
+                              }
                             : '',
                     sender,
                     time: new Date().getTime(),

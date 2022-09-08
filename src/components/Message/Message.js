@@ -58,10 +58,13 @@ function Message({ sender = false, time, type, children, onClick, ...passprops }
                 <a
                     className={cx('wrapper-file-message')}
                     href={`data:attachment/text,${encodeURIComponent(children.content)}`}
-                    download="text.txt"
+                    download={children.filename}
                 >
                     <FontAwesomeIcon className={cx('file-icon')} icon={faFileLines} />
-                    <p>{children.filename}</p>
+                    <div className={cx('properties')}>
+                        <p>{children.filename}</p>
+                        <span>{children.size}B</span>
+                    </div>
                 </a>
             )}
             <div ref={btnRef} className={cx('message-sended-actions')}>
