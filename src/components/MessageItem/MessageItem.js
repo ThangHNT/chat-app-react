@@ -52,7 +52,7 @@ function MessageItem({ receiver, avatar, username, searchResult = false }) {
                     setlastestMessage(newestMessage.text);
                 } else if (newestMessage.type === 'img') {
                     setlastestMessage('Ban nhan dc 1 anh');
-                } else if (newestMessage.type === 'text-file') {
+                } else {
                     setlastestMessage('Ban nhan dc 1 file');
                 }
             }
@@ -96,7 +96,7 @@ function MessageItem({ receiver, avatar, username, searchResult = false }) {
                                 setlastestMessage('Ban: ' + data2.message.message.text);
                             } else if (typeMsg === 'img') {
                                 setlastestMessage('Ban gui 1 anh ');
-                            } else if (typeMsg === 'text-file') {
+                            } else {
                                 setlastestMessage('Ban da gui 1 file');
                             }
                         } else {
@@ -104,7 +104,7 @@ function MessageItem({ receiver, avatar, username, searchResult = false }) {
                                 setlastestMessage(data2.message.message.text);
                             } else if (typeMsg === 'img') {
                                 setlastestMessage('Ban nhan 1 anh');
-                            } else if (typeMsg === 'text-file') {
+                            } else {
                                 setlastestMessage('Ban nhan 1 file');
                             }
                         }

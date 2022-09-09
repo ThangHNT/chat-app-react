@@ -1,12 +1,6 @@
 import React, { useEffect, useContext, memo, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-    faEllipsisVertical,
-    faFaceGrinWide,
-    faReply,
-    faFileLines,
-    faFileWord,
-} from '@fortawesome/free-solid-svg-icons';
+import { faEllipsisVertical, faFaceGrinWide, faReply, faFileLines } from '@fortawesome/free-solid-svg-icons';
 import classNames from 'classnames/bind';
 import styles from './Message.module.scss';
 import { ChatContentContext } from '~/components/Context/ChatContentContext';

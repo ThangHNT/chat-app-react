@@ -193,31 +193,11 @@ function SendMessage({ receiver }) {
                 });
             }
             if (file) {
-                if (file.type === 'text-file') {
-                    content.push({
-                        file: { content: file.text, filename: file.filename, size: file.size },
-                        type: 'text-file',
-                        time: new Date().getTime(),
-                    });
-                } else if (file.type === 'doc-file') {
-                    content.push({
-                        file: { content: file.text, filename: file.filename, size: file.size },
-                        type: 'doc-file',
-                        time: new Date().getTime(),
-                    });
-                } else if (file.type === 'video') {
-                    content.push({
-                        file: { content: file.text, filename: file.filename, size: file.size },
-                        type: 'video',
-                        time: new Date().getTime(),
-                    });
-                } else if (file.type === 'audio') {
-                    content.push({
-                        file: { content: file.text, filename: file.filename, size: file.size },
-                        type: 'audio',
-                        time: new Date().getTime(),
-                    });
-                }
+                content.push({
+                    file: { content: file.text, filename: file.filename, size: file.size },
+                    type: file.type,
+                    time: new Date().getTime(),
+                });
             }
             // console.log(messages);
             if (messages.content.length > 0) {
