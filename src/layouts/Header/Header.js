@@ -15,7 +15,7 @@ import { ChatContentContext } from '~/components/Context/ChatContentContext';
 
 const cx = classNames.bind(styles);
 
-function Header({ currentUser = true }) {
+function Header({ currentUser }) {
     // console.log('Header');
     const { handleInitSocket, socket, messageSended } = useContext(SocketContext);
     const { handleDisplayChatContent, handleAddMessage } = useContext(ChatContentContext);
@@ -44,11 +44,14 @@ function Header({ currentUser = true }) {
 
     return (
         <header className={cx('header', { 'wrapper-content': true })}>
-            <Link to="/" className={cx('logo-link')}>
-                <Image src="/logo.png" alt="logo" className={cx('logo')} />
-            </Link>
+            <div className={cx('wrapper-logo')}>
+                <Link to="/" className={cx('logo-link')}>
+                    <Image src="/logo.png" alt="logo" className={cx('logo')} />
+                </Link>
+                <span className={cx('header-title')}>Welcome</span>
+            </div>
             <h1>Chat app</h1>
-            {currentUser ? (
+            {user ? (
                 <Tippy
                     interactive
                     delay={[100, 200]}

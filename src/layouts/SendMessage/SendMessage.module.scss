@@ -45,25 +45,27 @@
     display: flex;
     align-items: center;
     justify-content: center;
+
+    .remove-attachment-icon {
+        font-size: 18px;
+    }
 }
 
 .file-icon {
-    font-size: 20px;
-}
-
-.remove-attachment-icon {
-    font-size: 18px;
+    font-size: 24px;
 }
 
 .wrapper-name-icon-file {
     padding-right: 12px;
     padding-top: 4px;
-
+    width: 100%;
     span {
         font-size: 15px;
         padding-left: 4px;
         color: yellow;
         user-select: none;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 }
 

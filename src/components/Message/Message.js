@@ -1,6 +1,12 @@
 import React, { useEffect, useContext, memo, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEllipsisVertical, faFaceGrinWide, faReply, faFileLines } from '@fortawesome/free-solid-svg-icons';
+import {
+    faEllipsisVertical,
+    faFaceGrinWide,
+    faReply,
+    faFileLines,
+    faFileWord,
+} from '@fortawesome/free-solid-svg-icons';
 import classNames from 'classnames/bind';
 import styles from './Message.module.scss';
 import { ChatContentContext } from '~/components/Context/ChatContentContext';
@@ -67,6 +73,28 @@ function Message({ sender = false, time, type, children, onClick, ...passprops }
                     </div>
                 </a>
             )}
+            {type === 'video' && (
+                <video
+                    className={cx('video')}
+                    src={`data:video/mp4;base64,${children.content}`}
+                    controls
+                    autoPlay
+                ></video>
+            )}
+            {type === 'audio' && <audio src={`data:audio/mpeg;base64,${children.content}`} controls></audio>}
+            {/* {type === 'doc-file' && (
+                <a
+                    className={cx('wrapper-file-message')}
+                    href={`data:application/vnd.ms-word;charset=utf-8,${encodeURIComponent(children.content)}`}
+                    download={children.filename}
+                >
+                    <FontAwesomeIcon className={cx('file-icon')} icon={faFileWord} />
+                    <div className={cx('properties')}>
+                        <p>{children.filename}</p>
+                        <span>{children.size}B</span>
+                    </div>
+                </a>
+            )} */}
             <div ref={btnRef} className={cx('message-sended-actions')}>
                 <Button message_sended leftIcon={<FontAwesomeIcon icon={faFaceGrinWide} />}></Button>
                 <Button message_sended leftIcon={<FontAwesomeIcon icon={faReply} />}></Button>

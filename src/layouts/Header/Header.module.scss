@@ -13,9 +13,60 @@
     background-color: #fff;
 }
 
+.wrapper-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
 .logo-link {
     display: flex;
     align-items: center;
+    position: absolute;
+    left: 180px;
+    animation: rolling 1.8s linear forwards reverse;
+    z-index: 2;
+}
+
+.header-title {
+    position: absolute;
+    left: 120px;
+    font-size: 18px;
+    font-weight: bold;
+    opacity: 0;
+    animation: welcome 3.5s linear;
+    z-index: 1;
+    color: crimson;
+}
+
+@keyframes rolling {
+    from {
+        left: 0;
+        transform: rotate(0deg);
+    }
+    to {
+        left: 180px;
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes welcome {
+    0% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 0.5;
+    }
+    75% {
+        opacity: 0.8;
+    }
+    85% {
+        opacity: 0.9;
+    }
+    100% {
+        opacity: 1;
+    }
 }
 
 .help {

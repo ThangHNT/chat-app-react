@@ -69,7 +69,10 @@ function Messages({ receiver }) {
                     text: message.type === 'text' ? message.text : '',
                     img: message.type === 'img' ? message.img : '',
                     file:
-                        message.type === 'text-file'
+                        message.type === 'text-file' ||
+                        message.type === 'doc-file' ||
+                        message.type === 'video' ||
+                        message.type === 'audio'
                             ? {
                                   content: message.file.content,
                                   filename: message.file.filename,

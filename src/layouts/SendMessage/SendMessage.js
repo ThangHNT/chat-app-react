@@ -3,9 +3,9 @@ import classNames from 'classnames/bind';
 import axios from 'axios';
 import Picker from 'emoji-picker-react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faXmarkCircle } from '@fortawesome/free-solid-svg-icons';
-import { faFaceGrin, faImages } from '@fortawesome/free-regular-svg-icons';
-import { faFileLines, faMicrophone } from '@fortawesome/free-solid-svg-icons';
+import { faFileVideo, faFileWord, faPhotoFilm, faXmarkCircle } from '@fortawesome/free-solid-svg-icons';
+import { faFaceGrin, faFileLines, faFileAudio } from '@fortawesome/free-regular-svg-icons';
+import { faMicrophone } from '@fortawesome/free-solid-svg-icons';
 import Image from '~/components/Image';
 import Button from '~/components/Button';
 import Input from '~/components/Input';
@@ -25,7 +25,7 @@ function SendMessage({ receiver }) {
     const [blobUrlImg, setBlobUrlImg] = useState('');
     const [imgBase64, setImgBase64] = useState('');
     const [inputValue, setInputValue] = useState('');
-    const [file, setFile] = useState('');
+    const [file, setFile] = useState();
     const [displayEmojiList, setDisplayEmojiList] = useState(false);
 
     const currentUser = useMemo(() => {
@@ -57,10 +57,10 @@ function SendMessage({ receiver }) {
     useEffect(() => {
         if (ChatContent.fileInput) {
             let newFile = ChatContent.fileInput;
-            // console.log(newFile);
             let base64String = newFile.content;
             let checkFileImage = newFile.type.includes('image');
             base64String = base64String.replace('data:', '').replace(/^.+,/, '');
+            // console.log(newFile);
             if (checkFileImage) {
                 setImgBase64(base64String);
             } else if (newFile.type === 'text/plain') {
@@ -77,8 +77,26 @@ function SendMessage({ receiver }) {
                     filename: newFile.filename,
                     text,
                     size: newFile.size,
+                    type: 'text-file',
+                });
+            } else if (newFile.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+                alert('chua co chuc nang gui file doc');
+            } else if (newFile.type === 'video/mp4') {
+                setFile({
+                    filename: newFile.filename,
+                    text: base64String,
+                    size: newFile.size,
+                    type: 'video',
+                });
+            } else if (newFile.type.includes('audio')) {
+                setFile({
+                    filename: newFile.filename,
+                    text: base64String,
+                    size: newFile.size,
+                    type: 'audio',
                 });
             }
+
             inputRef.current.focus();
         }
     }, [ChatContent.fileInput]);
@@ -174,12 +192,32 @@ function SendMessage({ receiver }) {
                     time: new Date().getTime(),
                 });
             }
-            if (file.text.length > 0) {
-                content.push({
-                    file: { content: file.text, filename: file.filename, size: file.size },
-                    type: 'text-file',
-                    time: new Date().getTime(),
-                });
+            if (file) {
+                if (file.type === 'text-file') {
+                    content.push({
+                        file: { content: file.text, filename: file.filename, size: file.size },
+                        type: 'text-file',
+                        time: new Date().getTime(),
+                    });
+                } else if (file.type === 'doc-file') {
+                    content.push({
+                        file: { content: file.text, filename: file.filename, size: file.size },
+                        type: 'doc-file',
+                        time: new Date().getTime(),
+                    });
+                } else if (file.type === 'video') {
+                    content.push({
+                        file: { content: file.text, filename: file.filename, size: file.size },
+                        type: 'video',
+                        time: new Date().getTime(),
+                    });
+                } else if (file.type === 'audio') {
+                    content.push({
+                        file: { content: file.text, filename: file.filename, size: file.size },
+                        type: 'audio',
+                        time: new Date().getTime(),
+                    });
+                }
             }
             // console.log(messages);
             if (messages.content.length > 0) {
@@ -205,7 +243,7 @@ function SendMessage({ receiver }) {
     return (
         <div className={cx('wrapper')}>
             <div className={cx('chat-btns')}>
-                <Button nestInput leftIcon={<FontAwesomeIcon icon={faImages} />}>
+                <Button nestInput leftIcon={<FontAwesomeIcon icon={faPhotoFilm} />}>
                     <Input noLabel file type="file" input name="file" autoComplete="off" />
                 </Button>
                 <Button nestInput leftIcon={<FontAwesomeIcon icon={faMicrophone} />}></Button>
@@ -227,12 +265,22 @@ function SendMessage({ receiver }) {
                             <div className={cx('remove-attachment-item')} onClick={handleRemoveImg}>
                                 <FontAwesomeIcon className={cx('remove-attachment-icon')} icon={faXmarkCircle} />
                             </div>
-                            {file.text.length > 0 && (
-                                <div className={cx('wrapper-name-icon-file')}>
-                                    <FontAwesomeIcon className={cx('file-icon')} icon={faFileLines} />
-                                    <span>{file.filename}</span>
-                                </div>
-                            )}
+                            <div className={cx('wrapper-name-icon-file')}>
+                                <FontAwesomeIcon
+                                    className={cx('file-icon')}
+                                    icon={
+                                        file.type === 'text-file'
+                                            ? faFileLines
+                                            : file.type === 'doc-file'
+                                            ? faFileWord
+                                            : file.type === 'video'
+                                            ? faFileVideo
+                                            : faFileAudio
+                                    }
+                                />
+
+                                <span>{file.filename}</span>
+                            </div>
                         </div>
                     </div>
                 )}

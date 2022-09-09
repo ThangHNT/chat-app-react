@@ -41,7 +41,7 @@ const Input = forwardRef(
                 const reader = new FileReader();
                 if (e.target.files) {
                     let file = e.target.files[0];
-                    // console.log(e.target.files);
+                    // console.log(file);
                     reader.readAsDataURL(file);
                     reader.onload = () => {
                         let base64String = reader.result;
