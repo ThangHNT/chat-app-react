@@ -42,16 +42,16 @@ function Messages({ receiver }) {
                 });
                 // console.log(messageSended);
 
-                // khi chua goi api send message : ${host}/api/send-message
-                handlSetMessageSended(receiver.id, newMessage.content);
+                // khi chua goi api send message : ${host}/api/send-message ở SendMessage
+                // handlSetMessageSended(receiver.id, newMessage.content);
 
-                // khi goi api send message: ${host}/api/send-message
-                // const checkGetData = checkGetDataFromDB.some((userId) => {
-                //     return userId === receiver.id;
-                // });
-                // if (checkGetData) {
-                //     handlSetMessageSended(receiver.id, newMessage.content);
-                // }
+                // khi goi api send message: ${host}/api/send-message ở SendMessage
+                const checkGetData = checkGetDataFromDB.some((userId) => {
+                    return userId === receiver.id;
+                });
+                if (checkGetData) {
+                    handlSetMessageSended(receiver.id, newMessage.content);
+                }
 
                 handleSetNewMessage(undefined);
             }
@@ -71,6 +71,7 @@ function Messages({ receiver }) {
                     file:
                         message.type === 'text-file' ||
                         message.type === 'doc-file' ||
+                        message.type === 'pdf-file' ||
                         message.type === 'video' ||
                         message.type === 'audio'
                             ? {

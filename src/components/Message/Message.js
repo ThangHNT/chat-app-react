@@ -1,6 +1,13 @@
 import React, { useEffect, useContext, memo, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEllipsisVertical, faFaceGrinWide, faReply, faFileLines } from '@fortawesome/free-solid-svg-icons';
+import {
+    faFileWord,
+    faEllipsisVertical,
+    faFaceGrinWide,
+    faReply,
+    faFileLines,
+    faFilePdf,
+} from '@fortawesome/free-solid-svg-icons';
 import classNames from 'classnames/bind';
 import styles from './Message.module.scss';
 import { ChatContentContext } from '~/components/Context/ChatContentContext';
@@ -76,10 +83,12 @@ function Message({ sender = false, time, type, children, onClick, ...passprops }
                 ></video>
             )}
             {type === 'audio' && <audio src={`data:audio/mpeg;base64,${children.content}`} controls></audio>}
-            {/* {type === 'doc-file' && (
+            {type === 'doc-file' && (
                 <a
                     className={cx('wrapper-file-message')}
-                    href={`data:application/vnd.ms-word;charset=utf-8,${encodeURIComponent(children.content)}`}
+                    href={`data:application/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,${encodeURIComponent(
+                        children.content,
+                    )}`}
                     download={children.filename}
                 >
                     <FontAwesomeIcon className={cx('file-icon')} icon={faFileWord} />
@@ -88,7 +97,20 @@ function Message({ sender = false, time, type, children, onClick, ...passprops }
                         <span>{children.size}B</span>
                     </div>
                 </a>
-            )} */}
+            )}
+            {type === 'pdf-file' && (
+                <a
+                    className={cx('wrapper-file-message')}
+                    href={`data:application/pdf;base64,${encodeURIComponent(children.content)}`}
+                    download={children.filename}
+                >
+                    <FontAwesomeIcon className={cx('file-icon')} icon={faFilePdf} />
+                    <div className={cx('properties')}>
+                        <p>{children.filename}</p>
+                        <span>{children.size}B</span>
+                    </div>
+                </a>
+            )}
             <div ref={btnRef} className={cx('message-sended-actions')}>
                 <Button message_sended leftIcon={<FontAwesomeIcon icon={faFaceGrinWide} />}></Button>
                 <Button message_sended leftIcon={<FontAwesomeIcon icon={faReply} />}></Button>

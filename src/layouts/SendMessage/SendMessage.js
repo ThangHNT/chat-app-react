@@ -3,7 +3,7 @@ import classNames from 'classnames/bind';
 import axios from 'axios';
 import Picker from 'emoji-picker-react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFileVideo, faFileWord, faPhotoFilm, faXmarkCircle } from '@fortawesome/free-solid-svg-icons';
+import { faFilePdf, faFileVideo, faFileWord, faPhotoFilm, faXmarkCircle } from '@fortawesome/free-solid-svg-icons';
 import { faFaceGrin, faFileLines, faFileAudio } from '@fortawesome/free-regular-svg-icons';
 import { faMicrophone } from '@fortawesome/free-solid-svg-icons';
 import Image from '~/components/Image';
@@ -54,6 +54,7 @@ function SendMessage({ receiver }) {
         // eslint-disable-next-line
     }, []);
 
+    // khi chọn file từ ô input
     useEffect(() => {
         if (ChatContent.fileInput) {
             let newFile = ChatContent.fileInput;
@@ -61,6 +62,7 @@ function SendMessage({ receiver }) {
             let checkFileImage = newFile.type.includes('image');
             base64String = base64String.replace('data:', '').replace(/^.+,/, '');
             // console.log(newFile);
+            // console.log(base64String);
             if (checkFileImage) {
                 setImgBase64(base64String);
             } else if (newFile.type === 'text/plain') {
@@ -72,7 +74,6 @@ function SendMessage({ receiver }) {
                     })
                     .join('');
                 let text = decodeURIComponent(percentEncodedStr);
-                // console.log(text);
                 setFile({
                     filename: newFile.filename,
                     text,
@@ -80,7 +81,20 @@ function SendMessage({ receiver }) {
                     type: 'text-file',
                 });
             } else if (newFile.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
-                alert('chua co chuc nang gui file doc');
+                // alert('chua co chuc nang gui file doc');
+                setFile({
+                    filename: newFile.filename,
+                    text: base64String,
+                    size: newFile.size,
+                    type: 'doc-file',
+                });
+            } else if (newFile.type === 'application/pdf') {
+                setFile({
+                    filename: newFile.filename,
+                    text: base64String,
+                    size: newFile.size,
+                    type: 'pdf-file',
+                });
             } else if (newFile.type === 'video/mp4') {
                 setFile({
                     filename: newFile.filename,
@@ -165,6 +179,7 @@ function SendMessage({ receiver }) {
         }
     };
 
+    // ấn enter để gửi tin nhắn
     const handleEnterSubmit = (e) => {
         let shiftKey = 0;
         if (e.shiftKey) shiftKey = 16;
@@ -193,22 +208,24 @@ function SendMessage({ receiver }) {
                 });
             }
             if (file) {
-                content.push({
-                    file: { content: file.text, filename: file.filename, size: file.size },
-                    type: file.type,
-                    time: new Date().getTime(),
-                });
+                if (file.text.length > 0) {
+                    content.push({
+                        file: { content: file.text, filename: file.filename, size: file.size },
+                        type: file.type,
+                        time: new Date().getTime(),
+                    });
+                }
             }
-            // console.log(messages);
+            console.log(messages);
             if (messages.content.length > 0) {
                 handleSendMessage(messages);
                 ChatContent.handleAddMessage(messages);
                 try {
-                    // axios.post(`${host}/api/send-message`, {
-                    //     sender: currentUser._id,
-                    //     receiver: receiver.id,
-                    //     messages,
-                    // });
+                    axios.post(`${host}/api/send-message`, {
+                        sender: currentUser._id,
+                        receiver: receiver.id,
+                        messages,
+                    });
                     setInputValue('');
                     setBlobUrlImg('');
                     setImgBase64('');
@@ -255,6 +272,8 @@ function SendMessage({ receiver }) {
                                             ? faFileWord
                                             : file.type === 'video'
                                             ? faFileVideo
+                                            : file.type === 'pdf-file'
+                                            ? faFilePdf
                                             : faFileAudio
                                     }
                                 />
