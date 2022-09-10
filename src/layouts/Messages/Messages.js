@@ -42,16 +42,17 @@ function Messages({ receiver }) {
                 });
                 // console.log(messageSended);
 
+                // ===============================
                 // khi chua goi api send message : ${host}/api/send-message ở SendMessage
-                // handlSetMessageSended(receiver.id, newMessage.content);
-
+                handlSetMessageSended(receiver.id, newMessage.content);
                 // khi goi api send message: ${host}/api/send-message ở SendMessage
-                const checkGetData = checkGetDataFromDB.some((userId) => {
-                    return userId === receiver.id;
-                });
-                if (checkGetData) {
-                    handlSetMessageSended(receiver.id, newMessage.content);
-                }
+                // const checkGetData = checkGetDataFromDB.some((userId) => {
+                //     return userId === receiver.id;
+                // });
+                // if (checkGetData) {
+                //     handlSetMessageSended(receiver.id, newMessage.content);
+                // }
+                // =========================================
 
                 handleSetNewMessage(undefined);
             }
@@ -155,7 +156,11 @@ function Messages({ receiver }) {
     // chuyển đổi thời gian về dạng giờ phút cho mỗi tin nhắn
     const getTime = (millisecond) => {
         const date = new Date(millisecond);
-        return `${date.getHours()} : ${date.getMinutes()}`;
+        let hours = String(date.getHours());
+        let minutes = String(date.getMinutes());
+        hours = hours.length < 2 ? `0${hours}` : hours;
+        minutes = minutes.length < 2 ? `0${minutes}` : minutes;
+        return `${hours} : ${minutes}`;
     };
 
     const handleScroll = () => {

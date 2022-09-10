@@ -27,6 +27,7 @@ function SendMessage({ receiver }) {
     const [inputValue, setInputValue] = useState('');
     const [file, setFile] = useState();
     const [displayEmojiList, setDisplayEmojiList] = useState(false);
+    let messageSound = new Audio();
 
     const currentUser = useMemo(() => {
         return JSON.parse(localStorage.getItem('chat-app-hnt'));
@@ -50,6 +51,7 @@ function SendMessage({ receiver }) {
         return () => {
             document.removeEventListener('click', (e) => {});
             ChatContent.handleGetFileInput('');
+            messageSound.remove();
         };
         // eslint-disable-next-line
     }, []);
@@ -150,6 +152,8 @@ function SendMessage({ receiver }) {
 
     // xử lý 2 chiều khi gõ vào input
     const handleType = (e) => {
+        messageSound.src = 'texting-sound.mp3';
+        messageSound.play();
         setInputValue(e.target.value);
     };
 
@@ -185,6 +189,8 @@ function SendMessage({ receiver }) {
         if (e.shiftKey) shiftKey = 16;
         if (e.which === 13 && shiftKey !== 16) {
             e.preventDefault();
+            messageSound.src = 'send-message-sound.mp3';
+            messageSound.play();
             let content = [];
             let messages = {
                 receiver: receiver.id,
@@ -216,16 +222,16 @@ function SendMessage({ receiver }) {
                     });
                 }
             }
-            console.log(messages);
+            // console.log(messages);
             if (messages.content.length > 0) {
                 handleSendMessage(messages);
                 ChatContent.handleAddMessage(messages);
                 try {
-                    axios.post(`${host}/api/send-message`, {
-                        sender: currentUser._id,
-                        receiver: receiver.id,
-                        messages,
-                    });
+                    // axios.post(`${host}/api/send-message`, {
+                    //     sender: currentUser._id,
+                    //     receiver: receiver.id,
+                    //     messages,
+                    // });
                     setInputValue('');
                     setBlobUrlImg('');
                     setImgBase64('');

@@ -36,6 +36,7 @@ function MessageItem({ receiver, avatar, username, searchResult = false }) {
     const senderId = useMemo(() => {
         return JSON.parse(localStorage.getItem('chat-app-hnt'))._id;
     }, []);
+    var messageSound = new Audio('messenger-sound.mp3');
 
     const btnRef = useRef();
 
@@ -44,6 +45,7 @@ function MessageItem({ receiver, avatar, username, searchResult = false }) {
         if (newMessage) {
             if (newMessage.sender === receiver) {
                 // console.log(newMessage);
+                messageSound.play();
                 if (ChatContent.receiver !== receiver) {
                     setMessageNotify(true);
                 }
@@ -114,6 +116,11 @@ function MessageItem({ receiver, avatar, username, searchResult = false }) {
                     console.log('loi lay tin nhan gan nhat');
                 });
         }
+
+        return () => {
+            messageSound.remove();
+        };
+
         // eslint-disable-next-line
     }, []);
 
@@ -147,7 +154,7 @@ function MessageItem({ receiver, avatar, username, searchResult = false }) {
         <div className={cx('wrapper', { searchResult })} onClick={handleClick}>
             <div className={cx('avatar')}>
                 <Image small={searchResult ? true : false} src={avatar} avatar alt="avatar" />
-                <PositiveStatus receiver={receiver} />
+                {!searchResult && <PositiveStatus receiver={receiver} />}
             </div>
             <div className={cx('info')}>
                 {searchResult ? (
