@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
@@ -23,6 +23,15 @@ function Form({ login, signup }) {
         confirmPassword: '',
         email: '',
     });
+
+    useEffect(() => {
+        return () => {
+            setTimeout(function () {
+                navigate('/', { replace: true });
+            }, 2500);
+        };
+        // eslint-disable-next-line
+    }, []);
 
     const checkValues = () => {
         let username = values.username;
@@ -54,10 +63,10 @@ function Form({ login, signup }) {
                     const { data } = await axios.post('/register', values);
                     if (data.status === true) {
                         toast('Đăng ký thành công');
-                        User.setUser(data.user);
-                        localStorage.setItem('chat-app-hnt', JSON.stringify(data.user));
+                        User.setUser(data.newUser);
+                        localStorage.setItem('chat-app-hnt', JSON.stringify(data.newUser));
                         setTimeout(function () {
-                            navigate('/home', { replace: true });
+                            navigate('/', { replace: true });
                         }, 2500);
                     } else {
                         toast(data.msg);

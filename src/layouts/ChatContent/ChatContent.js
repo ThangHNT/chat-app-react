@@ -23,10 +23,12 @@ function ChatContent() {
     useEffect(() => {
         if (ChatContent.receiver) {
             setLoading(true);
+            // console.log(ChatContent.receiver);
             axios
                 .get(`${host}/api/receiver/${ChatContent.receiver}`)
                 .then((data) => {
                     const data2 = data.data;
+                    // console.log(data2);
                     if (data2.status) {
                         // console.log(data2.data);
                         setReceiver(data2.data);

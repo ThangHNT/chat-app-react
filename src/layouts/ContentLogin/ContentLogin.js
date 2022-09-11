@@ -14,11 +14,13 @@ function ContentLogin() {
 
     const handleDisplaySignupForm = () => {
         setLoginForm(false);
+        h2Ref.current.innerText = 'Sign up';
         spanRef.current.innerText = 'Đã có tài khoản ?';
     };
 
     const handleDisplayLoginForm = () => {
         setLoginForm(true);
+        h2Ref.current.innerText = 'Log in';
         spanRef.current.innerText = 'Bạn chưa có tài khoản ?';
     };
 

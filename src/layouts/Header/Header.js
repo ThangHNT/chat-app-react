@@ -15,7 +15,7 @@ import { ChatContentContext } from '~/components/Context/ChatContentContext';
 
 const cx = classNames.bind(styles);
 
-function Header({ currentUser }) {
+function Header() {
     // console.log('Header');
     const { handleInitSocket, socket, messageSended } = useContext(SocketContext);
     const { handleDisplayChatContent, handleAddMessage } = useContext(ChatContentContext);
@@ -50,37 +50,40 @@ function Header({ currentUser }) {
                 </Link>
                 <span className={cx('header-title')}>Welcome</span>
             </div>
-            <h1>Chat app</h1>
+            <h1 className={cx('app-name')}>Chat app</h1>
             {user ? (
-                <Tippy
-                    interactive
-                    delay={[100, 200]}
-                    // visible
-                    placement="bottom-end"
-                    render={(attrs) => (
-                        <div className={cx('current-user-menu')} tabIndex="-1" {...attrs}>
-                            <Button children="Tài khoản" text leftIcon={<FontAwesomeIcon icon={faUser} />} />
-                            <Button
-                                onClick={handleLogout}
-                                children="Đăng xuất"
-                                text
-                                href="/login"
-                                leftIcon={<FontAwesomeIcon icon={faArrowRightFromBracket} />}
+                <div className={cx('user-info')}>
+                    <span className={cx('user-name')}>{user.username}</span>
+                    <Tippy
+                        interactive
+                        delay={[100, 200]}
+                        // visible
+                        placement="bottom-end"
+                        render={(attrs) => (
+                            <div className={cx('user-menu')} tabIndex="-1" {...attrs}>
+                                <Button children="Tài khoản" text leftIcon={<FontAwesomeIcon icon={faUser} />} />
+                                <Button
+                                    onClick={handleLogout}
+                                    children="Đăng xuất"
+                                    text
+                                    href="/login"
+                                    leftIcon={<FontAwesomeIcon icon={faArrowRightFromBracket} />}
+                                />
+                            </div>
+                        )}
+                    >
+                        {user === null ? (
+                            <Image
+                                src="https://toanthaydinh.com/wp-content/uploads/2020/04/wallpaper-4k-hinh-nen-4k-hinh-anh-ve-ruong-bac-thang-dep_101311157-1400x788-1.jpg"
+                                alt="avatar"
+                                arounded
+                                className={cx('current-user')}
                             />
-                        </div>
-                    )}
-                >
-                    {user === null ? (
-                        <Image
-                            src="https://toanthaydinh.com/wp-content/uploads/2020/04/wallpaper-4k-hinh-nen-4k-hinh-anh-ve-ruong-bac-thang-dep_101311157-1400x788-1.jpg"
-                            alt="avatar"
-                            arounded
-                            className={cx('current-user')}
-                        />
-                    ) : (
-                        <Image src={user.avatar} alt="avatar" arounded className={cx('current-user')} />
-                    )}
-                </Tippy>
+                        ) : (
+                            <Image src={user.avatar} alt="avatar" arounded className={cx('current-user')} />
+                        )}
+                    </Tippy>
+                </div>
             ) : (
                 <div className={cx('help')}>
                     <span>Trợ giúp</span>
