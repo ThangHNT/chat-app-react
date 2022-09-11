@@ -45,7 +45,7 @@ function Header() {
     return (
         <header className={cx('header', { 'wrapper-content': true })}>
             <div className={cx('wrapper-logo')}>
-                <Link to="/" className={cx('logo-link')}>
+                <Link to={user ? '/' : '/login'} className={cx('logo-link')}>
                     <Image src="/logo.png" alt="logo" className={cx('logo')} />
                 </Link>
                 <span className={cx('header-title')}>Welcome</span>

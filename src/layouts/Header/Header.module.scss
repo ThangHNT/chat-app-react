@@ -86,6 +86,7 @@
 
 .app-name {
     text-align: center;
+    user-select: none;
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
@@ -147,7 +148,6 @@
     .user-name {
         font-size: 18px;
         font-weight: 600;
-        user-select: none;
         margin-right: 10px;
     }
 

@@ -12,6 +12,7 @@ import classNames from 'classnames/bind';
 import styles from './Message.module.scss';
 import { ChatContentContext } from '~/components/Context/ChatContentContext';
 import Button from '~/components/Button';
+import ReactMessageIcon from '~/components/ReactMessageIcon';
 
 const cx = classNames.bind(styles);
 
@@ -39,7 +40,7 @@ function Message({ sender = false, time, type, children, onClick, ...passprops }
 
     const handleHideAction = () => {
         timeRef.current.style.display = 'none';
-        btnRef.current.style.display = 'none';
+        // btnRef.current.style.display = 'none';
     };
 
     const handleZoomImg = (e) => {
@@ -112,7 +113,7 @@ function Message({ sender = false, time, type, children, onClick, ...passprops }
                 </a>
             )}
             <div ref={btnRef} className={cx('message-sended-actions')}>
-                <Button message_sended leftIcon={<FontAwesomeIcon icon={faFaceGrinWide} />}></Button>
+                <ReactMessageIcon />
                 <Button message_sended leftIcon={<FontAwesomeIcon icon={faReply} />}></Button>
                 <Button message_sended leftIcon={<FontAwesomeIcon icon={faEllipsisVertical} />}></Button>
             </div>

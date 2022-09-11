@@ -1,0 +1,32 @@
+.wrapper {
+    position: relative;
+}
+
+.represent-icon {
+    cursor: pointer;
+}
+
+.react-icon-list {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: -4.2rem;
+    right: 50%;
+    transform: translateX(50%);
+    padding: 4px 10px;
+    background-color: rgb(69, 67, 67);
+    border-radius: 20px;
+    box-shadow: 0px 0px 2px 1px #aaa;
+
+    .react-icon {
+        width: 30px;
+        height: 30px;
+        cursor: pointer;
+        border-radius: 50%;
+    }
+
+    .react-icon + .react-icon {
+        margin: 0 3px;
+    }
+}
