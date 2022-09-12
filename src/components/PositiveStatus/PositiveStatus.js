@@ -6,7 +6,7 @@ const cx = classNames.bind(styles);
 
 function PositiveStatus({ receiver }) {
     // console.log('online-status');
-    const { newUser, userList } = useContext(SocketContext);
+    const { userList } = useContext(SocketContext);
     const [positive, setPositive] = useState(false);
 
     // console.log(receiver);
@@ -22,13 +22,6 @@ function PositiveStatus({ receiver }) {
         }
         // eslint-disable-next-line
     }, [userList]);
-
-    useEffect(() => {
-        if (newUser) {
-            setPositive(receiver === newUser.userId);
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [newUser]);
 
     return <div className={cx('wrapper')}>{positive && <span className={cx('online')}></span>}</div>;
 }

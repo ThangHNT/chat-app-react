@@ -4,8 +4,6 @@ const SocketContext = createContext();
 
 function SocketContextProvider({ children }) {
     // console.log('socket-context');
-
-    const [newUser, setNewUser] = useState();
     const [userList, setUserList] = useState([]);
     const [socket, setSocket] = useState();
     const [newMessage, setNewMessage] = useState();
@@ -13,15 +11,18 @@ function SocketContextProvider({ children }) {
     const [checkGetDataFromDB, setCheckGetDataFromDB] = useState([]);
     const [newReaction, setNewReaction] = useState();
 
+    // khoi tao socket
     const handleInitSocket = (socket) => {
         setSocket(socket);
     };
 
+    // kiểm tra xem đã lấy dữ liệu chưa, lấy r thì thêm userid vào mảng
     const handleCheckGetDataFromDB = (userId) => {
         setCheckGetDataFromDB((pre) => [...pre, userId]);
     };
 
-    const handlSetMessageSended = (key, value, fromDB = false, reactionIcon = false) => {
+    // lưu tin nhắn vào bộ nhớ của client
+    const handlSetMessageSended = (key, value, fromDB = false) => {
         const checkKey = messageSended.has(key);
         if (!checkKey) {
             messageSended.set(key, value);
@@ -40,14 +41,17 @@ function SocketContextProvider({ children }) {
         }
     };
 
+    // set tin nhắn mới
     const handleSetNewMessage = (message) => {
         setNewMessage(message);
     };
 
+    // set reaction icon mới
     const handleSetNewReaction = (reaction) => {
         setNewReaction(reaction);
     };
 
+    // lắng nghe event từ socket
     useEffect(() => {
         if (socket) {
             socket.on('users', (users) => {
@@ -56,7 +60,6 @@ function SocketContextProvider({ children }) {
             });
             socket.on('user just connected', (user) => {
                 // console.log(user);
-                setNewUser(user);
                 setUserList((pre) => [...pre, user]);
             });
             socket.on('private message', (data) => {
@@ -81,6 +84,7 @@ function SocketContextProvider({ children }) {
         // eslint-disable-next-line
     }, [socket]);
 
+    // gửi tin nhắn
     const handleSendMessage = (data, reactionIcon = false) => {
         if (userList.length > 0) {
             const { receiver, content, icon, messageId, sender } = data;
@@ -93,6 +97,7 @@ function SocketContextProvider({ children }) {
             }
             let message;
             if (reactionIcon) {
+                // khi gửi reaction icon
                 message = {
                     sender,
                     to,
@@ -127,7 +132,6 @@ function SocketContextProvider({ children }) {
 
     const values = {
         socket,
-        newUser,
         userList,
         newMessage,
         messageSended,
