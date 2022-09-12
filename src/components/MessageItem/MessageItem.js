@@ -36,7 +36,7 @@ function MessageItem({ receiver, avatar, username, searchResult = false }) {
     const senderId = useMemo(() => {
         return JSON.parse(localStorage.getItem('chat-app-hnt'))._id;
     }, []);
-    var messageSound = new Audio('messenger-sound.mp3');
+    const messageSound = new Audio('messenger-sound.mp3');
 
     const btnRef = useRef();
 

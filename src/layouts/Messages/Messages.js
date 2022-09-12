@@ -112,7 +112,7 @@ function Messages({ receiver }) {
                 // nếu chưa load data from db lần đầu
                 // console.log('can goi api');
                 axios
-                    .post(`${host}/api/get-messages`, {
+                    .post(`${host}/api/get/messages`, {
                         sender: sender,
                         receiver: receiver.id,
                     })
@@ -135,7 +135,7 @@ function Messages({ receiver }) {
             // click vào messageItem khi chưa có tn mới và load data from db
             // console.log('get data from db');
             axios
-                .post(`${host}/api/get-messages`, {
+                .post(`${host}/api/get/messages`, {
                     sender: sender,
                     receiver: receiver.id,
                 })
@@ -186,6 +186,9 @@ function Messages({ receiver }) {
                             type={message.type}
                             time={getTime(messages[index].time)}
                             sender={sender === message.sender}
+                            messageId={message.id}
+                            messageBody={contentRef}
+                            reaction={message.reactionIcon}
                         >
                             {message.type === 'text'
                                 ? message.text

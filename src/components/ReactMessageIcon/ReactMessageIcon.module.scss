@@ -2,8 +2,23 @@
     position: relative;
 }
 
-.represent-icon {
+.represent-icon-wrapper {
     cursor: pointer;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .represent-icon {
+        font-size: 16px;
+    }
+
+    &:hover {
+        background-color: var(--button-icon-hover);
+    }
 }
 
 .react-icon-list {
@@ -18,6 +33,7 @@
     background-color: rgb(69, 67, 67);
     border-radius: 20px;
     box-shadow: 0px 0px 2px 1px #aaa;
+    z-index: 5;
 
     .react-icon {
         width: 30px;
@@ -28,5 +44,25 @@
 
     .react-icon + .react-icon {
         margin: 0 3px;
+    }
+
+    &:after {
+        content: '';
+        display: block;
+        width: 100%;
+        height: 12px;
+        position: absolute;
+        background-color: transparent;
+        bottom: -10px;
+    }
+
+    &:before {
+        content: '';
+        display: block;
+        width: 100%;
+        height: 12px;
+        position: absolute;
+        background-color: transparent;
+        top: -8px;
     }
 }

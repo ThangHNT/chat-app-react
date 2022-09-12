@@ -11,6 +11,7 @@ function SocketContextProvider({ children }) {
     const [newMessage, setNewMessage] = useState();
     const [messageSended, setMessageSended] = useState(new Map());
     const [checkGetDataFromDB, setCheckGetDataFromDB] = useState([]);
+    const [newReaction, setNewReaction] = useState();
 
     const handleInitSocket = (socket) => {
         setSocket(socket);
@@ -20,7 +21,7 @@ function SocketContextProvider({ children }) {
         setCheckGetDataFromDB((pre) => [...pre, userId]);
     };
 
-    const handlSetMessageSended = (key, value, fromDB = false) => {
+    const handlSetMessageSended = (key, value, fromDB = false, reactionIcon = false) => {
         const checkKey = messageSended.has(key);
         if (!checkKey) {
             messageSended.set(key, value);
@@ -43,6 +44,10 @@ function SocketContextProvider({ children }) {
         setNewMessage(message);
     };
 
+    const handleSetNewReaction = (reaction) => {
+        setNewReaction(reaction);
+    };
+
     useEffect(() => {
         if (socket) {
             socket.on('users', (users) => {
@@ -58,6 +63,10 @@ function SocketContextProvider({ children }) {
                 // console.log(data.content);
                 setNewMessage(data);
             });
+            socket.on('private reaction message', (data) => {
+                // console.log(data);
+                setNewReaction(data);
+            });
             socket.on('user disconnected', (socketId) => {
                 let newUsers = [];
                 userList.forEach((user) => {
@@ -72,9 +81,9 @@ function SocketContextProvider({ children }) {
         // eslint-disable-next-line
     }, [socket]);
 
-    const handleSendMessage = (data) => {
+    const handleSendMessage = (data, reactionIcon = false) => {
         if (userList.length > 0) {
-            const { receiver, content, sender } = data;
+            const { receiver, content, icon, messageId, sender } = data;
             let to = '';
             for (let i = 0; i < userList.length; i++) {
                 if (userList[i].userId === receiver) {
@@ -82,13 +91,27 @@ function SocketContextProvider({ children }) {
                     break;
                 }
             }
-            const message = {
-                sender,
-                to,
-                from: socket.id,
-                content,
-                receiver,
-            };
+            let message;
+            if (reactionIcon) {
+                message = {
+                    sender,
+                    to,
+                    from: socket.id,
+                    icon,
+                    receiver,
+                    messageId,
+                };
+                socket.emit('send reaction icon', message);
+                return;
+            } else {
+                message = {
+                    sender,
+                    to,
+                    from: socket.id,
+                    content,
+                    receiver,
+                };
+            }
             const formatMessage = content.map((msg) => {
                 return {
                     ...msg,
@@ -109,11 +132,13 @@ function SocketContextProvider({ children }) {
         newMessage,
         messageSended,
         checkGetDataFromDB,
+        newReaction,
         handlSetMessageSended,
         handleSendMessage,
         handleSetNewMessage,
         handleInitSocket,
         handleCheckGetDataFromDB,
+        handleSetNewReaction,
     };
 
     return <SocketContext.Provider value={values}>{children}</SocketContext.Provider>;

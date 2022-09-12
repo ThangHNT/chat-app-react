@@ -1,8 +1,14 @@
 .wrapper {
     width: 100%;
     max-height: 480px;
+    margin-top: 5px;
     overflow-x: hidden;
     scroll-behavior: smooth;
+    padding-bottom: 15px;
+}
+
+.message-item + .message-item {
+    margin-top: 12px;
 }
 
 .scroll-down-btn {

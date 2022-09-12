@@ -227,7 +227,7 @@ function SendMessage({ receiver }) {
                 handleSendMessage(messages);
                 ChatContent.handleAddMessage(messages);
                 try {
-                    // axios.post(`${host}/api/send-message`, {
+                    // axios.post(`${host}/api/send/message`, {
                     //     sender: currentUser._id,
                     //     receiver: receiver.id,
                     //     messages,
