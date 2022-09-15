@@ -1,6 +1,13 @@
 import React, { useEffect, useState, useMemo, useContext, memo, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFileWord, faEllipsisVertical, faReply, faFileLines, faFilePdf } from '@fortawesome/free-solid-svg-icons';
+import {
+    faFileWord,
+    faEllipsisVertical,
+    faReply,
+    faFileLines,
+    faFileExcel,
+    faFilePdf,
+} from '@fortawesome/free-solid-svg-icons';
 import classNames from 'classnames/bind';
 import styles from './Message.module.scss';
 import Button from '~/components/Button';
@@ -159,6 +166,21 @@ function Message({
                         download={children.filename}
                     >
                         <FontAwesomeIcon className={cx('file-icon')} icon={faFilePdf} />
+                        <div className={cx('properties')}>
+                            <p>{children.filename}</p>
+                            <span>{children.size}B</span>
+                        </div>
+                    </a>
+                )}
+                {type === 'excel-file' && (
+                    <a
+                        className={cx('wrapper-file-message')}
+                        href={`data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,${encodeURIComponent(
+                            children.content,
+                        )}`}
+                        download={children.filename}
+                    >
+                        <FontAwesomeIcon className={cx('file-icon')} icon={faFileExcel} />
                         <div className={cx('properties')}>
                             <p>{children.filename}</p>
                             <span>{children.size}B</span>

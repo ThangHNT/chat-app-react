@@ -45,7 +45,7 @@ function MessageItem({ receiver, avatar, username, searchResult = false }) {
         if (newMessage) {
             if (newMessage.sender === receiver) {
                 // console.log(newMessage);
-                // messageSound.play();
+                messageSound.play();
                 if (ChatContent.receiver !== receiver) {
                     setMessageNotify(true);
                 }

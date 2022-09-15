@@ -28,6 +28,7 @@ function SocketContextProvider({ children }) {
             });
             socket.on('private message', (data) => {
                 // console.log(data.content);
+                document.title = 'Co tin nhan moi';
                 handleCheckGetDataFromDB(data.sender);
                 handlSetMessageSended(data.sender, data.content);
                 setNewMessage(data);

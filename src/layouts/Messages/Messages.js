@@ -40,7 +40,7 @@ function Messages({ receiver }) {
                 setMessages((pre) => {
                     return [...pre, ...newMessage.content];
                 });
-
+                document.title = 'Chat app';
                 handleSetNewMessage(undefined);
             }
         }
@@ -60,6 +60,7 @@ function Messages({ receiver }) {
                         message.type === 'text-file' ||
                         message.type === 'doc-file' ||
                         message.type === 'pdf-file' ||
+                        message.type === 'excel-file' ||
                         message.type === 'video' ||
                         message.type === 'audio'
                             ? {
@@ -132,7 +133,7 @@ function Messages({ receiver }) {
                 .then((data) => {
                     if (data.data.status) {
                         let data2 = data.data.arr;
-                        console.log('data from db', data2);
+                        // console.log('data from db', data2);
                         setMessages([...data2]);
                         handlSetMessageSended(receiver.id, data2);
                         handleCheckGetDataFromDB(receiver.id);

@@ -59,19 +59,16 @@ function ReactMessageIcon({ messageId, messageBody }) {
         const icon = e.target.alt;
         handleSetReactionIcon({ icon, messageId });
         handleSendMessage({ icon, messageId, sender: currentUser, receiver }, true);
-        axios
-            .post(`${host}/api/send/reaction-icon`, { messageId, reaction: icon })
-            .then((data) => {
-                const data2 = data.data;
-                if (data2.status) {
-                    // console.log('send reaction successcully');
-                } else {
-                    // console.log('send reaction failed');
-                }
-            })
-            .catch((err) => {
-                console.log('loi gui reaction icon');
-            });
+        // axios
+        // .post(`${host}/api/send/reaction-icon`, { messageId, reaction: icon })
+        // .then((data) => {
+        //     const data2 = data.data;
+        //     if (data2.status) {
+        //         // console.log('send reaction successcully');
+        //     } else {
+        //         // console.log('send reaction failed');
+        //     }
+        // })
     };
 
     return (

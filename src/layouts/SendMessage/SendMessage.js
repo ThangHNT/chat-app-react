@@ -4,7 +4,7 @@ import axios from 'axios';
 import Picker from 'emoji-picker-react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilePdf, faFileVideo, faFileWord, faPhotoFilm, faXmarkCircle } from '@fortawesome/free-solid-svg-icons';
-import { faFaceGrin, faFileLines, faFileAudio } from '@fortawesome/free-regular-svg-icons';
+import { faFaceGrin, faFileLines, faFileAudio, faFileExcel } from '@fortawesome/free-regular-svg-icons';
 import { faMicrophone } from '@fortawesome/free-solid-svg-icons';
 import Image from '~/components/Image';
 import Button from '~/components/Button';
@@ -63,7 +63,7 @@ function SendMessage({ receiver }) {
             let base64String = newFile.content;
             let checkFileImage = newFile.type.includes('image');
             base64String = base64String.replace('data:', '').replace(/^.+,/, '');
-            // console.log(newFile);
+            // console.log(newFile.type);
             // console.log(base64String);
             if (checkFileImage) {
                 setImgBase64(base64String);
@@ -83,7 +83,6 @@ function SendMessage({ receiver }) {
                     type: 'text-file',
                 });
             } else if (newFile.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
-                // alert('chua co chuc nang gui file doc');
                 setFile({
                     filename: newFile.filename,
                     text: base64String,
@@ -110,6 +109,14 @@ function SendMessage({ receiver }) {
                     text: base64String,
                     size: newFile.size,
                     type: 'audio',
+                });
+            } else if (newFile.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+                console.log('file excel');
+                setFile({
+                    filename: newFile.filename,
+                    text: base64String,
+                    size: newFile.size,
+                    type: 'excel-file',
                 });
             }
 
@@ -153,7 +160,7 @@ function SendMessage({ receiver }) {
     // xử lý 2 chiều khi gõ vào input
     const handleType = (e) => {
         messageSound.src = 'texting-sound.mp3';
-        // messageSound.play();
+        messageSound.play();
         setInputValue(e.target.value);
     };
 
@@ -189,8 +196,6 @@ function SendMessage({ receiver }) {
         if (e.shiftKey) shiftKey = 16;
         if (e.which === 13 && shiftKey !== 16) {
             e.preventDefault();
-            messageSound.src = 'send-message-sound.mp3';
-            // messageSound.play();
             let content = [];
             let messages = {
                 receiver: receiver.id,
@@ -224,6 +229,8 @@ function SendMessage({ receiver }) {
             }
             // console.log(messages);
             if (messages.content.length > 0) {
+                messageSound.src = 'send-message-sound.mp3';
+                messageSound.play();
                 handleSendMessage(messages);
                 ChatContent.handleAddMessage(messages);
                 try {
@@ -280,7 +287,9 @@ function SendMessage({ receiver }) {
                                             ? faFileVideo
                                             : file.type === 'pdf-file'
                                             ? faFilePdf
-                                            : faFileAudio
+                                            : file.type === 'audio'
+                                            ? faFileAudio
+                                            : faFileExcel
                                     }
                                 />
 
