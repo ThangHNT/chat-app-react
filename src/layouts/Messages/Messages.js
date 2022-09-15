@@ -40,20 +40,6 @@ function Messages({ receiver }) {
                 setMessages((pre) => {
                     return [...pre, ...newMessage.content];
                 });
-                // console.log(messageSended);
-
-                // ===============================
-                // khi chua goi api send message : ${host}/api/send-message ở SendMessage
-                // handlSetMessageSended(receiver.id, newMessage.content);
-
-                // khi goi api send message: ${host}/api/send-message ở SendMessage
-                // const checkGetData = checkGetDataFromDB.some((userId) => {
-                //     return userId === receiver.id;
-                // });
-                // if (checkGetData) {
-                //     handlSetMessageSended(receiver.id, newMessage.content);
-                // }
-                // =========================================
 
                 handleSetNewMessage(undefined);
             }
@@ -118,18 +104,21 @@ function Messages({ receiver }) {
                         receiver: receiver.id,
                     })
                     .then((data) => {
-                        let data2 = data.data.arr;
-                        // console.log('data from db', data2);
-                        setMessages([...data2, ...messagesSended]);
-                        handleCheckGetDataFromDB(receiver.id);
-                        handlSetMessageSended(receiver.id, data2, true);
+                        // console.log('data from db', data.data.arr);
+                        if (data.data.status) {
+                            let data2 = data.data.arr;
+                            setMessages([...data2, ...messagesSended]);
+                            handleCheckGetDataFromDB(receiver.id);
+                            handlSetMessageSended(receiver.id, data2, true);
+                        }
                     })
                     .catch((error) => {
-                        console.log('loi lay tin nhan');
+                        console.log('loi lay tin nhan 2');
                     });
             } else {
                 // từ lần 2 chỉ load data từ bộ nhớ client
                 // console.log('ko can goi api');
+                // console.log(messagesSended);
                 setMessages([...messagesSended]);
             }
         } else {
@@ -141,11 +130,13 @@ function Messages({ receiver }) {
                     receiver: receiver.id,
                 })
                 .then((data) => {
-                    let data2 = data.data.arr;
-                    // console.log('data from db', data2);
-                    setMessages([...data2]);
-                    handlSetMessageSended(receiver.id, data2);
-                    handleCheckGetDataFromDB(receiver.id);
+                    if (data.data.status) {
+                        let data2 = data.data.arr;
+                        console.log('data from db', data2);
+                        setMessages([...data2]);
+                        handlSetMessageSended(receiver.id, data2);
+                        handleCheckGetDataFromDB(receiver.id);
+                    }
                 })
                 .catch((error) => {
                     console.log('loi lay tin nhan');

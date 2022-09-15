@@ -9,21 +9,20 @@ function SocketContextProvider({ children }) {
     const [newMessage, setNewMessage] = useState();
     const [messageSended, setMessageSended] = useState(new Map());
     const [checkGetDataFromDB, setCheckGetDataFromDB] = useState([]);
-    const [newReaction, setNewReaction] = useState();
     const [newUser, setNewUser] = useState();
     const [userDisconnect, setUserDisconnect] = useState();
+    const [newReaction, setNewReaction] = useState();
     // console.log(userList);
 
     // lắng nghe event từ socket
     useEffect(() => {
-        console.log('socket');
         if (socket) {
             socket.on('users', (users) => {
-                console.log('get all users');
+                // console.log('get all users');
                 setUserList(users);
             });
             socket.on('user just connected', (user) => {
-                console.log('new user');
+                // console.log('new user');
                 setNewUser(user);
                 setUserList((pre) => [...pre, user]);
             });
@@ -35,10 +34,10 @@ function SocketContextProvider({ children }) {
             });
             socket.on('private reaction message', (data) => {
                 // console.log(data);
+                handlSetMessageSended(data.sender, [data], false, true);
                 setNewReaction(data);
             });
             socket.on('user disconnected', (socketId) => {
-                // console.log(userList);
                 setUserDisconnect(socketId);
             });
         }
@@ -56,10 +55,13 @@ function SocketContextProvider({ children }) {
     };
 
     // lưu tin nhắn vào bộ nhớ của client
-    const handlSetMessageSended = (key, value, fromDB = false) => {
+    const handlSetMessageSended = (key, value, fromDB = false, reaction = false) => {
         const checkKey = messageSended.has(key);
+        // console.log(value);
         if (!checkKey) {
-            messageSended.set(key, value);
+            if (!reaction) {
+                messageSended.set(key, value);
+            }
         } else {
             if (fromDB) {
                 const oldData = messageSended.get(key);
@@ -68,6 +70,14 @@ function SocketContextProvider({ children }) {
                 });
             } else {
                 const oldData = messageSended.get(key);
+                if (reaction) {
+                    console.log(value);
+                    oldData.forEach((data) => {
+                        if (data.id === value[0].messageId) {
+                            data.reactionIcon = value[0].icon;
+                        }
+                    });
+                }
                 setMessageSended(() => {
                     return messageSended.set(key, [...oldData, ...value]);
                 });
@@ -75,6 +85,7 @@ function SocketContextProvider({ children }) {
         }
     };
 
+    // thay đổi ds người online
     const handleSetUserList = (newUserList) => {
         setUserList(newUserList);
     };
@@ -92,7 +103,6 @@ function SocketContextProvider({ children }) {
     // gửi tin nhắn
     const handleSendMessage = (data, reactionIcon = false) => {
         if (userList.length > 0) {
-            // console.log('send msg', userList);
             const { receiver, content, icon, messageId, sender } = data;
             let to = '';
             for (let i = 0; i < userList.length; i++) {

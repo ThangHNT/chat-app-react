@@ -20,6 +20,7 @@
     left: 0;
     z-index: 5;
     overflow: hidden;
+    animation: display 0.2s linear;
 
     .modal-overlay {
         position: fixed;
@@ -48,5 +49,14 @@
             object-fit: cover;
             box-shadow: 0px 0px 3px 0px #aaa;
         }
+    }
+}
+
+@keyframes display {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
     }
 }
