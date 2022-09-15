@@ -10,6 +10,40 @@ function SocketContextProvider({ children }) {
     const [messageSended, setMessageSended] = useState(new Map());
     const [checkGetDataFromDB, setCheckGetDataFromDB] = useState([]);
     const [newReaction, setNewReaction] = useState();
+    const [newUser, setNewUser] = useState();
+    const [userDisconnect, setUserDisconnect] = useState();
+    // console.log(userList);
+
+    // lắng nghe event từ socket
+    useEffect(() => {
+        console.log('socket');
+        if (socket) {
+            socket.on('users', (users) => {
+                console.log('get all users');
+                setUserList(users);
+            });
+            socket.on('user just connected', (user) => {
+                console.log('new user');
+                setNewUser(user);
+                setUserList((pre) => [...pre, user]);
+            });
+            socket.on('private message', (data) => {
+                // console.log(data.content);
+                handleCheckGetDataFromDB(data.sender);
+                handlSetMessageSended(data.sender, data.content);
+                setNewMessage(data);
+            });
+            socket.on('private reaction message', (data) => {
+                // console.log(data);
+                setNewReaction(data);
+            });
+            socket.on('user disconnected', (socketId) => {
+                // console.log(userList);
+                setUserDisconnect(socketId);
+            });
+        }
+        // eslint-disable-next-line
+    }, [socket]);
 
     // khoi tao socket
     const handleInitSocket = (socket) => {
@@ -41,6 +75,10 @@ function SocketContextProvider({ children }) {
         }
     };
 
+    const handleSetUserList = (newUserList) => {
+        setUserList(newUserList);
+    };
+
     // set tin nhắn mới
     const handleSetNewMessage = (message) => {
         setNewMessage(message);
@@ -51,42 +89,10 @@ function SocketContextProvider({ children }) {
         setNewReaction(reaction);
     };
 
-    // lắng nghe event từ socket
-    useEffect(() => {
-        if (socket) {
-            socket.on('users', (users) => {
-                // console.log(users);
-                setUserList(users);
-            });
-            socket.on('user just connected', (user) => {
-                // console.log(user);
-                setUserList((pre) => [...pre, user]);
-            });
-            socket.on('private message', (data) => {
-                // console.log(data.content);
-                setNewMessage(data);
-            });
-            socket.on('private reaction message', (data) => {
-                // console.log(data);
-                setNewReaction(data);
-            });
-            socket.on('user disconnected', (socketId) => {
-                let newUsers = [];
-                userList.forEach((user) => {
-                    if (user.socketId !== socketId) {
-                        newUsers.push(user);
-                    }
-                });
-                // console.log(socketId);
-                setUserList([...newUsers]);
-            });
-        }
-        // eslint-disable-next-line
-    }, [socket]);
-
     // gửi tin nhắn
     const handleSendMessage = (data, reactionIcon = false) => {
         if (userList.length > 0) {
+            // console.log('send msg', userList);
             const { receiver, content, icon, messageId, sender } = data;
             let to = '';
             for (let i = 0; i < userList.length; i++) {
@@ -131,6 +137,8 @@ function SocketContextProvider({ children }) {
     };
 
     const values = {
+        userDisconnect,
+        newUser,
         socket,
         userList,
         newMessage,
@@ -143,6 +151,7 @@ function SocketContextProvider({ children }) {
         handleInitSocket,
         handleCheckGetDataFromDB,
         handleSetNewReaction,
+        handleSetUserList,
     };
 
     return <SocketContext.Provider value={values}>{children}</SocketContext.Provider>;

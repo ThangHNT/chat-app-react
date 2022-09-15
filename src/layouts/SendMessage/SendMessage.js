@@ -153,7 +153,7 @@ function SendMessage({ receiver }) {
     // xử lý 2 chiều khi gõ vào input
     const handleType = (e) => {
         messageSound.src = 'texting-sound.mp3';
-        messageSound.play();
+        // messageSound.play();
         setInputValue(e.target.value);
     };
 
@@ -190,7 +190,7 @@ function SendMessage({ receiver }) {
         if (e.which === 13 && shiftKey !== 16) {
             e.preventDefault();
             messageSound.src = 'send-message-sound.mp3';
-            messageSound.play();
+            // messageSound.play();
             let content = [];
             let messages = {
                 receiver: receiver.id,

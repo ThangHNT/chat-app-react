@@ -35,7 +35,7 @@ function Messages({ receiver }) {
     // nhận tin nhắn mới nhất từ socket
     useEffect(() => {
         if (newMessage) {
-            // console.log('new msg', newMessage);
+            // console.log('new msg', newMessage.content);
             if (newMessage.sender === receiver.id) {
                 setMessages((pre) => {
                     return [...pre, ...newMessage.content];
@@ -44,7 +44,8 @@ function Messages({ receiver }) {
 
                 // ===============================
                 // khi chua goi api send message : ${host}/api/send-message ở SendMessage
-                handlSetMessageSended(receiver.id, newMessage.content);
+                // handlSetMessageSended(receiver.id, newMessage.content);
+
                 // khi goi api send message: ${host}/api/send-message ở SendMessage
                 // const checkGetData = checkGetDataFromDB.some((userId) => {
                 //     return userId === receiver.id;
