@@ -1,4 +1,4 @@
-import React, { forwardRef, useContext, memo } from 'react';
+import React, { forwardRef, useContext, memo, useImperativeHandle, useRef } from 'react';
 import classNames from 'classnames/bind';
 import { ChatContentContext } from '~/components/Context/ChatContentContext';
 import styles from './Input.module.scss';
@@ -28,6 +28,15 @@ const Input = forwardRef(
         ref,
     ) => {
         const ChatContent = useContext(ChatContentContext);
+        const inputRef = useRef();
+        useImperativeHandle(ref, () => ({
+            focus() {
+                inputRef.current.focus();
+            },
+            setHeight(height) {
+                inputRef.current.style.height = `${height}px`;
+            },
+        }));
 
         const handleChange = (e) => {
             if (chat) {
@@ -83,7 +92,7 @@ const Input = forwardRef(
         return (
             <div className={cx('wrapper-input')}>
                 <Input
-                    ref={ref}
+                    ref={inputRef}
                     className={classnames}
                     name={name}
                     title={title}

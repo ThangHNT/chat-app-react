@@ -1,1 +1,1 @@
-lỗi gửi tin nhắn khi reload lại
+tao socketEvent

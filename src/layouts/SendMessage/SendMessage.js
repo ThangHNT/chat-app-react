@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo, useContext, memo } from 'react';
+import { useState, useEffect, useRef, useLayoutEffect, useMemo, useContext, memo } from 'react';
 import classNames from 'classnames/bind';
 import axios from 'axios';
 import Picker from 'emoji-picker-react';
@@ -16,7 +16,7 @@ import { SocketContext } from '~/components/Context/SocketContext';
 
 const cx = classNames.bind(styles);
 
-function SendMessage({ receiver }) {
+function SendMessage({ receiver, blockStatus = false }) {
     // console.log('Send-message');
     const ChatContent = useContext(ChatContentContext);
     const { handleSendMessage } = useContext(SocketContext);
@@ -27,6 +27,7 @@ function SendMessage({ receiver }) {
     const [inputValue, setInputValue] = useState('');
     const [file, setFile] = useState();
     const [displayEmojiList, setDisplayEmojiList] = useState(false);
+
     let messageSound = new Audio();
 
     const currentUser = useMemo(() => {
@@ -38,8 +39,10 @@ function SendMessage({ receiver }) {
     const emojiRef = useRef();
 
     // click bên ra ngoài để đóng emoji list
-    useEffect(() => {
-        inputRef.current.focus();
+    useLayoutEffect(() => {
+        if (inputRef.current) {
+            inputRef.current.focus();
+        }
         document.addEventListener('click', (e) => {
             if (emojiListBtnRef.current && emojiRef.current) {
                 if (!emojiListBtnRef.current.contains(e.target) && !emojiRef.current.contains(e.target)) {
@@ -123,17 +126,6 @@ function SendMessage({ receiver }) {
             inputRef.current.focus();
         }
     }, [ChatContent.fileInput]);
-
-    // mở rộng input
-    useEffect(() => {
-        let value = inputRef.current.value;
-        if (value === ' ' || value === '' || value === '\n') {
-            inputRef.current.style.height = '34px';
-        }
-        let height = inputRef.current.scrollHeight;
-        inputRef.current.style.height = `${height + 2}px`;
-        // eslint-disable-next-line
-    }, [inputValue]);
 
     // xóa URL ảnh cũ khi chọn ảnh mới
     useEffect(() => {
@@ -229,6 +221,7 @@ function SendMessage({ receiver }) {
             }
             // console.log(messages);
             if (messages.content.length > 0) {
+                inputRef.current.setHeight(32);
                 messageSound.src = 'send-message-sound.mp3';
                 messageSound.play();
                 handleSendMessage(messages);
@@ -252,73 +245,104 @@ function SendMessage({ receiver }) {
 
     return (
         <div className={cx('wrapper')}>
-            <div className={cx('chat-btns')}>
-                <Button nestInput leftIcon={<FontAwesomeIcon icon={faPhotoFilm} />}>
-                    <Input noLabel file type="file" input name="file" autoComplete="off" />
-                </Button>
-                <Button nestInput leftIcon={<FontAwesomeIcon icon={faMicrophone} />}></Button>
-            </div>
-            <div className={cx('chat-input')}>
-                {imgBase64.length > 0 && (
-                    <div className={cx('attachment-list')}>
-                        <div className={cx('attachment-item')}>
-                            <div className={cx('remove-attachment-item')} onClick={handleRemoveImg}>
-                                <FontAwesomeIcon className={cx('remove-attachment-icon')} icon={faXmarkCircle} />
-                            </div>
-                            {imgBase64.length > 0 && <Image pasted src={`data:image/jpeg;base64,${imgBase64}`}></Image>}
+            {blockStatus && (
+                <div className={cx('block-status')}>
+                    {blockStatus === 'block' ? (
+                        <div className={cx('block-status-body')}>
+                            <span>
+                                Ban da chan
+                                <span className={cx('username')}>{receiver.username}</span>
+                            </span>
+                            <button className={cx('unblock-btn')}>Bo Chan</button>
                         </div>
-                    </div>
-                )}
-                {file && (
-                    <div className={cx('attachment-list')}>
-                        <div className={cx('attachment-item')}>
-                            <div className={cx('remove-attachment-item')} onClick={handleRemoveImg}>
-                                <FontAwesomeIcon className={cx('remove-attachment-icon')} icon={faXmarkCircle} />
-                            </div>
-                            <div className={cx('wrapper-name-icon-file')}>
-                                <FontAwesomeIcon
-                                    className={cx('file-icon')}
-                                    icon={
-                                        file.type === 'text-file'
-                                            ? faFileLines
-                                            : file.type === 'doc-file'
-                                            ? faFileWord
-                                            : file.type === 'video'
-                                            ? faFileVideo
-                                            : file.type === 'pdf-file'
-                                            ? faFilePdf
-                                            : file.type === 'audio'
-                                            ? faFileAudio
-                                            : faFileExcel
-                                    }
-                                />
-
-                                <span>{file.filename}</span>
-                            </div>
-                        </div>
-                    </div>
-                )}
-                <Input
-                    ref={inputRef}
-                    type="text"
-                    placeholder="Chat here"
-                    value={inputValue}
-                    chat
-                    onKeyDown={handleEnterSubmit}
-                    onPaste={handlePaste}
-                    onInput={handleType}
-                />
-            </div>
-            <div className={cx('chat-emoji')}>
-                <div className={cx('wrapper-emoji-btn')} ref={emojiListBtnRef} onClick={handlDisplayEmojiList}>
-                    <Button noTitle leftIcon={<FontAwesomeIcon icon={faFaceGrin} />} />
+                    ) : (
+                        <span>
+                            Ban da bi
+                            <span className={cx('username')}>{receiver.username}</span>
+                            chan
+                        </span>
+                    )}
                 </div>
-                {displayEmojiList && (
-                    <div className={cx('emoji-list')} ref={emojiRef}>
-                        <Picker native searchPlaceholder="smile" disableAutoFocus onEmojiClick={onEmojiClick} />
+            )}
+            {!blockStatus && (
+                <div className={cx('body')}>
+                    <div className={cx('chat-btns')}>
+                        <Button nestInput leftIcon={<FontAwesomeIcon icon={faPhotoFilm} />}>
+                            <Input noLabel file type="file" input name="file" autoComplete="off" />
+                        </Button>
+                        <Button nestInput leftIcon={<FontAwesomeIcon icon={faMicrophone} />}></Button>
                     </div>
-                )}
-            </div>
+                    <div className={cx('chat-input')}>
+                        {imgBase64.length > 0 && (
+                            <div className={cx('attachment-list')}>
+                                <div className={cx('attachment-item')}>
+                                    <div className={cx('remove-attachment-item')} onClick={handleRemoveImg}>
+                                        <FontAwesomeIcon
+                                            className={cx('remove-attachment-icon')}
+                                            icon={faXmarkCircle}
+                                        />
+                                    </div>
+                                    {imgBase64.length > 0 && (
+                                        <Image pasted src={`data:image/jpeg;base64,${imgBase64}`}></Image>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+                        {file && (
+                            <div className={cx('attachment-list')}>
+                                <div className={cx('attachment-item')}>
+                                    <div className={cx('remove-attachment-item')} onClick={handleRemoveImg}>
+                                        <FontAwesomeIcon
+                                            className={cx('remove-attachment-icon')}
+                                            icon={faXmarkCircle}
+                                        />
+                                    </div>
+                                    <div className={cx('wrapper-name-icon-file')}>
+                                        <FontAwesomeIcon
+                                            className={cx('file-icon')}
+                                            icon={
+                                                file.type === 'text-file'
+                                                    ? faFileLines
+                                                    : file.type === 'doc-file'
+                                                    ? faFileWord
+                                                    : file.type === 'video'
+                                                    ? faFileVideo
+                                                    : file.type === 'pdf-file'
+                                                    ? faFilePdf
+                                                    : file.type === 'audio'
+                                                    ? faFileAudio
+                                                    : faFileExcel
+                                            }
+                                        />
+
+                                        <span>{file.filename}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                        <Input
+                            ref={inputRef}
+                            type="text"
+                            placeholder="Chat here"
+                            value={inputValue}
+                            chat
+                            onKeyDown={handleEnterSubmit}
+                            onPaste={handlePaste}
+                            onInput={handleType}
+                        />
+                    </div>
+                    <div className={cx('chat-emoji')}>
+                        <div className={cx('wrapper-emoji-btn')} ref={emojiListBtnRef} onClick={handlDisplayEmojiList}>
+                            <Button noTitle leftIcon={<FontAwesomeIcon icon={faFaceGrin} />} />
+                        </div>
+                        {displayEmojiList && (
+                            <div className={cx('emoji-list')} ref={emojiRef}>
+                                <Picker native searchPlaceholder="smile" disableAutoFocus onEmojiClick={onEmojiClick} />
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

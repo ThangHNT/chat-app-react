@@ -2,7 +2,7 @@ import { useEffect, useState, useRef, memo, useMemo, useContext } from 'react';
 import classNames from 'classnames/bind';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBan, faEllipsis, faTrashCan } from '@fortawesome/free-solid-svg-icons';
+import { faEllipsis } from '@fortawesome/free-solid-svg-icons';
 import styles from './MessageItem.module.scss';
 import Image from '~/components/Image';
 import host from '~/ulties/serverHost';
@@ -13,17 +13,6 @@ import { SocketContext } from '~/components/Context/SocketContext';
 import { ChatContentContext } from '~/components/Context/ChatContentContext';
 
 const cx = classNames.bind(styles);
-
-const actionsMessageItem = [
-    {
-        text: 'Chan',
-        icon: <FontAwesomeIcon icon={faBan} />,
-    },
-    {
-        text: 'Xoa doan chat',
-        icon: <FontAwesomeIcon icon={faTrashCan} />,
-    },
-];
 
 function MessageItem({ receiver, avatar, username, searchResult = false }) {
     // console.log('message-item');
@@ -174,7 +163,7 @@ function MessageItem({ receiver, avatar, username, searchResult = false }) {
                     </div>
                     {menuMessageItem && (
                         <div className={cx('message-item-action-menu')}>
-                            <Menu elements={actionsMessageItem} />
+                            <Menu sender={senderId} receiver={receiver} />
                         </div>
                     )}
                 </div>

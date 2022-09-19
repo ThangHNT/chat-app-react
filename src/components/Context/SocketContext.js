@@ -8,10 +8,12 @@ function SocketContextProvider({ children }) {
     const [socket, setSocket] = useState();
     const [newMessage, setNewMessage] = useState();
     const [messageSended, setMessageSended] = useState(new Map());
+    const [blockStatus, setBlockStatus] = useState(new Map());
     const [checkGetDataFromDB, setCheckGetDataFromDB] = useState([]);
     const [newUser, setNewUser] = useState();
     const [userDisconnect, setUserDisconnect] = useState();
     const [newReaction, setNewReaction] = useState();
+    const [preventation, setPreventation] = useState();
     // console.log(userList);
 
     // lắng nghe event từ socket
@@ -38,6 +40,9 @@ function SocketContextProvider({ children }) {
                 handlSetMessageSended(data.sender, [data], false, true);
                 setNewReaction(data);
             });
+            socket.on('user-blocked', ({ receiver, content }) => {
+                setPreventation({ receiver, content });
+            });
             socket.on('user disconnected', (socketId) => {
                 setUserDisconnect(socketId);
             });
@@ -53,6 +58,18 @@ function SocketContextProvider({ children }) {
     // kiểm tra xem đã lấy dữ liệu chưa, lấy r thì thêm userid vào mảng
     const handleCheckGetDataFromDB = (userId) => {
         setCheckGetDataFromDB((pre) => [...pre, userId]);
+    };
+
+    const handleSetBlockStatus = (key, value) => {
+        const checkKey = blockStatus.has(key);
+        if (!checkKey) {
+            blockStatus.set(key, { value });
+        } else {
+            const oldData = blockStatus.get(key);
+            setBlockStatus(() => {
+                return blockStatus.set(key, [...oldData, ...value]);
+            });
+        }
     };
 
     // lưu tin nhắn vào bộ nhớ của client
@@ -72,7 +89,7 @@ function SocketContextProvider({ children }) {
             } else {
                 const oldData = messageSended.get(key);
                 if (reaction) {
-                    console.log(value);
+                    // console.log(value);
                     oldData.forEach((data) => {
                         if (data.id === value[0].messageId) {
                             data.reactionIcon = value[0].icon;
@@ -101,17 +118,29 @@ function SocketContextProvider({ children }) {
         setNewReaction(reaction);
     };
 
+    const getSocketIdFromReceiverId = (users, receiver) => {
+        let to = '';
+        for (let i = 0; i < users.length; i++) {
+            if (users[i].userId === receiver) {
+                to = users[i].socketId;
+                break;
+            }
+        }
+        return to;
+    };
+
+    const handleBlockUser = (data) => {
+        console.log(data);
+        const { sender, receiver } = data;
+        let to = getSocketIdFromReceiverId(userList, receiver);
+        socket.emit('block-user', { from: socket.id, to, sender, receiver, content: 'block' });
+    };
+
     // gửi tin nhắn
     const handleSendMessage = (data, reactionIcon = false) => {
         if (userList.length > 0) {
             const { receiver, content, icon, messageId, sender } = data;
-            let to = '';
-            for (let i = 0; i < userList.length; i++) {
-                if (userList[i].userId === receiver) {
-                    to = userList[i].socketId;
-                    break;
-                }
-            }
+            let to = getSocketIdFromReceiverId(userList, receiver);
             let message;
             if (reactionIcon) {
                 // khi gửi reaction icon
@@ -148,6 +177,8 @@ function SocketContextProvider({ children }) {
     };
 
     const values = {
+        preventation,
+        blockStatus,
         userDisconnect,
         newUser,
         socket,
@@ -163,6 +194,8 @@ function SocketContextProvider({ children }) {
         handleCheckGetDataFromDB,
         handleSetNewReaction,
         handleSetUserList,
+        handleSetBlockStatus,
+        handleBlockUser,
     };
 
     return <SocketContext.Provider value={values}>{children}</SocketContext.Provider>;

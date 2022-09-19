@@ -106,13 +106,36 @@ function Message({
         ChatContent.handleZoomImgae(e.target.src);
     };
 
+    const isValidUrl = (urlString) => {
+        var urlPattern = new RegExp(
+            '^(https?:\\/\\/)?' + // validate protocol
+                '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // validate domain name
+                '((\\d{1,3}\\.){3}\\d{1,3}))' + // validate OR ip (v4) address
+                '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // validate port and path
+                '(\\?[;&a-z\\d%_.~+=-]*)?' + // validate query string
+                '(\\#[-a-z\\d_]*)?$',
+            'i',
+        ); // validate fragment locator
+        return !!urlPattern.test(urlString);
+    };
+
     return (
         <div className={cx('wrapper', { sender })} onMouseOver={handleDisplayAction} onMouseOut={handleHideAction}>
             <div className={cx('wrapper-content', { sender })}>
-                {type === 'text' && (
+                {type === 'text' && !isValidUrl(children) && (
                     <p className={cx('text-message')} {...props}>
                         {children}
                     </p>
+                )}
+                {type === 'text' && isValidUrl(children) && (
+                    <a
+                        href={children}
+                        className={cx('text-message', { urlText: true })}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                    >
+                        {children}
+                    </a>
                 )}
                 {type === 'img' && (
                     <img

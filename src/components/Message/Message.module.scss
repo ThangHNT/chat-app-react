@@ -28,10 +28,17 @@
     font-size: 16px;
 }
 
+.urlText {
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
 .img-message {
     cursor: pointer;
     max-width: 20rem;
     height: auto;
+    user-select: none;
 }
 
 .wrapper-file-message {
@@ -99,6 +106,7 @@
     align-items: center;
     justify-content: center;
     z-index: 2;
+    user-select: none;
 
     img {
         width: 100%;

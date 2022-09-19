@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, memo } from 'react';
+import React, { useState, useEffect, useContext, useMemo, memo } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import classNames from 'classnames/bind';
@@ -18,17 +18,34 @@ function ChatContent() {
     const ChatContent = useContext(ChatContentContext);
     const [receiver, setReceiver] = useState();
     const [loading, setLoading] = useState(false);
+    const [blockStatus, setBlockStatus] = useState(false);
+
+    const currentUser = useMemo(() => {
+        return JSON.parse(localStorage.getItem('chat-app-hnt'));
+    }, []);
 
     // lấy thông tin ng nhận khi ấn vào user bên sidebar
     useEffect(() => {
         if (ChatContent.receiver) {
             setLoading(true);
             // console.log(ChatContent.receiver);
+            (async function () {
+                // kiểm tra tình trạng chặn
+                const { data } = await axios.post(`${host}/api/check-block-status`, {
+                    currentUser: currentUser._id,
+                    receiver: ChatContent.receiver,
+                });
+                if (data.status) {
+                    // console.log(data);
+                    setBlockStatus(data.blocked);
+                } else {
+                    console.log('loi check block status');
+                }
+            })();
             axios
                 .get(`${host}/api/receiver/${ChatContent.receiver}`)
                 .then((data) => {
                     const data2 = data.data;
-                    // console.log(data2);
                     if (data2.status) {
                         // console.log(data2.data);
                         setReceiver(data2.data);
@@ -43,6 +60,7 @@ function ChatContent() {
                     console.log('Loi lay ng nhan');
                 });
         }
+        // eslint-disable-next-line
     }, [ChatContent.receiver]);
 
     return (
@@ -57,7 +75,7 @@ function ChatContent() {
             {receiver && !loading && (
                 <div className={cx('send-message')}>
                     {/* phần soạn tin nhắn send message area */}
-                    <SendMessage receiver={receiver} />
+                    <SendMessage receiver={receiver} blockStatus={blockStatus} />
                 </div>
             )}
             {/* khi chưa chọn messageItem(người nhận) hiện lên ảnh */}

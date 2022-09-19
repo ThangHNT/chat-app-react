@@ -1,5 +1,4 @@
 import { useState, createContext } from 'react';
-
 const ChatContentContext = createContext();
 
 function ChatContentProvider({ children }) {

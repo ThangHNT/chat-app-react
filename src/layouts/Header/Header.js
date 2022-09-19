@@ -72,16 +72,17 @@ function Header() {
                             </div>
                         )}
                     >
-                        {user === null ? (
-                            <Image
-                                src="https://toanthaydinh.com/wp-content/uploads/2020/04/wallpaper-4k-hinh-nen-4k-hinh-anh-ve-ruong-bac-thang-dep_101311157-1400x788-1.jpg"
-                                alt="avatar"
-                                arounded
-                                className={cx('current-user')}
-                            />
-                        ) : (
-                            <Image src={user.avatar} alt="avatar" arounded className={cx('current-user')} />
-                        )}
+                        <div className={cx('current-user')}>
+                            {user === null ? (
+                                <Image
+                                    src="https://toanthaydinh.com/wp-content/uploads/2020/04/wallpaper-4k-hinh-nen-4k-hinh-anh-ve-ruong-bac-thang-dep_101311157-1400x788-1.jpg"
+                                    alt="avatar"
+                                    arounded
+                                />
+                            ) : (
+                                <Image src={user.avatar} alt="avatar" arounded />
+                            )}
+                        </div>
                     </Tippy>
                 </div>
             ) : (

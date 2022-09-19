@@ -12,7 +12,8 @@
 }
 
 .content,
-.send-message {
+.send-message,
+.block-status {
     position: fixed;
     width: var(--width-chat-content);
 }
