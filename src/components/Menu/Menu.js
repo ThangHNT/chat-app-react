@@ -8,6 +8,7 @@ import 'tippy.js/dist/tippy.css';
 import styles from './Menu.module.scss';
 import host from '~/ulties/serverHost';
 import { SocketContext } from '~/components/Context/SocketContext';
+import { ChatContentContext } from '~/components/Context/ChatContentContext';
 
 const cx = classNames.bind(styles);
 
@@ -26,15 +27,18 @@ const actionsMessageItem = [
 
 function Menu({ sender, receiver }) {
     const { handleBlockUser } = useContext(SocketContext);
+    const { handleSetBlockStatus } = useContext(ChatContentContext);
 
     const handleAction = async (e) => {
         const target = e.currentTarget;
         const action = target.getAttribute('action');
         handleBlockUser({ sender, receiver });
-        const { data } = await axios.post(`${host}/api/${action}`, { sender, receiver });
-        if (!data.status) {
-            console.log('loi ' + action);
-        }
+        handleSetBlockStatus('block');
+        // console.log('chan');
+        // const { data } = await axios.post(`${host}/api/${action}`, { sender, receiver });
+        // if (!data.status) {
+        //     console.log('loi ' + action);
+        // }
     };
 
     return actionsMessageItem.map((item, index) => {

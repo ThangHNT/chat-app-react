@@ -10,6 +10,7 @@ import { ChatContentContext } from '~/components/Context/ChatContentContext';
 import SendMessage from '~/layouts/SendMessage';
 import host from '~/ulties/serverHost';
 import HeaderChat from '~/layouts/HeaderChat';
+import Setting from '~/layouts/Setting';
 
 const cx = classNames.bind(styles);
 
@@ -23,6 +24,13 @@ function ChatContent() {
     const currentUser = useMemo(() => {
         return JSON.parse(localStorage.getItem('chat-app-hnt'));
     }, []);
+
+    useEffect(() => {
+        if (ChatContent.blockStatus) {
+            // console.log(ChatContent.blockStatus);
+            setBlockStatus(ChatContent.blockStatus);
+        }
+    }, [ChatContent.blockStatus]);
 
     // lấy thông tin ng nhận khi ấn vào user bên sidebar
     useEffect(() => {
@@ -70,6 +78,9 @@ function ChatContent() {
                 <div className={cx('content')}>
                     {/* Nội dung tin nhắn */}
                     <Messages receiver={receiver} />
+                    <div className={cx('setting')}>
+                        <Setting receiver={receiver} />
+                    </div>
                 </div>
             )}
             {receiver && !loading && (

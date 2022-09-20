@@ -16,10 +16,10 @@ import { SocketContext } from '~/components/Context/SocketContext';
 
 const cx = classNames.bind(styles);
 
-function SendMessage({ receiver, blockStatus = false }) {
+function SendMessage({ receiver, blockStatus }) {
     // console.log('Send-message');
     const ChatContent = useContext(ChatContentContext);
-    const { handleSendMessage } = useContext(SocketContext);
+    const { handleSendMessage, preventation } = useContext(SocketContext);
     // eslint-disable-next-line
     const [chosenEmoji, setChosenEmoji] = useState(null);
     const [blobUrlImg, setBlobUrlImg] = useState('');
@@ -29,6 +29,7 @@ function SendMessage({ receiver, blockStatus = false }) {
     const [displayEmojiList, setDisplayEmojiList] = useState(false);
 
     let messageSound = new Audio();
+    // console.log(blockStatus);
 
     const currentUser = useMemo(() => {
         return JSON.parse(localStorage.getItem('chat-app-hnt'));
@@ -37,6 +38,7 @@ function SendMessage({ receiver, blockStatus = false }) {
     const inputRef = useRef();
     const emojiListBtnRef = useRef();
     const emojiRef = useRef();
+    const blockStatusRef = useRef(blockStatus);
 
     // click bên ra ngoài để đóng emoji list
     useLayoutEffect(() => {
@@ -58,6 +60,16 @@ function SendMessage({ receiver, blockStatus = false }) {
         };
         // eslint-disable-next-line
     }, []);
+
+    useEffect(() => {
+        if (preventation) {
+            // console.log(receiver);
+            if (preventation.sender === receiver.id) {
+                blockStatusRef.current = 'blocked';
+            }
+        }
+        // eslint-disable-next-line
+    }, [preventation]);
 
     // khi chọn file từ ô input
     useEffect(() => {
@@ -245,9 +257,9 @@ function SendMessage({ receiver, blockStatus = false }) {
 
     return (
         <div className={cx('wrapper')}>
-            {blockStatus && (
+            {blockStatusRef.current && (
                 <div className={cx('block-status')}>
-                    {blockStatus === 'block' ? (
+                    {blockStatusRef.current === 'block' ? (
                         <div className={cx('block-status-body')}>
                             <span>
                                 Ban da chan
@@ -264,7 +276,7 @@ function SendMessage({ receiver, blockStatus = false }) {
                     )}
                 </div>
             )}
-            {!blockStatus && (
+            {!blockStatusRef.current && (
                 <div className={cx('body')}>
                     <div className={cx('chat-btns')}>
                         <Button nestInput leftIcon={<FontAwesomeIcon icon={faPhotoFilm} />}>

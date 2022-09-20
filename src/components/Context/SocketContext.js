@@ -40,8 +40,9 @@ function SocketContextProvider({ children }) {
                 handlSetMessageSended(data.sender, [data], false, true);
                 setNewReaction(data);
             });
-            socket.on('user-blocked', ({ receiver, content }) => {
-                setPreventation({ receiver, content });
+            socket.on('user is blocked', ({ receiver, sender }) => {
+                // console.log(sender);
+                setPreventation({ receiver, sender });
             });
             socket.on('user disconnected', (socketId) => {
                 setUserDisconnect(socketId);
@@ -129,11 +130,10 @@ function SocketContextProvider({ children }) {
         return to;
     };
 
-    const handleBlockUser = (data) => {
-        console.log(data);
-        const { sender, receiver } = data;
+    const handleBlockUser = ({ sender, receiver }) => {
+        console.log('chan');
         let to = getSocketIdFromReceiverId(userList, receiver);
-        socket.emit('block-user', { from: socket.id, to, sender, receiver, content: 'block' });
+        socket.emit('block-user', { from: socket.id, to, sender, receiver });
     };
 
     // gửi tin nhắn
