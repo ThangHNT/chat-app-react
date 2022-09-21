@@ -2,7 +2,7 @@ import React, { memo, useContext } from 'react';
 import classNames from 'classnames/bind';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBan, faTrashCan } from '@fortawesome/free-solid-svg-icons';
+import { faTrashCan } from '@fortawesome/free-solid-svg-icons';
 import Button from '~/components/Button';
 import 'tippy.js/dist/tippy.css';
 import styles from './Menu.module.scss';
@@ -14,11 +14,6 @@ const cx = classNames.bind(styles);
 
 const actionsMessageItem = [
     {
-        text: 'Chan',
-        icon: <FontAwesomeIcon icon={faBan} />,
-        action: 'block-user',
-    },
-    {
         text: 'Xoa doan chat',
         icon: <FontAwesomeIcon icon={faTrashCan} />,
         action: 'delete-messages',
@@ -29,21 +24,9 @@ function Menu({ sender, receiver }) {
     const { handleBlockUser } = useContext(SocketContext);
     const { handleSetBlockStatus } = useContext(ChatContentContext);
 
-    const handleAction = async (e) => {
-        const target = e.currentTarget;
-        const action = target.getAttribute('action');
-        handleBlockUser({ sender, receiver });
-        handleSetBlockStatus('block');
-        // console.log('chan');
-        // const { data } = await axios.post(`${host}/api/${action}`, { sender, receiver });
-        // if (!data.status) {
-        //     console.log('loi ' + action);
-        // }
-    };
-
     return actionsMessageItem.map((item, index) => {
         return (
-            <div key={index} action={item.action} className={cx('wrapper')} onClick={handleAction}>
+            <div key={index} action={item.action} className={cx('wrapper')}>
                 <Button messageItem text leftIcon={item.icon} children={item.text} />
             </div>
         );

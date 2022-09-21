@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useMemo, memo } from 'react';
+import React, { useState, useEffect, useContext, memo } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import classNames from 'classnames/bind';
@@ -19,37 +19,12 @@ function ChatContent() {
     const ChatContent = useContext(ChatContentContext);
     const [receiver, setReceiver] = useState();
     const [loading, setLoading] = useState(false);
-    const [blockStatus, setBlockStatus] = useState(false);
-
-    const currentUser = useMemo(() => {
-        return JSON.parse(localStorage.getItem('chat-app-hnt'));
-    }, []);
-
-    useEffect(() => {
-        if (ChatContent.blockStatus) {
-            // console.log(ChatContent.blockStatus);
-            setBlockStatus(ChatContent.blockStatus);
-        }
-    }, [ChatContent.blockStatus]);
+    const [setting, setSetting] = useState(false);
 
     // lấy thông tin ng nhận khi ấn vào user bên sidebar
     useEffect(() => {
         if (ChatContent.receiver) {
             setLoading(true);
-            // console.log(ChatContent.receiver);
-            (async function () {
-                // kiểm tra tình trạng chặn
-                const { data } = await axios.post(`${host}/api/check-block-status`, {
-                    currentUser: currentUser._id,
-                    receiver: ChatContent.receiver,
-                });
-                if (data.status) {
-                    // console.log(data);
-                    setBlockStatus(data.blocked);
-                } else {
-                    console.log('loi check block status');
-                }
-            })();
             axios
                 .get(`${host}/api/receiver/${ChatContent.receiver}`)
                 .then((data) => {
@@ -71,22 +46,28 @@ function ChatContent() {
         // eslint-disable-next-line
     }, [ChatContent.receiver]);
 
+    const handleDisplaySetting = () => {
+        setSetting((pre) => !pre);
+    };
+
     return (
         <div className={cx('wrapper')}>
-            {receiver && !loading && <HeaderChat receiver={receiver} />}
+            {receiver && !loading && <HeaderChat receiver={receiver} onClick={handleDisplaySetting} />}
             {receiver && !loading && (
                 <div className={cx('content')}>
                     {/* Nội dung tin nhắn */}
                     <Messages receiver={receiver} />
-                    <div className={cx('setting')}>
-                        <Setting receiver={receiver} />
-                    </div>
+                    {setting && (
+                        <div className={cx('setting')}>
+                            <Setting receiver={receiver} />
+                        </div>
+                    )}
                 </div>
             )}
             {receiver && !loading && (
                 <div className={cx('send-message')}>
                     {/* phần soạn tin nhắn send message area */}
-                    <SendMessage receiver={receiver} blockStatus={blockStatus} />
+                    <SendMessage receiver={receiver} />
                 </div>
             )}
             {/* khi chưa chọn messageItem(người nhận) hiện lên ảnh */}

@@ -1,4 +1,4 @@
-.body {
+.chat-area {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -17,14 +17,6 @@
         font-weight: 600;
         color: var(--primary);
         padding: 0 4px;
-    }
-
-    .unblock-btn {
-        padding: 4px 8px;
-        cursor: pointer;
-        margin-left: 5px;
-        color: purple;
-        font-size: 16px;
     }
 }
 

@@ -8,7 +8,7 @@ import PositiveStatus from '~/components/PositiveStatus';
 
 const cx = classNames.bind(styles);
 
-function HeaderChat({ receiver }) {
+function HeaderChat({ receiver, onClick }) {
     // console.log('header-chat');
     return (
         <div className={cx('wrapper')}>
@@ -27,7 +27,7 @@ function HeaderChat({ receiver }) {
             <div className={cx('action-btns')}>
                 <Button noTitle leftIcon={<FontAwesomeIcon icon={faPhone} />}></Button>
                 <Button noTitle leftIcon={<FontAwesomeIcon icon={faVideo} />}></Button>
-                <Button noTitle leftIcon={<FontAwesomeIcon icon={faCircleInfo} />}></Button>
+                <Button noTitle leftIcon={<FontAwesomeIcon icon={faCircleInfo} onClick={onClick} />}></Button>
             </div>
         </div>
     );

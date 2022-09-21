@@ -18,9 +18,9 @@ function Messages({ receiver }) {
     const {
         newMessage,
         messageSended,
-        checkGetDataFromDB,
+        checkGetMessagesFromDB,
         handlSetMessageSended,
-        handleCheckGetDataFromDB,
+        handleCheckGetMessagesFromDB,
         handleSetNewMessage,
     } = useContext(SocketContext);
 
@@ -93,7 +93,7 @@ function Messages({ receiver }) {
         if (messagesSended) {
             // console.log(messagesSended);
             // click vào messageItem lần đầu khi có tin nhắn mới
-            const checkGetData = checkGetDataFromDB.some((userId) => {
+            const checkGetData = checkGetMessagesFromDB.some((userId) => {
                 return userId === receiver.id;
             });
             if (!checkGetData) {
@@ -109,7 +109,7 @@ function Messages({ receiver }) {
                         if (data.data.status) {
                             let data2 = data.data.arr;
                             setMessages([...data2, ...messagesSended]);
-                            handleCheckGetDataFromDB(receiver.id);
+                            handleCheckGetMessagesFromDB(receiver.id);
                             handlSetMessageSended(receiver.id, data2, true);
                         }
                     })
@@ -136,7 +136,7 @@ function Messages({ receiver }) {
                         // console.log('data from db', data2);
                         setMessages([...data2]);
                         handlSetMessageSended(receiver.id, data2);
-                        handleCheckGetDataFromDB(receiver.id);
+                        handleCheckGetMessagesFromDB(receiver.id);
                     }
                 })
                 .catch((error) => {

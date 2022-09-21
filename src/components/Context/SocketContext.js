@@ -9,7 +9,7 @@ function SocketContextProvider({ children }) {
     const [newMessage, setNewMessage] = useState();
     const [messageSended, setMessageSended] = useState(new Map());
     const [blockStatus, setBlockStatus] = useState(new Map());
-    const [checkGetDataFromDB, setCheckGetDataFromDB] = useState([]);
+    const [checkGetMessagesFromDB, setCheckGetMessagesFromDB] = useState([]);
     const [newUser, setNewUser] = useState();
     const [userDisconnect, setUserDisconnect] = useState();
     const [newReaction, setNewReaction] = useState();
@@ -31,7 +31,7 @@ function SocketContextProvider({ children }) {
             socket.on('private message', (data) => {
                 // console.log(data.content);
                 document.title = 'Co tin nhan moi';
-                handleCheckGetDataFromDB(data.sender);
+                handleCheckGetMessagesFromDB(data.sender);
                 handlSetMessageSended(data.sender, data.content);
                 setNewMessage(data);
             });
@@ -42,7 +42,11 @@ function SocketContextProvider({ children }) {
             });
             socket.on('user is blocked', ({ receiver, sender }) => {
                 // console.log(sender);
-                setPreventation({ receiver, sender });
+                setPreventation({ receiver, sender, block: true });
+            });
+            socket.on('user is unblocked', ({ receiver, sender }) => {
+                // console.log(sender);
+                setPreventation({ receiver, sender, unblock: true });
             });
             socket.on('user disconnected', (socketId) => {
                 setUserDisconnect(socketId);
@@ -57,8 +61,8 @@ function SocketContextProvider({ children }) {
     };
 
     // kiểm tra xem đã lấy dữ liệu chưa, lấy r thì thêm userid vào mảng
-    const handleCheckGetDataFromDB = (userId) => {
-        setCheckGetDataFromDB((pre) => [...pre, userId]);
+    const handleCheckGetMessagesFromDB = (userId) => {
+        setCheckGetMessagesFromDB((pre) => [...pre, userId]);
     };
 
     const handleSetBlockStatus = (key, value) => {
@@ -131,9 +135,14 @@ function SocketContextProvider({ children }) {
     };
 
     const handleBlockUser = ({ sender, receiver }) => {
-        console.log('chan');
+        // console.log(sender, receiver);
         let to = getSocketIdFromReceiverId(userList, receiver);
         socket.emit('block-user', { from: socket.id, to, sender, receiver });
+    };
+
+    const handleUnblockUser = ({ sender, receiver }) => {
+        let to = getSocketIdFromReceiverId(userList, receiver);
+        socket.emit('unblock-user', { from: socket.id, to, sender, receiver });
     };
 
     // gửi tin nhắn
@@ -185,17 +194,18 @@ function SocketContextProvider({ children }) {
         userList,
         newMessage,
         messageSended,
-        checkGetDataFromDB,
+        checkGetMessagesFromDB,
         newReaction,
         handlSetMessageSended,
         handleSendMessage,
         handleSetNewMessage,
         handleInitSocket,
-        handleCheckGetDataFromDB,
+        handleCheckGetMessagesFromDB,
         handleSetNewReaction,
         handleSetUserList,
         handleSetBlockStatus,
         handleBlockUser,
+        handleUnblockUser,
     };
 
     return <SocketContext.Provider value={values}>{children}</SocketContext.Provider>;
