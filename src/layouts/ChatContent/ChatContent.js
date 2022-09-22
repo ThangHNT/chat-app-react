@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, memo } from 'react';
+import React, { useState, useEffect, useContext, useCallback, memo } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import classNames from 'classnames/bind';
@@ -46,13 +46,19 @@ function ChatContent() {
         // eslint-disable-next-line
     }, [ChatContent.receiver]);
 
-    const handleDisplaySetting = () => {
+    const handleDisplaySetting = useCallback(() => {
         setSetting((pre) => !pre);
-    };
+    }, []);
+
+    const handleHideSetting = useCallback(() => {
+        setSetting(false);
+    }, []);
 
     return (
         <div className={cx('wrapper')}>
-            {receiver && !loading && <HeaderChat receiver={receiver} onClick={handleDisplaySetting} />}
+            {receiver && !loading && (
+                <HeaderChat receiver={receiver} hideSetting={handleHideSetting} onClick={handleDisplaySetting} />
+            )}
             {receiver && !loading && (
                 <div className={cx('content')}>
                     {/* Nội dung tin nhắn */}

@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleInfo, faPhone, faVideo } from '@fortawesome/free-solid-svg-icons';
 import Image from '~/components/Image';
@@ -8,8 +9,14 @@ import PositiveStatus from '~/components/PositiveStatus';
 
 const cx = classNames.bind(styles);
 
-function HeaderChat({ receiver, onClick }) {
+function HeaderChat({ receiver, onClick, hideSetting }) {
     // console.log('header-chat');
+
+    useEffect(() => {
+        hideSetting();
+        // eslint-disable-next-line
+    }, []);
+
     return (
         <div className={cx('wrapper')}>
             <div className={cx('receiver')}>

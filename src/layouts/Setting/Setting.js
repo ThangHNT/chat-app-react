@@ -26,17 +26,27 @@ function Setting({ receiver }) {
     };
 
     const handleBlock = async (e) => {
-        if (blockStatus === 'block') {
-            handlSetBlockStatus('false');
+        // console.log((blockStatus.block = false));
+        if (blockStatus.block) {
             handleUnblockUser({ sender: currentUser._id, receiver: receiver.id });
+            const { data } = await axios.post(`${host}/api/unblock-user`, {
+                sender: currentUser._id,
+                receiver: receiver.id,
+            });
+            if (!data.status) {
+                console.log('loi block-user');
+            }
         } else {
-            handlSetBlockStatus('block');
             handleBlockUser({ sender: currentUser._id, receiver: receiver.id });
+            const { data } = await axios.post(`${host}/api/block-user`, {
+                sender: currentUser._id,
+                receiver: receiver.id,
+            });
+            if (!data.status) {
+                console.log('loi block-user');
+            }
         }
-        // const { data } = await axios.post(`${host}/api/block-user`, { sender: currentUser._id, receiver: receiver.id });
-        // if (!data.status) {
-        //     console.log('loi block-user');
-        // }
+        handlSetBlockStatus({ blocked: blockStatus.blocked, block: !blockStatus.block, receiver: receiver.id });
     };
 
     return (
@@ -86,7 +96,7 @@ function Setting({ receiver }) {
                 <div className={cx('item', { block: true })} onClick={handleBlock}>
                     <div className={cx('title')}>
                         <FontAwesomeIcon className={cx('icon')} icon={faBan} />
-                        {blockStatus === 'block' ? (
+                        {blockStatus.block ? (
                             <span>Bỏ Chặn {receiver.username} </span>
                         ) : (
                             <span>Chặn {receiver.username} </span>

@@ -29,7 +29,7 @@ function SendMessage({ receiver }) {
     const [inputValue, setInputValue] = useState('');
     const [file, setFile] = useState();
     const [displayEmojiList, setDisplayEmojiList] = useState(false);
-    const [block, setBlock] = useState();
+    const [block, setBlock] = useState({});
 
     let messageSound = new Audio();
 
@@ -47,27 +47,9 @@ function SendMessage({ receiver }) {
         }
     });
 
-    useEffect(() => {
-        setBlock(blockStatus);
-    }, [blockStatus]);
-
     // click bên ra ngoài để đóng emoji list
-    useEffect(() => {
-        (async function () {
-            // kiểm tra tình trạng chặn
-            const data = await axios.post(`${host}/api/check-block-status`, {
-                currentUser: currentUser._id,
-                receiver: ChatContent.receiver,
-            });
-            if (data) {
-                const data2 = data.data;
-                // console.log(data2);
-                setBlock(data2);
-                handlSetBlockStatus(data2.result);
-            } else {
-                console.log('loi check block status');
-            }
-        })();
+    useLayoutEffect(() => {
+        handleGetBlockStatus();
         document.addEventListener('click', (e) => {
             if (emojiListBtnRef.current && emojiRef.current) {
                 if (!emojiListBtnRef.current.contains(e.target) && !emojiRef.current.contains(e.target)) {
@@ -84,16 +66,26 @@ function SendMessage({ receiver }) {
         // eslint-disable-next-line
     }, []);
 
+    useEffect(() => {
+        if (blockStatus) {
+            if (blockStatus.receiver === receiver.id) {
+                setBlock(blockStatus);
+            }
+        } else {
+            // console.log('goi db');
+            handleGetBlockStatus();
+        }
+        // eslint-disable-next-line
+    }, [blockStatus]);
+
     // listen event block in socket
     useEffect(() => {
         if (preventation) {
             // console.log(preventation);
             if (preventation.block && preventation.sender === receiver.id) {
-                setBlock('blocked');
-                handlSetBlockStatus('blocked');
+                handlSetBlockStatus({ blocked: true, block: blockStatus.block, receiver: receiver.id });
             } else if (preventation.unblock && preventation.sender === receiver.id) {
-                setBlock('false');
-                handlSetBlockStatus('false');
+                handlSetBlockStatus({ blocked: false, block: blockStatus.block, receiver: receiver.id });
             }
         }
         // eslint-disable-next-line
@@ -283,12 +275,27 @@ function SendMessage({ receiver }) {
         }
     };
 
+    // kiểm tra tình trạng chặn
+    const handleGetBlockStatus = async () => {
+        const data = await axios.post(`${host}/api/check-block-status`, {
+            currentUser: currentUser._id,
+            receiver: ChatContent.receiver,
+        });
+        if (data) {
+            const data2 = data.data;
+            // console.log(data2);
+            setBlock(data2);
+            handlSetBlockStatus(data2);
+        } else {
+            console.log('loi check block status');
+        }
+    };
+
     return (
         <div className={cx('wrapper')}>
-            {console.log(block)}
             {block && (
                 <div className={cx('body')}>
-                    {block.status && (
+                    {!block.block && !block.blocked && (
                         <div className={cx('chat-area')}>
                             <div className={cx('chat-btns')}>
                                 <Button nestInput leftIcon={<FontAwesomeIcon icon={faPhotoFilm} />}>
@@ -377,7 +384,7 @@ function SendMessage({ receiver }) {
                         </div>
                     )}
 
-                    {block.status === false && (
+                    {(block.block || block.blocked) && (
                         <div className={cx('block-status')}>
                             {block.block && (
                                 <div className={cx('block-status-body')}>
