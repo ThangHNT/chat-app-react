@@ -137,3 +137,13 @@
         background-color: rgb(50, 49, 49);
     }
 }
+
+// ========================== dark mode =================================
+.darkmodeBtn {
+    background-color: var(--dark-mode);
+    color: #fff;
+
+    &:hover {
+        background-color: #9999;
+    }
+}

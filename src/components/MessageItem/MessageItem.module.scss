@@ -92,6 +92,17 @@
     border-radius: 5px;
     right: 6px;
     top: 58px;
-    box-shadow: 0px 0px 4px 1px #ccc;
+    box-shadow: 0px 0px 1px 1px #ccc;
     z-index: 10;
+}
+
+// ================================ dark mode =======================
+.darkBackground {
+    background-color: var(--dark-mode);
+    transition: 0.5s;
+
+    &:hover {
+        cursor: pointer;
+        background-color: rgb(123, 119, 119);
+    }
 }

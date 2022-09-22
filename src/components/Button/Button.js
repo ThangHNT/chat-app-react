@@ -20,6 +20,7 @@ function Button({
     noTitle = false,
     nestInput = false,
     scrollDown = false,
+    darkmodeBtn = false,
     children,
     onClick,
     leftIcon,
@@ -57,6 +58,7 @@ function Button({
         message_sended,
         nestInput,
         scrollDown,
+        darkmodeBtn,
     });
 
     return (

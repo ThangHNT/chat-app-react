@@ -14,7 +14,7 @@ import { ChatContentContext } from '~/components/Context/ChatContentContext';
 
 const cx = classNames.bind(styles);
 
-function Search() {
+function Search({ darkmode = false }) {
     // console.log('Search');
     const UserChatContent = useContext(ChatContentContext);
     const [searchValue, setSearchValue] = useState('');
@@ -103,6 +103,7 @@ function Search() {
                             noLabel
                             onInput={handleType}
                             arounded
+                            darkmode={darkmode}
                             placeholder="Tìm kiếm bạn bè"
                             input
                             name="search"

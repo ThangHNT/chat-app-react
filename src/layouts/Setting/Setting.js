@@ -11,7 +11,7 @@ import { SocketContext } from '~/components/Context/SocketContext';
 
 const cx = classNames.bind(styles);
 
-function Setting({ receiver }) {
+function Setting({ receiver, darkmode }) {
     const { blockStatus, handlSetBlockStatus } = useContext(SettingContext);
     const { handleBlockUser, handleUnblockUser } = useContext(SocketContext);
 
@@ -51,8 +51,8 @@ function Setting({ receiver }) {
 
     return (
         <div className={cx('wrapper')}>
-            <div className={cx('body')}>
-                <div className={cx('item')}>
+            <div className={cx('body', { darkmode: darkmode })}>
+                <div className={cx('item', { darkmodeItem: darkmode })}>
                     <div className={cx('title')} onClick={handleDisplayTheme}>
                         <FontAwesomeIcon className={cx('icon')} icon={faEthereum} />
                         <span>Thay đổi chủ đề</span>
@@ -81,19 +81,19 @@ function Setting({ receiver }) {
                         </div>
                     )}
                 </div>
-                <div className={cx('item', { changeNickName: true })}>
+                <div className={cx('item', { changeNickName: true, darkmodeItem: darkmode })}>
                     <div className={cx('title')}>
                         <FontAwesomeIcon className={cx('icon')} icon={faFont} />
                         <span>Chỉnh sửa biệt danh</span>
                     </div>
                 </div>
-                <div className={cx('item', { search: true })}>
+                <div className={cx('item', { search: true, darkmodeItem: darkmode })}>
                     <div className={cx('title')}>
                         <FontAwesomeIcon className={cx('icon')} icon={faMagnifyingGlass} />
                         <span>Tìm kiếm trong cuộc trò chuyện</span>
                     </div>
                 </div>
-                <div className={cx('item', { block: true })} onClick={handleBlock}>
+                <div className={cx('item', { block: true, darkmodeItem: darkmode })} onClick={handleBlock}>
                     <div className={cx('title')}>
                         <FontAwesomeIcon className={cx('icon')} icon={faBan} />
                         {blockStatus.block ? (

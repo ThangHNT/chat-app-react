@@ -32,6 +32,7 @@ function Message({
     type,
     children,
     onClick,
+    darkmodeMsg,
     ...passprops
 }) {
     // console.log('message==');
@@ -123,7 +124,7 @@ function Message({
         <div className={cx('wrapper', { sender })} onMouseOver={handleDisplayAction} onMouseOut={handleHideAction}>
             <div className={cx('wrapper-content', { sender })}>
                 {type === 'text' && !isValidUrl(children) && (
-                    <p className={cx('text-message')} {...props}>
+                    <p className={cx('text-message', { darkmodeText: darkmodeMsg })} {...props}>
                         {children}
                     </p>
                 )}

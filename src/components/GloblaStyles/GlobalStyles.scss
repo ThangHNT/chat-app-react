@@ -12,6 +12,9 @@
     --action-btn-font-size: 22px;
     --button-icon-hover: #ccc;
     --margin-top-home-content: 75px;
+    --dark-mode-btn: rgb(73, 147, 180);
+    --dark-mode: rgb(36, 37, 38);
+    --light-mode: #fff;
     --positive: #31a24c;
     --width-chat-content: 46%;
     --font-family-primary: 'Helvetica Neue', Helvetica, Arial;
@@ -20,6 +23,7 @@
 
 html {
     font-size: 62.5%;
+    // background-color: var(--dark-mode);
 }
 
 * {
@@ -48,4 +52,10 @@ a {
     border: 1px solid #000;
     top: 64%;
     left: 80%;
+}
+
+.darkmode {
+    background-color: var(--dark-mode) !important;
+    color: #fff;
+    transition: 0.5s;
 }

@@ -11,11 +11,13 @@ import SendMessage from '~/layouts/SendMessage';
 import host from '~/ulties/serverHost';
 import HeaderChat from '~/layouts/HeaderChat';
 import Setting from '~/layouts/Setting';
+import { SettingContext } from '~/components/Context/SettingContext';
 
 const cx = classNames.bind(styles);
 
 function ChatContent() {
     // console.log('Chat-content');
+    const { darkLightMode } = useContext(SettingContext);
     const ChatContent = useContext(ChatContentContext);
     const [receiver, setReceiver] = useState();
     const [loading, setLoading] = useState(false);
@@ -62,10 +64,10 @@ function ChatContent() {
             {receiver && !loading && (
                 <div className={cx('content')}>
                     {/* Nội dung tin nhắn */}
-                    <Messages receiver={receiver} />
+                    <Messages darkmodeMsg={darkLightMode} receiver={receiver} />
                     {setting && (
                         <div className={cx('setting')}>
-                            <Setting receiver={receiver} />
+                            <Setting darkmode={darkLightMode} receiver={receiver} />
                         </div>
                     )}
                 </div>
@@ -73,7 +75,7 @@ function ChatContent() {
             {receiver && !loading && (
                 <div className={cx('send-message')}>
                     {/* phần soạn tin nhắn send message area */}
-                    <SendMessage receiver={receiver} />
+                    <SendMessage darkmode={darkLightMode} receiver={receiver} />
                 </div>
             )}
             {/* khi chưa chọn messageItem(người nhận) hiện lên ảnh */}

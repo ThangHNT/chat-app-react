@@ -12,7 +12,7 @@ import { SocketContext } from '~/components/Context/SocketContext';
 
 const cx = classNames.bind(styles);
 
-function Messages({ receiver }) {
+function Messages({ receiver, darkmodeMsg = false }) {
     // console.log('Messages');
     const ChatContent = useContext(ChatContentContext);
     const {
@@ -182,6 +182,7 @@ function Messages({ receiver }) {
                             messageId={message.id}
                             messageBody={contentRef}
                             reaction={message.reactionIcon}
+                            darkmodeMsg={darkmodeMsg}
                         >
                             {message.type === 'text'
                                 ? message.text

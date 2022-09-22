@@ -12,11 +12,13 @@ import Image from '~/components/Image';
 import Button from '~/components/Button';
 import { SocketContext } from '~/components/Context/SocketContext';
 import { ChatContentContext } from '~/components/Context/ChatContentContext';
+import { SettingContext } from '~/components/Context/SettingContext';
 
 const cx = classNames.bind(styles);
 
 function Header() {
     // console.log('Header');
+    const { darkLightMode } = useContext(SettingContext);
     const { handleInitSocket, socket, messageSended } = useContext(SocketContext);
     const { handleDisplayChatContent, handleAddMessage } = useContext(ChatContentContext);
 
@@ -43,7 +45,7 @@ function Header() {
     };
 
     return (
-        <header className={cx('header', { 'wrapper-content': true })}>
+        <header className={cx('header', { darkmode: darkLightMode, darkmodeBorder: darkLightMode })}>
             <div className={cx('wrapper-logo')}>
                 <Link to={user ? '/' : '/login'} className={cx('logo-link')}>
                     <Image src="/logo.png" alt="logo" className={cx('logo')} />
@@ -60,9 +62,15 @@ function Header() {
                         // visible
                         placement="bottom-end"
                         render={(attrs) => (
-                            <div className={cx('user-menu')} tabIndex="-1" {...attrs}>
-                                <Button children="Tài khoản" text leftIcon={<FontAwesomeIcon icon={faUser} />} />
+                            <div className={cx('user-menu', { darkmode: darkLightMode })} tabIndex="-1" {...attrs}>
                                 <Button
+                                    darkmodeBtn={darkLightMode}
+                                    children="Tài khoản"
+                                    text
+                                    leftIcon={<FontAwesomeIcon icon={faUser} />}
+                                />
+                                <Button
+                                    darkmodeBtn={darkLightMode}
                                     onClick={handleLogout}
                                     children="Đăng xuất"
                                     text

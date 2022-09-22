@@ -1,7 +1,6 @@
 .wrapper {
     display: flex;
     align-items: center;
-    // margin-top: 5px;
 }
 
 .sender {
@@ -28,10 +27,18 @@
     font-size: 16px;
 }
 
+.darkmodeText {
+    color: #000;
+}
+
 .urlText {
-    color: blue;
+    color: var(--primary);
     text-decoration: underline;
     cursor: pointer;
+
+    &:hover {
+        color: rgb(145, 37, 223);
+    }
 }
 
 .img-message {

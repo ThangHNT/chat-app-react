@@ -186,3 +186,12 @@
 .item + .item {
     margin-top: 15px;
 }
+
+// ============================ dark mode ====================================
+.darkmodeItem {
+    background-color: #aaa;
+
+    .title:hover {
+        background-color: #555;
+    }
+}

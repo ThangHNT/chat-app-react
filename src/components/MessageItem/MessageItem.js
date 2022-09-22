@@ -14,7 +14,7 @@ import { ChatContentContext } from '~/components/Context/ChatContentContext';
 
 const cx = classNames.bind(styles);
 
-function MessageItem({ receiver, avatar, username, searchResult = false }) {
+function MessageItem({ receiver, darkmode = false, avatar, username, searchResult = false }) {
     // console.log('message-item');
     const { messages, handleDisplayChatContent } = useContext(ChatContentContext);
     const ChatContent = useContext(ChatContentContext);
@@ -140,7 +140,7 @@ function MessageItem({ receiver, avatar, username, searchResult = false }) {
     };
 
     return (
-        <div className={cx('wrapper', { searchResult })} onClick={handleClick}>
+        <div className={cx('wrapper', { searchResult, darkBackground: darkmode })} onClick={handleClick}>
             <div className={cx('avatar')}>
                 <Image small={searchResult ? true : false} src={avatar} avatar alt="avatar" />
                 {!searchResult && <PositiveStatus receiver={receiver} />}

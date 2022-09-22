@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useContext } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleInfo, faPhone, faVideo } from '@fortawesome/free-solid-svg-icons';
 import Image from '~/components/Image';
@@ -6,11 +6,13 @@ import Button from '~/components/Button';
 import classNames from 'classnames/bind';
 import styles from './HeaderChat.module.scss';
 import PositiveStatus from '~/components/PositiveStatus';
+import { SettingContext } from '~/components/Context/SettingContext';
 
 const cx = classNames.bind(styles);
 
 function HeaderChat({ receiver, onClick, hideSetting }) {
     // console.log('header-chat');
+    const { darkLightMode } = useContext(SettingContext);
 
     useEffect(() => {
         hideSetting();
@@ -18,7 +20,7 @@ function HeaderChat({ receiver, onClick, hideSetting }) {
     }, []);
 
     return (
-        <div className={cx('wrapper')}>
+        <div className={cx('wrapper', { darkmode: darkLightMode })}>
             <div className={cx('receiver')}>
                 <div>
                     <div className={cx('wrapper-img')}>

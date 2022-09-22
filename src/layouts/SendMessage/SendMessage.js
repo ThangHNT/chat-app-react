@@ -17,7 +17,7 @@ import { SettingContext } from '~/components/Context/SettingContext';
 
 const cx = classNames.bind(styles);
 
-function SendMessage({ receiver }) {
+function SendMessage({ receiver, darkmode = false }) {
     // console.log('Send-message');
     const ChatContent = useContext(ChatContentContext);
     const { handleSendMessage, preventation } = useContext(SocketContext);
@@ -309,7 +309,9 @@ function SendMessage({ receiver }) {
                                         <div className={cx('attachment-item')}>
                                             <div className={cx('remove-attachment-item')} onClick={handleRemoveImg}>
                                                 <FontAwesomeIcon
-                                                    className={cx('remove-attachment-icon')}
+                                                    className={cx('remove-attachment-icon', {
+                                                        removeIconDarkmode: darkmode,
+                                                    })}
                                                     icon={faXmarkCircle}
                                                 />
                                             </div>

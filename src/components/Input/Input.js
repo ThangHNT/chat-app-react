@@ -17,6 +17,7 @@ const Input = forwardRef(
             input = false,
             chat = false,
             file = false,
+            darkmode = false,
             onInput,
             onFocus,
             onKeyDown,
@@ -87,6 +88,7 @@ const Input = forwardRef(
             chat,
             arounded,
             file,
+            darkmode,
         });
 
         return (
