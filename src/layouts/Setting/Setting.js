@@ -62,7 +62,7 @@ function Setting({ receiver, darkmode }) {
                         </div>
                     </div>
                     {!openThemes && (
-                        <div className={cx('theme-list')}>
+                        <div className={cx('theme-list', { darkmodeThemeList: darkmode })}>
                             <div className={cx('theme-item')}>
                                 <span className={cx('theme1')}></span>
                             </div>

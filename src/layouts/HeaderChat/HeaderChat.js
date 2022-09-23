@@ -24,7 +24,7 @@ function HeaderChat({ receiver, onClick, hideSetting }) {
             <div className={cx('receiver')}>
                 <div>
                     <div className={cx('wrapper-img')}>
-                        <Image arounded src={receiver.avatar} />
+                        <Image darkmode={darkLightMode} arounded src={receiver.avatar} />
                         <PositiveStatus receiver={receiver.id} />
                     </div>
                 </div>

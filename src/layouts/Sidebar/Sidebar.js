@@ -50,7 +50,6 @@ function Sidebar() {
 
     return (
         <div className={cx('wrapper')}>
-            {/* {console.log(darkMode)} */}
             <div className={cx('header', { darkmode: darkMode })}>
                 <div className={cx('action')}>
                     <h3>USERS</h3>

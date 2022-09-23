@@ -67,6 +67,12 @@
     border-bottom-right-radius: 10px;
     height: 34px;
     max-height: 84px;
+    border-width: 2px;
+    border-color: var(--border-input);
+
+    &:focus {
+        border: 2px solid var(--primary);
+    }
 
     &::-webkit-scrollbar {
         width: 0px;

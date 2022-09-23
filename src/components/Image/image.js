@@ -16,6 +16,7 @@ const Image = forwardRef(
             arounded = false,
             noneReceiver = false,
             pasted = false,
+            darkmode = false,
             avatar,
             className,
             onClick,
@@ -43,6 +44,7 @@ const Image = forwardRef(
                         small,
                         pasted,
                         noneReceiver,
+                        darkmode,
                     })}
                     {...props}
                 />

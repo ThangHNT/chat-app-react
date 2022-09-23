@@ -65,6 +65,7 @@ function Search({ darkmode = false }) {
         // lấy root element
         const rootdiv = e.currentTarget;
         UserChatContent.handleDisplayChatContent(rootdiv.getAttribute('userid'));
+        setShowResults(false);
     };
 
     return (
@@ -100,7 +101,6 @@ function Search({ darkmode = false }) {
                         </div>
                     )}
                     onClickOutside={handleHideResults}
-                    hideOnClick="toggle"
                 >
                     <div className={cx('wrapper-input')}>
                         <Input

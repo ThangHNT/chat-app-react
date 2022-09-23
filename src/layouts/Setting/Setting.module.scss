@@ -195,3 +195,12 @@
         background-color: #555;
     }
 }
+
+.darkmodeThemeList,
+.darkmodeThemeList > .theme-item {
+    background-color: var(--dark-mode);
+
+    .theme-item:hover {
+        background-color: #444;
+    }
+}

@@ -20,6 +20,8 @@ import surprisedIcon from '~/assets/images/surprised-reaction-icon.png';
 import likeIcon from '~/assets/images/like-reaction-icon.png';
 import { ChatContentContext } from '~/components/Context/ChatContentContext';
 import { SocketContext } from '~/components/Context/SocketContext';
+import axios from 'axios';
+import host from '~/ulties/serverHost';
 
 const cx = classNames.bind(styles);
 
@@ -105,6 +107,15 @@ function Message({
 
     const handleZoomImg = (e) => {
         ChatContent.handleZoomImgae(e.target.src);
+    };
+
+    const handleRemoveIcon = async (e) => {
+        // console.log(reactionIcon);
+        setReactionIcon(false);
+        // const data = await axios.post(`${host}/api/remove/reaction-icon`, { messageId });
+        // if (!data.status) {
+        //     console.log('xoa icon that bai');
+        // }
     };
 
     const isValidUrl = (urlString) => {
@@ -211,8 +222,8 @@ function Message({
                         </div>
                     </a>
                 )}
-                {(reaction || reactionIcon) && (
-                    <div className={cx('reaction-icon', { sender })}>
+                {reactionIcon && (
+                    <div className={cx('reaction-icon', { sender })} onClick={handleRemoveIcon}>
                         <img src={`${reactionIcon}`} alt="reaction" />
                     </div>
                 )}

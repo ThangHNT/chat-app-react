@@ -86,9 +86,10 @@ function Header() {
                                     src="https://toanthaydinh.com/wp-content/uploads/2020/04/wallpaper-4k-hinh-nen-4k-hinh-anh-ve-ruong-bac-thang-dep_101311157-1400x788-1.jpg"
                                     alt="avatar"
                                     arounded
+                                    darkmode={darkLightMode}
                                 />
                             ) : (
-                                <Image src={user.avatar} alt="avatar" arounded />
+                                <Image darkmode={darkLightMode} src={user.avatar} alt="avatar" arounded />
                             )}
                         </div>
                     </Tippy>
