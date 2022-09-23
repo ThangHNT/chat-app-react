@@ -177,6 +177,7 @@ function Messages({ receiver, darkmodeMsg = false }) {
                     <div key={index} className={cx('message-item')}>
                         <Message
                             type={message.type}
+                            receiver={receiver.id}
                             time={getTime(messages[index].time)}
                             sender={sender === message.sender}
                             messageId={message.id}

@@ -108,6 +108,18 @@ function SocketContextProvider({ children }) {
         }
     };
 
+    const handleRemoveMessageSended = (key, value, reaction = false) => {
+        const checkKey = messageSended.has(key);
+        if (checkKey) {
+            const oldData = messageSended.get(key);
+            oldData.forEach((item) => {
+                if (item.id === value) {
+                    item.reactionIcon = '';
+                }
+            });
+        }
+    };
+
     // thay đổi ds người online
     const handleSetUserList = (newUserList) => {
         setUserList(newUserList);
@@ -206,6 +218,7 @@ function SocketContextProvider({ children }) {
         handleSetBlockStatus,
         handleBlockUser,
         handleUnblockUser,
+        handleRemoveMessageSended,
     };
 
     return <SocketContext.Provider value={values}>{children}</SocketContext.Provider>;

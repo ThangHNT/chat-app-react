@@ -30,6 +30,7 @@ function Message({
     messageBody,
     reaction = false,
     sender = false,
+    receiver,
     time,
     type,
     children,
@@ -39,7 +40,7 @@ function Message({
 }) {
     // console.log('message==');
     const ChatContent = useContext(ChatContentContext);
-    const { newReaction, handleSetNewReaction } = useContext(SocketContext);
+    const { newReaction, handleSetNewReaction, handleRemoveMessageSended } = useContext(SocketContext);
     const [reactionIcon, setReactionIcon] = useState(() => {
         if (reaction === 'heartIcon') return heartIcon;
         if (reaction === 'surprisedIcon') return surprisedIcon;
@@ -112,6 +113,7 @@ function Message({
     const handleRemoveIcon = async (e) => {
         // console.log(reactionIcon);
         setReactionIcon(false);
+        handleRemoveMessageSended(receiver, messageId);
         // const data = await axios.post(`${host}/api/remove/reaction-icon`, { messageId });
         // if (!data.status) {
         //     console.log('xoa icon that bai');
