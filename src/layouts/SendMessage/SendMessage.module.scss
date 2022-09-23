@@ -25,6 +25,11 @@
     display: flex;
 }
 
+.chat-btn-item:nth-child(2),
+.chat-btn-item:nth-child(3) {
+    margin: 0 4px;
+}
+
 .chat-input {
     flex: 1;
 }

@@ -21,6 +21,7 @@ function Button({
     nestInput = false,
     scrollDown = false,
     darkmodeBtn = false,
+    darkmodeOptionBtn = false,
     children,
     onClick,
     leftIcon,
@@ -59,6 +60,7 @@ function Button({
         nestInput,
         scrollDown,
         darkmodeBtn,
+        darkmodeOptionBtn,
     });
 
     return (

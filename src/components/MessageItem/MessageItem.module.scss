@@ -56,12 +56,6 @@
         font-weight: 500;
         font-family: var(--font-family-primary);
     }
-
-    .long-name {
-        font-size: 16px;
-        font-weight: 500;
-        font-family: var(--font-family-primary);
-    }
 }
 
 .message-notification {
@@ -98,8 +92,8 @@
 
 // ================================ dark mode =======================
 .darkBackground {
+    transition: 0.25s;
     background-color: var(--dark-mode);
-    transition: 0.5s;
 
     &:hover {
         cursor: pointer;

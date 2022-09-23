@@ -27,7 +27,7 @@ function Menu({ sender, receiver }) {
     return actionsMessageItem.map((item, index) => {
         return (
             <div key={index} action={item.action} className={cx('wrapper')}>
-                <Button messageItem text leftIcon={item.icon} children={item.text} />
+                <Button darkmodeBtn={false} messageItem text leftIcon={item.icon} children={item.text} />
             </div>
         );
     });

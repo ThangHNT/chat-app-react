@@ -146,18 +146,14 @@ function MessageItem({ receiver, darkmode = false, avatar, username, searchResul
                 {!searchResult && <PositiveStatus receiver={receiver} />}
             </div>
             <div className={cx('info')}>
-                {searchResult ? (
-                    <span className={cx('long-name')}>{username}</span>
-                ) : (
-                    <span className={cx('username')}>{username}</span>
-                )}
+                <span className={cx('username')}>{username}</span>
                 {!searchResult && <p className={cx('message')}>{lastestMessage}</p>}
             </div>
             {messageNotify && <div className={cx('message-notification')}></div>}
             {!searchResult && (
                 <div className={cx('action-btns')}>
                     <div className={cx('wrapper-btn')} ref={btnRef} onClick={handleDisplayMenu}>
-                        <Button circle>
+                        <Button circle darkmodeOptionBtn={darkmode}>
                             <FontAwesomeIcon icon={faEllipsis} />
                         </Button>
                     </div>

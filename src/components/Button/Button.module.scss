@@ -140,10 +140,21 @@
 
 // ========================== dark mode =================================
 .darkmodeBtn {
+    transition: 0.25s;
     background-color: var(--dark-mode);
     color: #fff;
 
     &:hover {
         background-color: #9999;
+    }
+}
+
+.darkmodeOptionBtn {
+    transition: 0.25s;
+    background-color: #333;
+    color: #fff;
+
+    &:hover {
+        background-color: #aaa;
     }
 }

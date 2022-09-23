@@ -298,10 +298,22 @@ function SendMessage({ receiver, darkmode = false }) {
                     {!block.block && !block.blocked && (
                         <div className={cx('chat-area')}>
                             <div className={cx('chat-btns')}>
-                                <Button nestInput leftIcon={<FontAwesomeIcon icon={faPhotoFilm} />}>
-                                    <Input noLabel file type="file" input name="file" autoComplete="off" />
-                                </Button>
-                                <Button nestInput leftIcon={<FontAwesomeIcon icon={faMicrophone} />}></Button>
+                                <div className={cx('chat-btn-item')}>
+                                    <Button
+                                        darkmodeBtn={darkmode}
+                                        nestInput
+                                        leftIcon={<FontAwesomeIcon icon={faPhotoFilm} />}
+                                    >
+                                        <Input noLabel file type="file" input name="file" autoComplete="off" />
+                                    </Button>
+                                </div>
+                                <div className={cx('chat-btn-item')}>
+                                    <Button
+                                        darkmodeBtn={darkmode}
+                                        nestInput
+                                        leftIcon={<FontAwesomeIcon icon={faMicrophone} />}
+                                    ></Button>
+                                </div>
                             </div>
                             <div className={cx('chat-input')}>
                                 {imgBase64.length > 0 && (
@@ -354,6 +366,7 @@ function SendMessage({ receiver, darkmode = false }) {
                                     </div>
                                 )}
                                 <Input
+                                    darkmode={darkmode}
                                     ref={inputRef}
                                     type="text"
                                     placeholder="Chat here"
@@ -364,24 +377,30 @@ function SendMessage({ receiver, darkmode = false }) {
                                     onInput={handleType}
                                 />
                             </div>
-                            <div className={cx('chat-emoji')}>
-                                <div
-                                    className={cx('wrapper-emoji-btn')}
-                                    ref={emojiListBtnRef}
-                                    onClick={handlDisplayEmojiList}
-                                >
-                                    <Button noTitle leftIcon={<FontAwesomeIcon icon={faFaceGrin} />} />
-                                </div>
-                                {displayEmojiList && (
-                                    <div className={cx('emoji-list')} ref={emojiRef}>
-                                        <Picker
-                                            native
-                                            searchPlaceholder="smile"
-                                            disableAutoFocus
-                                            onEmojiClick={onEmojiClick}
+                            <div className={cx('chat-btn-item')}>
+                                <div className={cx('chat-emoji')}>
+                                    <div
+                                        className={cx('wrapper-emoji-btn')}
+                                        ref={emojiListBtnRef}
+                                        onClick={handlDisplayEmojiList}
+                                    >
+                                        <Button
+                                            darkmodeBtn={darkmode}
+                                            noTitle
+                                            leftIcon={<FontAwesomeIcon icon={faFaceGrin} />}
                                         />
                                     </div>
-                                )}
+                                    {displayEmojiList && (
+                                        <div className={cx('emoji-list')} ref={emojiRef}>
+                                            <Picker
+                                                native
+                                                searchPlaceholder="smile"
+                                                disableAutoFocus
+                                                onEmojiClick={onEmojiClick}
+                                            />
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     )}

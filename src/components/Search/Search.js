@@ -75,7 +75,11 @@ function Search({ darkmode = false }) {
                     placement="bottom"
                     visible={searchResults.length > 0 && showResults}
                     render={(attrs) => (
-                        <div className={cx('search-results')} tabIndex="-1" {...attrs}>
+                        <div
+                            className={cx('search-results', { darkmodeBackground: darkmode })}
+                            tabIndex="-1"
+                            {...attrs}
+                        >
                             {searchResults.length > 0 &&
                                 searchResults.map((item, index) => (
                                     <div
@@ -89,12 +93,14 @@ function Search({ darkmode = false }) {
                                             receiver={item.userId}
                                             avatar={item.avatar}
                                             username={item.username}
+                                            darkmode={darkmode}
                                         />
                                     </div>
                                 ))}
                         </div>
                     )}
                     onClickOutside={handleHideResults}
+                    hideOnClick="toggle"
                 >
                     <div className={cx('wrapper-input')}>
                         <Input
