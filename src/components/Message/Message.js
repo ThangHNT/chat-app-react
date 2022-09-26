@@ -40,7 +40,7 @@ function Message({
 }) {
     // console.log('message==');
     const ChatContent = useContext(ChatContentContext);
-    const { newReaction, handleSetNewReaction, handleRemoveMessageSended } = useContext(SocketContext);
+    const { newReaction, handleSetNewReaction, reactionRemoved, handleRemoveReactionIcon } = useContext(SocketContext);
     const [reactionIcon, setReactionIcon] = useState(() => {
         if (reaction === 'heartIcon') return heartIcon;
         if (reaction === 'surprisedIcon') return surprisedIcon;
@@ -112,8 +112,10 @@ function Message({
 
     const handleRemoveIcon = async (e) => {
         // console.log(reactionIcon);
-        setReactionIcon(false);
-        handleRemoveMessageSended(receiver, messageId);
+        if (!sender) {
+            setReactionIcon(false);
+            handleRemoveReactionIcon(receiver, messageId);
+        }
         // const data = await axios.post(`${host}/api/remove/reaction-icon`, { messageId });
         // if (!data.status) {
         //     console.log('xoa icon that bai');
@@ -231,7 +233,7 @@ function Message({
                 )}
             </div>
             <div ref={btnRef} className={cx('message-sended-actions')}>
-                {!sender && <ReactMessageIcon messageId={messageId} messageBody={messageBody} />}
+                {!sender && !reactionRemoved && <ReactMessageIcon messageId={messageId} messageBody={messageBody} />}
                 <Button message_sended leftIcon={<FontAwesomeIcon icon={faReply} />}></Button>
                 <Button message_sended leftIcon={<FontAwesomeIcon icon={faEllipsisVertical} />}></Button>
             </div>

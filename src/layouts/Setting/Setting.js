@@ -1,7 +1,7 @@
 import { useState, useMemo, useContext } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBan, faChevronRight, faChevronLeft, faFont, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
+import { faBan, faFont, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import classNames from 'classnames/bind';
 import host from '~/ulties/serverHost';
 import styles from './Setting.module.scss';
@@ -12,18 +12,12 @@ import { SocketContext } from '~/components/Context/SocketContext';
 const cx = classNames.bind(styles);
 
 function Setting({ receiver, darkmode }) {
-    const { blockStatus, handlSetBlockStatus } = useContext(SettingContext);
+    const { blockStatus, handlSetBlockStatus, handleDisplayThemeList } = useContext(SettingContext);
     const { handleBlockUser, handleUnblockUser } = useContext(SocketContext);
-
-    const [openThemes, setOpenThemes] = useState(true);
 
     const currentUser = useMemo(() => {
         return JSON.parse(localStorage.getItem('chat-app-hnt'));
     }, []);
-
-    const handleDisplayTheme = () => {
-        setOpenThemes((pre) => !pre);
-    };
 
     const handleBlock = async (e) => {
         // console.log((blockStatus.block = false));
@@ -53,33 +47,10 @@ function Setting({ receiver, darkmode }) {
         <div className={cx('wrapper')}>
             <div className={cx('body', { darkmode: darkmode })}>
                 <div className={cx('item', { darkmodeItem: darkmode })}>
-                    <div className={cx('title')} onClick={handleDisplayTheme}>
+                    <div className={cx('title')} onClick={handleDisplayThemeList}>
                         <FontAwesomeIcon className={cx('icon')} icon={faEthereum} />
                         <span>Thay đổi chủ đề</span>
-                        <div className={cx('arrow')}>
-                            {openThemes && <FontAwesomeIcon className={cx('icon')} icon={faChevronRight} />}
-                            {!openThemes && <FontAwesomeIcon className={cx('icon')} icon={faChevronLeft} />}
-                        </div>
                     </div>
-                    {!openThemes && (
-                        <div className={cx('theme-list', { darkmodeThemeList: darkmode })}>
-                            <div className={cx('theme-item')}>
-                                <span className={cx('theme1')}></span>
-                            </div>
-                            <div className={cx('theme-item')}>
-                                <span className={cx('theme2')}></span>
-                            </div>
-                            <div className={cx('theme-item')}>
-                                <span className={cx('theme3')}></span>
-                            </div>
-                            <div className={cx('theme-item')}>
-                                <span className={cx('theme4')}></span>
-                            </div>
-                            <div className={cx('theme-item')}>
-                                <span className={cx('theme5')}></span>
-                            </div>
-                        </div>
-                    )}
                 </div>
                 <div className={cx('item', { changeNickName: true, darkmodeItem: darkmode })}>
                     <div className={cx('title')}>

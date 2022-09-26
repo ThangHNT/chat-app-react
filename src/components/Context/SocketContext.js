@@ -14,6 +14,7 @@ function SocketContextProvider({ children }) {
     const [userDisconnect, setUserDisconnect] = useState();
     const [newReaction, setNewReaction] = useState();
     const [preventation, setPreventation] = useState();
+    const [reactionRemoved, setReactionRemoved] = useState();
     // console.log(userList);
 
     // lắng nghe event từ socket
@@ -47,6 +48,11 @@ function SocketContextProvider({ children }) {
             socket.on('user is unblocked', ({ receiver, sender }) => {
                 // console.log(sender);
                 setPreventation({ receiver, sender, unblock: true });
+            });
+            socket.on('remove reaction icon now', ({ receiver, messageId }) => {
+                // console.log(receiver);
+                handleRemoveMessageSended(receiver, messageId, true);
+                setReactionRemoved(messageId);
             });
             socket.on('user disconnected', (socketId) => {
                 setUserDisconnect(socketId);
@@ -112,12 +118,20 @@ function SocketContextProvider({ children }) {
         const checkKey = messageSended.has(key);
         if (checkKey) {
             const oldData = messageSended.get(key);
-            oldData.forEach((item) => {
-                if (item.id === value) {
-                    item.reactionIcon = '';
-                }
-            });
+            if (reaction) {
+                oldData.forEach((item) => {
+                    if (item.id === value) {
+                        item.reactionIcon = '';
+                    }
+                });
+            }
         }
+    };
+
+    const handleRemoveReactionIcon = (receiver, messageId) => {
+        handleRemoveMessageSended(receiver, messageId, true);
+        let to = getSocketIdFromReceiverId(userList, receiver);
+        socket.emit('remove reaction icon', { from: socket.id, to, receiver, messageId });
     };
 
     // thay đổi ds người online
@@ -208,6 +222,7 @@ function SocketContextProvider({ children }) {
         messageSended,
         checkGetMessagesFromDB,
         newReaction,
+        reactionRemoved,
         handlSetMessageSended,
         handleSendMessage,
         handleSetNewMessage,
@@ -219,6 +234,7 @@ function SocketContextProvider({ children }) {
         handleBlockUser,
         handleUnblockUser,
         handleRemoveMessageSended,
+        handleRemoveReactionIcon,
     };
 
     return <SocketContext.Provider value={values}>{children}</SocketContext.Provider>;
