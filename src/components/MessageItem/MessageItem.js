@@ -11,6 +11,7 @@ import Menu from '~/components/Menu';
 import PositiveStatus from '~/components/PositiveStatus';
 import { SocketContext } from '~/components/Context/SocketContext';
 import { ChatContentContext } from '~/components/Context/ChatContentContext';
+import { SettingContext } from '~/components/Context/SettingContext';
 
 const cx = classNames.bind(styles);
 
@@ -19,6 +20,7 @@ function MessageItem({ receiver, darkmode = false, avatar, username, searchResul
     const { messages, handleDisplayChatContent } = useContext(ChatContentContext);
     const ChatContent = useContext(ChatContentContext);
     const { newMessage } = useContext(SocketContext);
+    const { handleSetTheme } = useContext(SettingContext);
     const [lastestMessage, setlastestMessage] = useState();
     const [menuMessageItem, setmenuMessageItem] = useState(false);
     const [messageNotify, setMessageNotify] = useState(false);
@@ -134,9 +136,19 @@ function MessageItem({ receiver, darkmode = false, avatar, username, searchResul
     };
 
     // click để hiện ra đoạn chat và tắt thông báo tin nhắn mới
-    const handleClick = () => {
+    const handleClick = async () => {
         setMessageNotify(false);
         handleDisplayChatContent(receiver);
+        axios.post(`${host}/api/get-setting`, { user: senderId }).then((data) => {
+            const data2 = data.data;
+            // console.log(typeof data2);
+            if (data2.length > 0) {
+                // handleSetTheme(data2);
+            }
+            if (!data.status) {
+                console.log('loi lay cai dat');
+            }
+        });
     };
 
     return (
