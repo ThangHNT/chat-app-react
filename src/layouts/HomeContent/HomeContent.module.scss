@@ -123,8 +123,12 @@
     }
 
     &:hover {
-        background-color: #aaa;
+        background-color: #aaa !important;
     }
+}
+
+.active {
+    background-color: #aaa;
 }
 
 .theme-footer {
@@ -167,7 +171,7 @@
         color: #fff;
     }
 
-    .canStore {
+    .canChange {
         background-color: var(--primary);
         color: #fff;
         cursor: pointer;

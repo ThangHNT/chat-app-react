@@ -3,12 +3,12 @@ import { createContext, useState } from 'react';
 const SettingContext = createContext();
 
 const themeList = [
-    { kind: 'default-theme' },
-    { kind: 'theme1' },
-    { kind: 'theme2' },
-    { kind: 'theme3' },
-    { kind: 'theme4' },
-    { kind: 'theme5' },
+    { type: 'default-theme' },
+    { type: 'theme1' },
+    { type: 'theme2' },
+    { type: 'theme3' },
+    { type: 'theme4' },
+    { type: 'theme5' },
 ];
 
 function SettingProvider({ children }) {
@@ -16,7 +16,7 @@ function SettingProvider({ children }) {
     const [blockStatus, setBlockStatus] = useState('');
     const [darkLightMode, setDarkLightMode] = useState(false);
     const [displayTheme, setDisplayTheme] = useState();
-    const [theme, setTheme] = useState(0);
+    const [theme, setTheme] = useState('0');
 
     const handleDisplayThemeList = () => {
         setDisplayTheme((pre) => !pre);

@@ -13,7 +13,7 @@ const cx = classNames.bind(styles);
 function HomeContent() {
     // console.log('home-content');
     const ChatContentMsg = useContext(ChatContentContext);
-    const { displayTheme, handleDisplayThemeList, themeList } = useContext(SettingContext);
+    const { displayTheme, handleDisplayThemeList, themeList, handleSetTheme } = useContext(SettingContext);
     const Setting = useContext(SettingContext);
 
     const [zoomImg, setZoomImg] = useState(false);
@@ -59,14 +59,29 @@ function HomeContent() {
     };
 
     const handleGetTheme = (e) => {
-        // e.currentTarget.style.backgroundColor = '#aaa';
-        if (Setting.theme !== Number(e.currentTarget.id)) {
-            setTheme(e.currentTarget.id);
-            console.log(e.currentTarget.id);
+        const target = e.currentTarget;
+        target.style.backgroundColor = '#aaa';
+        themeList.forEach((item, index) => {
+            if (index !== Number(target.id)) {
+                document.getElementById(index).style.backgroundColor = '#fff';
+            }
+        });
+        if (Setting.theme !== target.id) {
+            setTheme(target.id);
         } else {
             setTheme(false);
         }
     };
+
+    const handleChangeTheme = (e) => {
+        if (theme) {
+            handleSetTheme(theme);
+        }
+    };
+
+    useEffect(() => {
+        // console.log(typeof Setting.theme);
+    }, []);
 
     return (
         <div className={cx('wrapper')}>
@@ -87,43 +102,32 @@ function HomeContent() {
                                     />
                                 </div>
                                 <div className={cx('theme-list')}>
-                                    {console.log(themeList)}
                                     {themeList.map((item, index) => {
                                         return (
                                             <div
                                                 key={index}
                                                 id={`${index}`}
-                                                className={cx('theme-item')}
+                                                className={cx('theme-item', {
+                                                    active: Setting.theme === String(index),
+                                                })}
                                                 onClick={handleGetTheme}
                                             >
-                                                <div className={cx(`${item.kind}`)}></div>
+                                                <div className={cx(`${item.type}`)}></div>
                                             </div>
                                         );
                                     })}
-                                    {/* <div id="0" className={cx('theme-item', {})} onClick={handleGetTheme}>
-                                        <div className={cx('default-theme')}></div>
-                                    </div>
-                                    <div id="1" className={cx('theme-item', {})} onClick={handleGetTheme}>
-                                        <div className={cx('theme1')}></div>
-                                    </div>
-                                    <div id="2" className={cx('theme-item', {})} onClick={handleGetTheme}>
-                                        <div className={cx('theme2')}></div>
-                                    </div>
-                                    <div id="3" className={cx('theme-item', {})} onClick={handleGetTheme}>
-                                        <div className={cx('theme3')}></div>
-                                    </div>
-                                    <div id="4" className={cx('theme-item', {})} onClick={handleGetTheme}>
-                                        <div className={cx('theme4')}></div>
-                                    </div>
-                                    <div id="5" className={cx('theme-item', {})} onClick={handleGetTheme}>
-                                        <div className={cx('theme5')}></div>
-                                    </div> */}
                                 </div>
                                 <div className={cx('theme-footer')}>
                                     <span className={cx('cancel-btn')} onClick={handleSetDisplayThemeList}>
                                         Hủy
                                     </span>
-                                    <span className={cx('store-btn', { canStore: theme })}>Lưu</span>
+                                    <span
+                                        disabled={theme}
+                                        className={cx('store-btn', { canChange: theme })}
+                                        onClick={handleChangeTheme}
+                                    >
+                                        Lưu
+                                    </span>
                                 </div>
                             </div>
                         ) : (
