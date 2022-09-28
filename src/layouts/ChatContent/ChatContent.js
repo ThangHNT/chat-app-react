@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useCallback, memo } from 'react';
+import React, { useState, useEffect, useContext, useMemo, useCallback, memo } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import classNames from 'classnames/bind';
@@ -17,16 +17,21 @@ const cx = classNames.bind(styles);
 
 function ChatContent() {
     // console.log('Chat-content');
-    const { darkLightMode } = useContext(SettingContext);
+    const { darkLightMode, handleSetTheme } = useContext(SettingContext);
     const ChatContent = useContext(ChatContentContext);
     const [receiver, setReceiver] = useState();
     const [loading, setLoading] = useState(false);
     const [setting, setSetting] = useState(false);
 
+    const senderId = useMemo(() => {
+        return JSON.parse(localStorage.getItem('chat-app-hnt'))._id;
+    }, []);
+
     // lấy thông tin ng nhận khi ấn vào user bên sidebar
     useEffect(() => {
         if (ChatContent.receiver) {
             setLoading(true);
+            // lấy thông tin ng nhận
             axios
                 .get(`${host}/api/receiver/${ChatContent.receiver}`)
                 .then((data) => {
@@ -43,6 +48,20 @@ function ChatContent() {
                 })
                 .catch((err) => {
                     console.log('Loi lay ng nhan');
+                });
+
+            // khởi tạo setting
+            axios
+                .post(`${host}/api/get-theme`, { sender: senderId, receiver: ChatContent.receiver })
+                .then((data) => {
+                    const data2 = data.data;
+                    // console.log(data2);
+                    if (data2) {
+                        handleSetTheme(data2.theme);
+                    }
+                })
+                .catch((error) => {
+                    console.log('loi set theme');
                 });
         }
         // eslint-disable-next-line

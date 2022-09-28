@@ -88,8 +88,12 @@ function Modal() {
                 receiver: ChatContentMsg.receiver,
                 theme,
             });
+            // console.log(data.data);
             if (!data.status) {
-                console.log('thay doi theme loi');
+                console.log('yeu cau doi theme that bai');
+                if (!data.data.status) {
+                    console.log('doi theme loi');
+                }
             }
         }
     };

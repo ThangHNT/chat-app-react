@@ -3,7 +3,7 @@ import { createContext, useState } from 'react';
 const SettingContext = createContext();
 
 const themeList = [
-    { type: 'default-theme' },
+    { type: 'theme0' },
     { type: 'theme1' },
     { type: 'theme2' },
     { type: 'theme3' },

@@ -8,6 +8,8 @@ import {
     faFileExcel,
     faFilePdf,
 } from '@fortawesome/free-solid-svg-icons';
+import axios from 'axios';
+import host from '~/ulties/serverHost';
 import classNames from 'classnames/bind';
 import styles from './Message.module.scss';
 import Button from '~/components/Button';
@@ -20,8 +22,7 @@ import surprisedIcon from '~/assets/images/surprised-reaction-icon.png';
 import likeIcon from '~/assets/images/like-reaction-icon.png';
 import { ChatContentContext } from '~/components/Context/ChatContentContext';
 import { SocketContext } from '~/components/Context/SocketContext';
-import axios from 'axios';
-import host from '~/ulties/serverHost';
+import { SettingContext } from '~/components/Context/SettingContext';
 
 const cx = classNames.bind(styles);
 
@@ -39,6 +40,7 @@ function Message({
     ...passprops
 }) {
     // console.log('message==');
+    const { theme } = useContext(SettingContext);
     const ChatContent = useContext(ChatContentContext);
     const { newReaction, handleSetNewReaction, reactionRemoved, handleRemoveReactionIcon } = useContext(SocketContext);
     const [reactionIcon, setReactionIcon] = useState(() => {
@@ -56,11 +58,24 @@ function Message({
 
     const btnRef = useRef();
     const spanRef = useRef();
+    const pRef = useRef();
 
     useEffect(() => {
         btnRef.current.style.display = 'none';
         spanRef.current.style.display = 'none';
     }, []);
+
+    useEffect(() => {
+        if (theme && pRef.current) {
+            console.log(theme);
+            for (let i = 0; i < 6; i++) {
+                if (i !== theme) {
+                    pRef.current.classList.remove(`theme${i}`);
+                }
+            }
+            pRef.current.classList.add(`theme${theme}`);
+        }
+    }, [theme]);
 
     useEffect(() => {
         if (newReaction) {
@@ -139,7 +154,7 @@ function Message({
         <div className={cx('wrapper', { sender })} onMouseOver={handleDisplayAction} onMouseOut={handleHideAction}>
             <div className={cx('wrapper-content', { sender })}>
                 {type === 'text' && !isValidUrl(children) && (
-                    <p className={cx('text-message', { darkmodeText: darkmodeMsg })} {...props}>
+                    <p ref={pRef} className={cx('text-message', { darkmodeText: darkmodeMsg })} {...props}>
                         {children}
                     </p>
                 )}
