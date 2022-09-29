@@ -24,13 +24,14 @@ function Messages({ receiver, darkmodeMsg = false }) {
         handleSetNewMessage,
     } = useContext(SocketContext);
 
+    const [scrollDown, setScrollDown] = useState(false);
+    const [messages, setMessages] = useState([]);
+
     const sender = useMemo(() => {
         return JSON.parse(localStorage.getItem('chat-app-hnt'))._id;
     }, []);
-    const [messages, setMessages] = useState([]);
 
     const contentRef = useRef();
-    const [scrollDown, setScrollDown] = useState(false);
 
     // nhận tin nhắn mới nhất từ socket
     useEffect(() => {

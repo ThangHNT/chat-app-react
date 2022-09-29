@@ -37,12 +37,14 @@ function Message({
     children,
     onClick,
     darkmodeMsg,
+    themeMsg,
     ...passprops
 }) {
     // console.log('message==');
-    const { theme } = useContext(SettingContext);
+    const { theme, handleSetTheme } = useContext(SettingContext);
     const ChatContent = useContext(ChatContentContext);
-    const { newReaction, handleSetNewReaction, reactionRemoved, handleRemoveReactionIcon } = useContext(SocketContext);
+    const { newReaction, changeTheme, handleSetNewReaction, reactionRemoved, handleRemoveReactionIcon } =
+        useContext(SocketContext);
     const [reactionIcon, setReactionIcon] = useState(() => {
         if (reaction === 'heartIcon') return heartIcon;
         if (reaction === 'surprisedIcon') return surprisedIcon;
@@ -66,15 +68,20 @@ function Message({
     }, []);
 
     useEffect(() => {
-        if (theme && pRef.current) {
-            console.log(theme);
-            for (let i = 0; i < 6; i++) {
-                if (i !== theme) {
-                    pRef.current.classList.remove(`theme${i}`);
-                }
+        if (changeTheme) {
+            if (receiver === changeTheme.user) {
+                handleChangeTheme(changeTheme.theme);
+                handleSetTheme(changeTheme.theme);
             }
-            pRef.current.classList.add(`theme${theme}`);
         }
+        // eslint-disable-next-line
+    }, [changeTheme]);
+
+    useEffect(() => {
+        if (theme) {
+            handleChangeTheme(theme);
+        }
+        // eslint-disable-next-line
     }, [theme]);
 
     useEffect(() => {
@@ -123,6 +130,17 @@ function Message({
 
     const handleZoomImg = (e) => {
         ChatContent.handleZoomImgae(e.target.src);
+    };
+
+    const handleChangeTheme = (theme) => {
+        if (pRef.current) {
+            for (let i = 0; i < 6; i++) {
+                if (i !== theme) {
+                    pRef.current.classList.remove(`theme${i}`);
+                }
+            }
+            pRef.current.classList.add(`theme${theme}`);
+        }
     };
 
     const handleRemoveIcon = async (e) => {

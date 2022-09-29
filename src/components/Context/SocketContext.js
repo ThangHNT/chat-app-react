@@ -15,7 +15,8 @@ function SocketContextProvider({ children }) {
     const [newReaction, setNewReaction] = useState();
     const [preventation, setPreventation] = useState();
     const [reactionRemoved, setReactionRemoved] = useState();
-    // console.log(userList);
+    const [theme, setTheme] = useState(new Map());
+    const [changeTheme, setChangeTheme] = useState();
 
     // lắng nghe event từ socket
     useEffect(() => {
@@ -49,10 +50,15 @@ function SocketContextProvider({ children }) {
                 // console.log(sender);
                 setPreventation({ receiver, sender, unblock: true });
             });
-            socket.on('remove reaction icon now', ({ receiver, messageId }) => {
+            socket.on('remove reaction icon private', ({ receiver, messageId }) => {
                 // console.log(receiver);
                 handleRemoveMessageSended(receiver, messageId, true);
                 setReactionRemoved(messageId);
+            });
+            socket.on('change theme private', (data) => {
+                // console.log(data);
+                // handleChangeThemeSocket(data.user, data.theme);
+                setChangeTheme(data);
             });
             socket.on('user disconnected', (socketId) => {
                 setUserDisconnect(socketId);
@@ -66,11 +72,31 @@ function SocketContextProvider({ children }) {
         setSocket(socket);
     };
 
+    // phát sự kiện thay đổi chủ đề
+    const handleChangeTheme = (sender, receiver, theme) => {
+        let to = getSocketIdFromReceiverId(userList, receiver);
+        socket.emit('change theme', { from: socket.id, to, sender, theme });
+    };
+
+    // lắng nghe event thay đổi chủ đề
+    const handleChangeThemeSocket = (key, value) => {
+        const oldData = theme.get(key);
+        // console.log(oldData);
+        if (oldData) {
+            setTheme(() => {
+                return oldData.set(key, value);
+            });
+        } else {
+            setTheme(theme.set(key, value));
+        }
+    };
+
     // kiểm tra xem đã lấy dữ liệu chưa, lấy r thì thêm userid vào mảng
     const handleCheckGetMessagesFromDB = (userId) => {
         setCheckGetMessagesFromDB((pre) => [...pre, userId]);
     };
 
+    // set tình trạng chặn
     const handleSetBlockStatus = (key, value) => {
         const checkKey = blockStatus.has(key);
         if (!checkKey) {
@@ -114,6 +140,7 @@ function SocketContextProvider({ children }) {
         }
     };
 
+    // xóa bỏ tin nhắn đã gửi
     const handleRemoveMessageSended = (key, value, reaction = false) => {
         const checkKey = messageSended.has(key);
         if (checkKey) {
@@ -128,6 +155,7 @@ function SocketContextProvider({ children }) {
         }
     };
 
+    // phát sự kiện xóa bỏ reaction icon
     const handleRemoveReactionIcon = (receiver, messageId) => {
         handleRemoveMessageSended(receiver, messageId, true);
         let to = getSocketIdFromReceiverId(userList, receiver);
@@ -149,6 +177,7 @@ function SocketContextProvider({ children }) {
         setNewReaction(reaction);
     };
 
+    // lấy socketId từ receiver id
     const getSocketIdFromReceiverId = (users, receiver) => {
         let to = '';
         for (let i = 0; i < users.length; i++) {
@@ -160,12 +189,14 @@ function SocketContextProvider({ children }) {
         return to;
     };
 
+    // phát sự kiện chặn ng dùng
     const handleBlockUser = ({ sender, receiver }) => {
         // console.log(sender, receiver);
         let to = getSocketIdFromReceiverId(userList, receiver);
         socket.emit('block-user', { from: socket.id, to, sender, receiver });
     };
 
+    // phát sự kiện bỏ chặn ng dùng
     const handleUnblockUser = ({ sender, receiver }) => {
         let to = getSocketIdFromReceiverId(userList, receiver);
         socket.emit('unblock-user', { from: socket.id, to, sender, receiver });
@@ -223,6 +254,8 @@ function SocketContextProvider({ children }) {
         checkGetMessagesFromDB,
         newReaction,
         reactionRemoved,
+        theme,
+        changeTheme,
         handlSetMessageSended,
         handleSendMessage,
         handleSetNewMessage,
@@ -235,6 +268,7 @@ function SocketContextProvider({ children }) {
         handleUnblockUser,
         handleRemoveMessageSended,
         handleRemoveReactionIcon,
+        handleChangeTheme,
     };
 
     return <SocketContext.Provider value={values}>{children}</SocketContext.Provider>;
