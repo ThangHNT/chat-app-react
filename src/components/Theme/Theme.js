@@ -12,8 +12,10 @@ import { SocketContext } from '~/components/Context/SocketContext';
 const cx = classNames.bind(styles);
 
 function Theme({ receiver }) {
+    // console.log('theme');
     const Socket = useContext(SocketContext);
     const [theme, setTheme] = useState(false);
+    // const [themeChoosen, setThemeChoosen] = useState(false);
     const { handleDisplayThemeList, themeList, handleSetTheme } = useContext(SettingContext);
     const Setting = useContext(SettingContext);
 
@@ -21,10 +23,7 @@ function Theme({ receiver }) {
         return JSON.parse(localStorage.getItem('chat-app-hnt'));
     }, []);
 
-    // useEffect(() => {
-    //     if (Socket.changeTheme) {
-    //     }
-    // }, [Socket.changeTheme]);
+    useEffect(() => {});
 
     const handleSetDisplayThemeList = () => {
         handleDisplayThemeList();

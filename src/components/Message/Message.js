@@ -67,9 +67,11 @@ function Message({
         spanRef.current.style.display = 'none';
     }, []);
 
+    // thay đổi màu chủ đề tin nhắn từ socket
     useEffect(() => {
         if (changeTheme) {
             if (receiver === changeTheme.user) {
+                // console.log('change theme');
                 handleChangeTheme(changeTheme.theme);
                 handleSetTheme(changeTheme.theme);
             }
