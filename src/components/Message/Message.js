@@ -37,7 +37,6 @@ function Message({
     children,
     onClick,
     darkmodeMsg,
-    themeMsg,
     ...passprops
 }) {
     // console.log('message==');
@@ -122,7 +121,7 @@ function Message({
 
     const handleDisplayAction = () => {
         btnRef.current.style.display = 'flex';
-        spanRef.current.style.display = 'flex';
+        spanRef.current.style.display = 'block';
     };
 
     const handleHideAction = () => {
@@ -136,12 +135,12 @@ function Message({
 
     const handleChangeTheme = (theme) => {
         if (pRef.current) {
-            for (let i = 0; i < 6; i++) {
-                if (i !== theme) {
-                    pRef.current.classList.remove(`theme${i}`);
-                }
-            }
-            pRef.current.classList.add(`theme${theme}`);
+            // for (let i = 0; i < 6; i++) {
+            //     if (i !== theme) {
+            //         pRef.current.classList.remove(`theme${i}`);
+            //     }
+            // }
+            // pRef.current.classList.add(`theme${theme}`);
         }
     };
 

@@ -55,9 +55,9 @@ function ChatContent() {
                 .post(`${host}/api/get-theme`, { sender: senderId, receiver: ChatContent.receiver })
                 .then((data) => {
                     const data2 = data.data;
-                    // console.log(data2);
+                    console.log(data2);
                     if (data2) {
-                        handleSetTheme(data2.theme);
+                        // handleSetTheme(data2.theme);
                     }
                 })
                 .catch((error) => {
