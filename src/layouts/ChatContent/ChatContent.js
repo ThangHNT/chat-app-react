@@ -23,8 +23,8 @@ function ChatContent() {
     const [loading, setLoading] = useState(false);
     const [setting, setSetting] = useState(false);
 
-    const senderId = useMemo(() => {
-        return JSON.parse(localStorage.getItem('chat-app-hnt'))._id;
+    const currentUser = useMemo(() => {
+        return JSON.parse(localStorage.getItem('chat-app-hnt'));
     }, []);
 
     // lấy thông tin ng nhận khi ấn vào user bên sidebar
@@ -52,16 +52,17 @@ function ChatContent() {
 
             // khởi tạo setting
             axios
-                .post(`${host}/api/get-theme`, { sender: senderId, receiver: ChatContent.receiver })
-                .then((data) => {
-                    const data2 = data.data;
-                    console.log(data2);
-                    if (data2) {
-                        // handleSetTheme(data2.theme);
-                    }
+                .post(`${host}/api/get-theme`, {
+                    sender: currentUser._id,
+                    receiver: ChatContent.receiver,
+                })
+                // .post(`${host}/api/delete-all`, { sender: currentUser._id, receiver: ChatContent.receiver })
+                .then(({ data }) => {
+                    // console.log(data);
+                    handleSetTheme(data.theme);
                 })
                 .catch((error) => {
-                    console.log('loi set theme');
+                    console.log('loi lay theme');
                 });
         }
         // eslint-disable-next-line

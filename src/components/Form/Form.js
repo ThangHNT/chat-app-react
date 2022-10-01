@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect } from 'react';
+import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
@@ -24,15 +24,6 @@ function Form({ login, signup }) {
         email: '',
     });
 
-    useEffect(() => {
-        return () => {
-            setTimeout(function () {
-                navigate('/', { replace: true });
-            }, 2500);
-        };
-        // eslint-disable-next-line
-    }, []);
-
     const checkValues = () => {
         let username = values.username;
         let password = values.password;
@@ -57,8 +48,8 @@ function Form({ login, signup }) {
     const handlSubmit = async (e) => {
         e.preventDefault();
         if (checkValues()) {
-            console.log('login');
             if (values.confirmPassword.length > 0) {
+                console.log('register');
                 try {
                     const { data } = await axios.post('/register', values);
                     if (data.status === true) {
@@ -80,10 +71,7 @@ function Form({ login, signup }) {
                     if (data.status === false) {
                         toast(data.msg);
                     } else {
-                        // let account = localStorage.getItem('chat-app-hnt');
-                        // if (!account) {
-                        //     localStorage.setItem('chat-app-hnt', JSON.stringify(data.user));
-                        // }
+                        console.log('login');
                         localStorage.setItem('chat-app-hnt', JSON.stringify(data.user));
                         User.setUser(data.user);
                         toast('Chuyển hướng đến trang chủ');

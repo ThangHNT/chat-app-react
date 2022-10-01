@@ -61,7 +61,10 @@ a {
 }
 
 .theme0 {
+    background-clip: padding-box !important;
     background-color: #ccc;
+    border: 1px solid transparent;
+    color: #000 !important;
 }
 
 .theme1 {
@@ -118,4 +121,11 @@ a {
         rgb(138, 57, 239) 90%,
         rgb(138, 57, 239) 96%
     );
+}
+
+.add-theme {
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    border: 1px solid #aaa;
 }

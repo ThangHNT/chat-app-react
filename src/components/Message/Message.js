@@ -135,12 +135,15 @@ function Message({
 
     const handleChangeTheme = (theme) => {
         if (pRef.current) {
-            // for (let i = 0; i < 6; i++) {
-            //     if (i !== theme) {
-            //         pRef.current.classList.remove(`theme${i}`);
-            //     }
-            // }
-            // pRef.current.classList.add(`theme${theme}`);
+            // console.log(pRef.current);
+            for (let i = 0; i < 6; i++) {
+                if (i !== theme) {
+                    pRef.current.classList.remove(`theme${i}`);
+                    pRef.current.classList.remove(`add-theme`);
+                }
+            }
+            pRef.current.classList.add(`theme${theme}`);
+            pRef.current.classList.add(`add-theme`);
         }
     };
 

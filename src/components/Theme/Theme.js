@@ -62,6 +62,7 @@ function Theme({ receiver }) {
                     console.log('doi theme loi');
                 }
             }
+            handleSetDisplayThemeList();
         }
     };
 
