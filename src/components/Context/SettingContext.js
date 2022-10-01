@@ -17,6 +17,11 @@ function SettingProvider({ children }) {
     const [darkLightMode, setDarkLightMode] = useState(false);
     const [displayTheme, setDisplayTheme] = useState();
     const [theme, setTheme] = useState('0');
+    const [background, setBackground] = useState();
+
+    const handleSetBackground = (background) => {
+        setBackground(background);
+    };
 
     const handleDisplayThemeList = () => {
         setDisplayTheme((pre) => !pre);
@@ -40,10 +45,12 @@ function SettingProvider({ children }) {
         theme,
         displayTheme,
         darkLightMode,
+        background,
         handlSetBlockStatus,
         handleChangeDarkLightMode,
         handleDisplayThemeList,
         handleSetTheme,
+        handleSetBackground,
     };
     return <SettingContext.Provider value={values}>{children}</SettingContext.Provider>;
 }
