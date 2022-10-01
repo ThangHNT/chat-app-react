@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, useContext, memo, useRef } from 'react';
+import React, { useEffect, useState, useMemo, useContext, memo, useRef, useLayoutEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faFileWord,
@@ -42,7 +42,8 @@ function Message({
     // console.log('message==');
     const { theme, handleSetTheme } = useContext(SettingContext);
     const ChatContent = useContext(ChatContentContext);
-    const { newReaction, changeTheme, handleSetNewReaction, reactionRemoved, handleRemoveReactionIcon } =
+    const Socket = useContext(SocketContext);
+    const { newReaction, newTheme, handleSetNewReaction, reactionRemoved, handleRemoveReactionIcon } =
         useContext(SocketContext);
     const [reactionIcon, setReactionIcon] = useState(() => {
         if (reaction === 'heartIcon') return heartIcon;
@@ -61,24 +62,30 @@ function Message({
     const spanRef = useRef();
     const pRef = useRef();
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         btnRef.current.style.display = 'none';
         spanRef.current.style.display = 'none';
-    }, []);
-
-    // thay đổi màu chủ đề tin nhắn từ socket
-    useEffect(() => {
-        if (changeTheme) {
-            if (receiver === changeTheme.user) {
-                // console.log('change theme');
-                handleChangeTheme(changeTheme.theme);
-                handleSetTheme(changeTheme.theme);
-            }
+        if (Socket.theme) {
+            // console.log(Socket.theme);
+            let themSocket = Socket.theme.get(receiver);
+            handleChangeTheme(themSocket);
+            handleSetTheme(themSocket);
         }
         // eslint-disable-next-line
-    }, [changeTheme]);
+    }, []);
+
+    // useLayoutEffect(() => {
+    // }, [Socket.theme]);
 
     useEffect(() => {
+        if (newTheme) {
+            handleChangeTheme(newTheme);
+        }
+        // eslint-disable-next-line
+    }, [newTheme]);
+
+    // thay đổi theme khi ấn lưu
+    useLayoutEffect(() => {
         if (theme) {
             handleChangeTheme(theme);
         }

@@ -15,7 +15,6 @@ function Theme({ receiver }) {
     // console.log('theme');
     const Socket = useContext(SocketContext);
     const [theme, setTheme] = useState(false);
-    // const [themeChoosen, setThemeChoosen] = useState(false);
     const { handleDisplayThemeList, themeList, handleSetTheme } = useContext(SettingContext);
     const Setting = useContext(SettingContext);
 
@@ -54,8 +53,9 @@ function Theme({ receiver }) {
                 receiver: receiver,
                 theme,
             });
+            // console.log(theme);
+            Socket.handleChangeThemeSocket(receiver, theme);
             Socket.handleChangeTheme(user._id, receiver, theme);
-            // console.log(data.data);
             if (!data.status) {
                 console.log('yeu cau doi theme that bai');
                 if (!data.data.status) {

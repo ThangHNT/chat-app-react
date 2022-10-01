@@ -16,7 +16,7 @@ function SocketContextProvider({ children }) {
     const [preventation, setPreventation] = useState();
     const [reactionRemoved, setReactionRemoved] = useState();
     const [theme, setTheme] = useState(new Map());
-    const [changeTheme, setChangeTheme] = useState();
+    const [newTheme, setNewTheme] = useState();
 
     // lắng nghe event từ socket
     useEffect(() => {
@@ -57,8 +57,8 @@ function SocketContextProvider({ children }) {
             });
             socket.on('change theme private', (data) => {
                 // console.log(data);
-                // handleChangeThemeSocket(data.user, data.theme);
-                setChangeTheme(data);
+                setNewTheme(data.theme);
+                handleChangeThemeSocket(data.user, data.theme);
             });
             socket.on('user disconnected', (socketId) => {
                 setUserDisconnect(socketId);
@@ -80,15 +80,10 @@ function SocketContextProvider({ children }) {
 
     // lắng nghe event thay đổi chủ đề
     const handleChangeThemeSocket = (key, value) => {
-        const oldData = theme.get(key);
-        // console.log(oldData);
-        if (oldData) {
-            setTheme(() => {
-                return oldData.set(key, value);
-            });
-        } else {
-            setTheme(theme.set(key, value));
-        }
+        // console.log(key, value);
+        setTheme((pre) => {
+            return pre.set(key, value);
+        });
     };
 
     // kiểm tra xem đã lấy dữ liệu chưa, lấy r thì thêm userid vào mảng
@@ -255,7 +250,7 @@ function SocketContextProvider({ children }) {
         newReaction,
         reactionRemoved,
         theme,
-        changeTheme,
+        newTheme,
         handlSetMessageSended,
         handleSendMessage,
         handleSetNewMessage,
@@ -269,6 +264,7 @@ function SocketContextProvider({ children }) {
         handleRemoveMessageSended,
         handleRemoveReactionIcon,
         handleChangeTheme,
+        handleChangeThemeSocket,
     };
 
     return <SocketContext.Provider value={values}>{children}</SocketContext.Provider>;

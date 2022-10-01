@@ -1,1 +1,1 @@
-scroll background color trip
+lỗi đổi theme khi chọn msg item
