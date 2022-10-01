@@ -1,4 +1,4 @@
-import { useContext, useState, useEffect, useMemo, memo } from 'react';
+import { useContext, useState, useMemo, memo } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
@@ -21,8 +21,6 @@ function Theme({ receiver }) {
     const user = useMemo(() => {
         return JSON.parse(localStorage.getItem('chat-app-hnt'));
     }, []);
-
-    useEffect(() => {});
 
     const handleSetDisplayThemeList = () => {
         handleDisplayThemeList();

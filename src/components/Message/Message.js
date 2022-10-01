@@ -74,12 +74,10 @@ function Message({
         // eslint-disable-next-line
     }, []);
 
-    // useLayoutEffect(() => {
-    // }, [Socket.theme]);
-
     useEffect(() => {
         if (newTheme) {
             handleChangeTheme(newTheme);
+            handleSetTheme(newTheme);
         }
         // eslint-disable-next-line
     }, [newTheme]);
