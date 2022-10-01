@@ -1,10 +1,16 @@
 .wrapper {
     width: 100%;
+    min-height: 480px;
     max-height: 480px;
     margin-top: 5px;
     overflow-x: hidden;
     scroll-behavior: smooth;
     padding-bottom: 15px;
+}
+
+.body {
+    position: relative;
+    width: 100%;
 }
 
 .message-item + .message-item {
@@ -29,5 +35,34 @@
     to {
         transform: translateY(0);
         opacity: 1;
+    }
+}
+
+// hình nền đoạn chat
+
+.background-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    width: 100%;
+    min-height: 485px;
+    max-height: 485px;
+    background-size: 100% 100%;
+    // background-image: url('https://vcdn1-dulich.vnecdn.net/2020/09/04/1-Meo-chup-anh-dep-khi-di-bien-9310-1599219010.jpg?w=0&h=0&q=100&dpr=2&fit=crop&s=j8THd4HE31ZHWTQhSZx5tQ');
+    background-repeat: no-repeat;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+
+    &::after {
+        content: '';
+        width: 100%;
+        height: 100%;
+        display: block;
+        position: absolute;
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
+        background-color: #000;
+        opacity: 0.25;
     }
 }

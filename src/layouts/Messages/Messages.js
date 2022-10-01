@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, memo, useContext, useRef } from 'react';
+import { useEffect, useState, useMemo, memo, useContext, useRef, useLayoutEffect } from 'react';
 import classNames from 'classnames/bind';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -9,11 +9,13 @@ import host from '~/ulties/serverHost';
 import Button from '~/components/Button';
 import { ChatContentContext } from '~/components/Context/ChatContentContext';
 import { SocketContext } from '~/components/Context/SocketContext';
+import { SettingContext } from '~/components/Context/SettingContext';
 
 const cx = classNames.bind(styles);
 
 function Messages({ receiver, darkmodeMsg = false }) {
     // console.log('Messages');
+    const { background } = useContext(SettingContext);
     const ChatContent = useContext(ChatContentContext);
     const {
         newMessage,
@@ -32,6 +34,18 @@ function Messages({ receiver, darkmodeMsg = false }) {
     }, []);
 
     const contentRef = useRef();
+    const backgroundRef = useRef();
+
+    useEffect(() => {
+        backgroundRef.current.style.display = 'none';
+    }, []);
+
+    useLayoutEffect(() => {
+        if (background) {
+            backgroundRef.current.style.display = 'block';
+            backgroundRef.current.style.backgroundImage = `url(${background})`;
+        }
+    }, [background]);
 
     // nhận tin nhắn mới nhất từ socket
     useEffect(() => {
@@ -173,27 +187,30 @@ function Messages({ receiver, darkmodeMsg = false }) {
 
     return (
         <div ref={contentRef} onScroll={handleScroll} className={cx('wrapper')}>
-            {messages.length > 0 &&
-                messages.map((message, index) => (
-                    <div key={index} className={cx('message-item')}>
-                        <Message
-                            type={message.type}
-                            receiver={receiver.id}
-                            time={getTime(messages[index].time)}
-                            sender={sender === message.sender}
-                            messageId={message.id}
-                            messageBody={contentRef}
-                            reaction={message.reactionIcon}
-                            darkmodeMsg={darkmodeMsg}
-                        >
-                            {message.type === 'text'
-                                ? message.text
-                                : message.type === 'img'
-                                ? message.img
-                                : message.file}
-                        </Message>
-                    </div>
-                ))}
+            <div className={cx('body')}>
+                {messages.length > 0 &&
+                    messages.map((message, index) => (
+                        <div key={index} className={cx('message-item')}>
+                            <Message
+                                type={message.type}
+                                receiver={receiver.id}
+                                time={getTime(messages[index].time)}
+                                sender={sender === message.sender}
+                                messageId={message.id}
+                                messageBody={contentRef}
+                                reaction={message.reactionIcon}
+                                darkmodeMsg={darkmodeMsg}
+                            >
+                                {message.type === 'text'
+                                    ? message.text
+                                    : message.type === 'img'
+                                    ? message.img
+                                    : message.file}
+                            </Message>
+                        </div>
+                    ))}
+            </div>
+            <div ref={backgroundRef} className={cx('background-image')}></div>
             {scrollDown && (
                 <div onClick={handleScrollDown} className={cx('scroll-down-btn')}>
                     <Button noTitle scrollDown normal circle leftIcon={<FontAwesomeIcon icon={faArrowDown} />} />

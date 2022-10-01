@@ -90,6 +90,31 @@
     }
 }
 
+.background-input {
+    cursor: pointer;
+}
+
+.store-background-btn {
+    background-color: var(--primary);
+    color: #fff;
+    padding: 3px 8px;
+    cursor: pointer;
+    border-radius: 8px;
+
+    &:hover {
+        background-color: var(--primary-hover);
+    }
+}
+
+.disabled {
+    background-color: #aaa;
+    cursor: no-drop;
+
+    &:hover {
+        background-color: #ddd;
+    }
+}
+
 @keyframes displayChooseImgBackground {
     from {
         transform: translateY(-50px);
