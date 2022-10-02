@@ -16,19 +16,21 @@ function SettingProvider({ children }) {
     const [blockStatus, setBlockStatus] = useState('');
     const [darkLightMode, setDarkLightMode] = useState(false);
     const [displayTheme, setDisplayTheme] = useState();
-    const [theme, setTheme] = useState('0');
+    const [theme, setTheme] = useState(new Map());
     const [background, setBackground] = useState();
 
     const handleSetBackground = (background) => {
         setBackground(background);
     };
 
-    const handleDisplayThemeList = () => {
-        setDisplayTheme((pre) => !pre);
+    const handleSetTheme = (key, value) => {
+        setTheme((pre) => {
+            return pre.set(key, value);
+        });
     };
 
-    const handleSetTheme = (theme) => {
-        setTheme(theme);
+    const handleDisplayThemeList = () => {
+        setDisplayTheme((pre) => !pre);
     };
 
     const handlSetBlockStatus = (status) => {

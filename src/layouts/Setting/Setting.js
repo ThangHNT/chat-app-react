@@ -15,6 +15,7 @@ function Setting({ receiver, darkmode }) {
     const { blockStatus, handlSetBlockStatus, handleDisplayThemeList, handleSetBackground } =
         useContext(SettingContext);
     const { handleBlockUser, handleUnblockUser } = useContext(SocketContext);
+    const Socket = useContext(SocketContext);
     const [background, setBackground] = useState(false);
     const [imageInput, setImageInput] = useState(false);
 
@@ -65,6 +66,7 @@ function Setting({ receiver, darkmode }) {
 
     const handleStoreBackgroundImage = () => {
         handleSetBackground(imageInput);
+        Socket.handleSetBackground(currentUser._id, receiver.id, imageInput);
         // axios
         //     .post(`${host}/api/set/background-image`, {
         //         sender: currentUser._id,

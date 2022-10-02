@@ -19,7 +19,8 @@ const cx = classNames.bind(styles);
 function ChatContent() {
     // console.log('Chat-content');
     const { darkLightMode, handleSetTheme } = useContext(SettingContext);
-    const { theme, handleChangeThemeSocket } = useContext(SocketContext);
+    const Socket = useContext(SocketContext);
+    const { handleChangeSetting } = useContext(SocketContext);
     const ChatContent = useContext(ChatContentContext);
     const [receiver, setReceiver] = useState();
     const [loading, setLoading] = useState(false);
@@ -52,28 +53,24 @@ function ChatContent() {
                     console.log('Loi lay ng nhan');
                 });
 
-            // console.log(theme.get(ChatContent.receiver));
-            const checkGetTheme = theme.get(ChatContent.receiver);
-            if (!checkGetTheme) {
-                // console.log('get theme from db');
-                handleGetTheme();
-            } else {
-                // console.log('da lay theme');
-                handleSetTheme(checkGetTheme);
+            const checkGetSetting = Socket.getSetting.get(ChatContent.receiver);
+            // console.log(checkGetSetting);
+            if (!checkGetSetting) {
+                handleGetChatSettingData();
             }
         }
         // eslint-disable-next-line
     }, [ChatContent.receiver]);
 
-    const handleGetTheme = async () => {
+    const handleGetChatSettingData = async () => {
         const { data } = await axios.post(`${host}/api/get-theme`, {
             // .post(`${host}/api/delete-all`, { sender: currentUser._id, receiver: ChatContent.receiver })
             sender: currentUser._id,
             receiver: ChatContent.receiver,
         });
         // console.log(data);
-        handleSetTheme(data.theme);
-        handleChangeThemeSocket(ChatContent.receiver, data.theme);
+        handleSetTheme(ChatContent.receiver, data.setting.theme);
+        handleChangeSetting(ChatContent.receiver, true);
     };
 
     const handleDisplaySetting = useCallback(() => {

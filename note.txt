@@ -1,1 +1,1 @@
-lỗi đổi theme khi chọn msg item
+tao socket event

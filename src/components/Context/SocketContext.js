@@ -15,8 +15,9 @@ function SocketContextProvider({ children }) {
     const [newReaction, setNewReaction] = useState();
     const [preventation, setPreventation] = useState();
     const [reactionRemoved, setReactionRemoved] = useState();
-    const [theme, setTheme] = useState(new Map());
     const [newTheme, setNewTheme] = useState();
+    const [newBackgroundImage, setNewBackgroundImage] = useState();
+    const [getSetting, setGetSetting] = useState(new Map());
 
     // lắng nghe event từ socket
     useEffect(() => {
@@ -57,8 +58,11 @@ function SocketContextProvider({ children }) {
             });
             socket.on('change theme private', (data) => {
                 // console.log(data);
-                setNewTheme(data.theme);
-                handleChangeThemeSocket(data.user, data.theme);
+                setNewTheme(data);
+            });
+            socket.on('change background private', (data) => {
+                // console.log(data);
+                setNewBackgroundImage(data);
             });
             socket.on('user disconnected', (socketId) => {
                 setUserDisconnect(socketId);
@@ -72,18 +76,29 @@ function SocketContextProvider({ children }) {
         setSocket(socket);
     };
 
+    const handleChangeSetting = (key, value) => {
+        if (key && value) {
+            setGetSetting((pre) => {
+                return pre.set(key, value);
+            });
+        }
+    };
+
+    const handleRemoveSocketEvent = (theme = false, backgroundImage = false) => {
+        if (theme) {
+            setNewTheme(undefined);
+        }
+    };
+
+    const handleSetBackground = (sender, receiver, background) => {
+        let to = getSocketIdFromReceiverId(userList, receiver);
+        socket.emit('change background', { from: socket.id, to, sender, background });
+    };
+
     // phát sự kiện thay đổi chủ đề
     const handleChangeTheme = (sender, receiver, theme) => {
         let to = getSocketIdFromReceiverId(userList, receiver);
         socket.emit('change theme', { from: socket.id, to, sender, theme });
-    };
-
-    // lắng nghe event thay đổi chủ đề
-    const handleChangeThemeSocket = (key, value) => {
-        // console.log(key, value);
-        setTheme((pre) => {
-            return pre.set(key, value);
-        });
     };
 
     // kiểm tra xem đã lấy dữ liệu chưa, lấy r thì thêm userid vào mảng
@@ -249,8 +264,9 @@ function SocketContextProvider({ children }) {
         checkGetMessagesFromDB,
         newReaction,
         reactionRemoved,
-        theme,
         newTheme,
+        newBackgroundImage,
+        getSetting,
         handlSetMessageSended,
         handleSendMessage,
         handleSetNewMessage,
@@ -264,7 +280,9 @@ function SocketContextProvider({ children }) {
         handleRemoveMessageSended,
         handleRemoveReactionIcon,
         handleChangeTheme,
-        handleChangeThemeSocket,
+        handleSetBackground,
+        handleChangeSetting,
+        handleRemoveSocketEvent,
     };
 
     return <SocketContext.Provider value={values}>{children}</SocketContext.Provider>;

@@ -44,7 +44,7 @@ function Theme({ receiver }) {
 
     const handleChangeTheme = async (e) => {
         if (theme) {
-            handleSetTheme(theme);
+            await handleSetTheme(receiver, theme);
             toast.success('Thay đổi chủ đề thành công');
             const data = await axios.post(`${host}/api/change-theme`, {
                 sender: user._id,
@@ -52,7 +52,6 @@ function Theme({ receiver }) {
                 theme,
             });
             // console.log(theme);
-            Socket.handleChangeThemeSocket(receiver, theme);
             Socket.handleChangeTheme(user._id, receiver, theme);
             if (!data.status) {
                 console.log('yeu cau doi theme that bai');
@@ -77,7 +76,7 @@ function Theme({ receiver }) {
                             key={index}
                             id={`${index}`}
                             className={cx('theme-item', {
-                                active: Setting.theme === String(index),
+                                active: Setting.theme.get(receiver) === String(index),
                             })}
                             onClick={handleGetTheme}
                         >

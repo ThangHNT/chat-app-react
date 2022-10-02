@@ -42,9 +42,15 @@ function Message({
     // console.log('message==');
     const { theme, handleSetTheme } = useContext(SettingContext);
     const ChatContent = useContext(ChatContentContext);
-    const Socket = useContext(SocketContext);
-    const { newReaction, newTheme, handleSetNewReaction, reactionRemoved, handleRemoveReactionIcon } =
-        useContext(SocketContext);
+    // const Socket = useContext(SocketContext);
+    const {
+        newReaction,
+        newTheme,
+        handleSetNewReaction,
+        reactionRemoved,
+        handleRemoveReactionIcon,
+        handleRemoveSocketEvent,
+    } = useContext(SocketContext);
     const [reactionIcon, setReactionIcon] = useState(() => {
         if (reaction === 'heartIcon') return heartIcon;
         if (reaction === 'surprisedIcon') return surprisedIcon;
@@ -62,33 +68,32 @@ function Message({
     const spanRef = useRef();
     const pRef = useRef();
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         btnRef.current.style.display = 'none';
         spanRef.current.style.display = 'none';
-        if (Socket.theme) {
-            // console.log(Socket.theme);
-            let themSocket = Socket.theme.get(receiver);
-            handleChangeTheme(themSocket);
-            handleSetTheme(themSocket);
-        }
         // eslint-disable-next-line
     }, []);
 
-    useEffect(() => {
+    // new theme event from socket
+    useLayoutEffect(() => {
         if (newTheme) {
-            handleChangeTheme(newTheme);
-            handleSetTheme(newTheme);
+            // console.log(receiver);
+            if (newTheme.user === receiver) {
+                handleChangeTheme(newTheme.theme);
+                handleRemoveSocketEvent(true);
+                handleSetTheme(receiver, newTheme.theme);
+            }
         }
         // eslint-disable-next-line
     }, [newTheme]);
 
     // thay đổi theme khi ấn lưu
     useLayoutEffect(() => {
-        if (theme) {
-            handleChangeTheme(theme);
+        if (theme.get(receiver)) {
+            handleChangeTheme(theme.get(receiver));
         }
         // eslint-disable-next-line
-    }, [theme]);
+    }, [theme.get(receiver)]);
 
     useEffect(() => {
         if (newReaction) {
