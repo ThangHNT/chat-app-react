@@ -103,6 +103,7 @@
     padding: 0 4px;
     background-color: #fff;
     border-radius: 2px;
+    user-select: none;
 }
 
 .reaction-icon {
@@ -126,4 +127,12 @@
         border-radius: 50%;
         padding: 1px;
     }
+}
+
+.delete-message-tippy {
+    padding: 4px 5px;
+    background-color: #fff;
+    font-size: 14px;
+    border-radius: 5px;
+    user-select: none;
 }

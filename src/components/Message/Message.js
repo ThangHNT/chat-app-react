@@ -2,13 +2,14 @@ import React, { useEffect, useState, useMemo, useContext, memo, useRef, useLayou
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faFileWord,
-    faEllipsisVertical,
     faReply,
     faFileLines,
     faFileExcel,
     faFilePdf,
+    faEllipsisVertical,
 } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
+import Tippy from '@tippyjs/react/headless';
 import host from '~/ulties/serverHost';
 import classNames from 'classnames/bind';
 import styles from './Message.module.scss';
@@ -23,6 +24,7 @@ import likeIcon from '~/assets/images/like-reaction-icon.png';
 import { ChatContentContext } from '~/components/Context/ChatContentContext';
 import { SocketContext } from '~/components/Context/SocketContext';
 import { SettingContext } from '~/components/Context/SettingContext';
+// import { faTrashCan } from '@fortawesome/free-regular-svg-icons';
 
 const cx = classNames.bind(styles);
 
@@ -78,7 +80,6 @@ function Message({
         if (newTheme) {
             // console.log(receiver);
             if (newTheme.user === receiver) {
-                handleChangeTheme(newTheme.theme);
                 handleRemoveSocketEvent(true);
                 handleSetTheme(receiver, newTheme.theme);
             }
@@ -89,6 +90,7 @@ function Message({
     // thay đổi theme khi ấn lưu
     useLayoutEffect(() => {
         if (theme.get(receiver)) {
+            // console.log(theme.get(receiver));
             handleChangeTheme(theme.get(receiver));
         }
         // eslint-disable-next-line
@@ -147,7 +149,7 @@ function Message({
     const handleChangeTheme = (theme) => {
         if (pRef.current) {
             // console.log(pRef.current);
-            for (let i = 0; i < 6; i++) {
+            for (let i = 0; i < 15; i++) {
                 if (i !== theme) {
                     pRef.current.classList.remove(`theme${i}`);
                     pRef.current.classList.remove(`add-theme`);
@@ -282,8 +284,36 @@ function Message({
             </div>
             <div ref={btnRef} className={cx('message-sended-actions')}>
                 {!sender && !reactionRemoved && <ReactMessageIcon messageId={messageId} messageBody={messageBody} />}
-                <Button message_sended leftIcon={<FontAwesomeIcon icon={faReply} />}></Button>
-                <Button message_sended leftIcon={<FontAwesomeIcon icon={faEllipsisVertical} />}></Button>
+                <div className={cx('wapper-tippy')}>
+                    <Tippy
+                        interactive
+                        placement="bottom"
+                        render={(attrs) => (
+                            <div className={cx('delete-message-tippy')} tabIndex="-1" {...attrs}>
+                                Trả lời
+                            </div>
+                        )}
+                    >
+                        <div className={cx('message-sended-btn')}>
+                            <Button message_sended leftIcon={<FontAwesomeIcon icon={faReply} />}></Button>
+                        </div>
+                    </Tippy>
+                </div>
+                <div className={cx('wapper-tippy')}>
+                    <Tippy
+                        interactive
+                        placement="bottom"
+                        render={(attrs) => (
+                            <div className={cx('delete-message-tippy')} tabIndex="-1" {...attrs}>
+                                Xem thêm
+                            </div>
+                        )}
+                    >
+                        <div className={cx('message-sended-btn')}>
+                            <Button message_sended leftIcon={<FontAwesomeIcon icon={faEllipsisVertical} />}></Button>
+                        </div>
+                    </Tippy>
+                </div>
             </div>
             <span ref={spanRef} className={cx('time-message')}>
                 {time}
