@@ -6,7 +6,7 @@ import {
     faFileLines,
     faFileExcel,
     faFilePdf,
-    faEllipsisVertical,
+    // faEllipsisVertical,
 } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import Tippy from '@tippyjs/react/headless';
@@ -24,7 +24,7 @@ import likeIcon from '~/assets/images/like-reaction-icon.png';
 import { ChatContentContext } from '~/components/Context/ChatContentContext';
 import { SocketContext } from '~/components/Context/SocketContext';
 import { SettingContext } from '~/components/Context/SettingContext';
-// import { faTrashCan } from '@fortawesome/free-regular-svg-icons';
+import { faTrashCan } from '@fortawesome/free-regular-svg-icons';
 
 const cx = classNames.bind(styles);
 
@@ -42,7 +42,7 @@ function Message({
     ...passprops
 }) {
     // console.log('message==');
-    const { theme, handleSetTheme } = useContext(SettingContext);
+    const { theme, handleSetTheme, handleSetDisplayRemoveMessageModal } = useContext(SettingContext);
     const ChatContent = useContext(ChatContentContext);
     const {
         newReaction,
@@ -68,12 +68,6 @@ function Message({
     const btnRef = useRef();
     const spanRef = useRef();
     const pRef = useRef();
-
-    useEffect(() => {
-        btnRef.current.style.display = 'none';
-        spanRef.current.style.display = 'none';
-        // eslint-disable-next-line
-    }, []);
 
     // new theme event from socket
     useLayoutEffect(() => {
@@ -183,6 +177,10 @@ function Message({
             'i',
         ); // validate fragment locator
         return !!urlPattern.test(urlString);
+    };
+
+    const handleDisplayRemoveMessageModal = () => {
+        handleSetDisplayRemoveMessageModal();
     };
 
     return (
@@ -305,12 +303,12 @@ function Message({
                         placement="bottom"
                         render={(attrs) => (
                             <div className={cx('delete-message-tippy')} tabIndex="-1" {...attrs}>
-                                Xem thêm
+                                Xóa, gỡ bỏ
                             </div>
                         )}
                     >
-                        <div className={cx('message-sended-btn')}>
-                            <Button message_sended leftIcon={<FontAwesomeIcon icon={faEllipsisVertical} />}></Button>
+                        <div className={cx('message-sended-btn')} onClick={handleDisplayRemoveMessageModal}>
+                            <Button message_sended leftIcon={<FontAwesomeIcon icon={faTrashCan} />}></Button>
                         </div>
                     </Tippy>
                 </div>

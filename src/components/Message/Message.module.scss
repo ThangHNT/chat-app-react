@@ -96,6 +96,7 @@
     align-items: center;
     margin: 0 8px;
     min-width: 50px;
+    display: none;
 }
 
 .time-message {
@@ -104,6 +105,7 @@
     background-color: #fff;
     border-radius: 2px;
     user-select: none;
+    display: none;
 }
 
 .reaction-icon {

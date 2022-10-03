@@ -27,6 +27,11 @@ function SettingProvider({ children }) {
     const [displayTheme, setDisplayTheme] = useState();
     const [theme, setTheme] = useState(new Map());
     const [backgroundImage, setBackgroundImage] = useState([]);
+    const [displayRemoveMessageModal, setDisplayRemoveMessageModal] = useState(false);
+
+    const handleSetDisplayRemoveMessageModal = () => {
+        setDisplayRemoveMessageModal((pre) => !pre);
+    };
 
     const handleSetBackgroundImage = (key, value) => {
         setBackgroundImage((pre) => {
@@ -63,11 +68,13 @@ function SettingProvider({ children }) {
         displayTheme,
         darkLightMode,
         backgroundImage,
+        displayRemoveMessageModal,
         handlSetBlockStatus,
         handleChangeDarkLightMode,
         handleDisplayThemeList,
         handleSetTheme,
         handleSetBackgroundImage,
+        handleSetDisplayRemoveMessageModal,
     };
     return <SettingContext.Provider value={values}>{children}</SettingContext.Provider>;
 }
