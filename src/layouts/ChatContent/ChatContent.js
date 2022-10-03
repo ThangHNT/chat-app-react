@@ -18,7 +18,7 @@ const cx = classNames.bind(styles);
 
 function ChatContent() {
     // console.log('Chat-content');
-    const { darkLightMode, handleSetTheme } = useContext(SettingContext);
+    const { darkLightMode, handleSetTheme, handleSetBackgroundImage } = useContext(SettingContext);
     const Socket = useContext(SocketContext);
     const { handleChangeSetting } = useContext(SocketContext);
     const ChatContent = useContext(ChatContentContext);
@@ -54,7 +54,6 @@ function ChatContent() {
                 });
 
             const checkGetSetting = Socket.getSetting.get(ChatContent.receiver);
-            // console.log(checkGetSetting);
             if (!checkGetSetting) {
                 handleGetChatSettingData();
             }
@@ -70,6 +69,7 @@ function ChatContent() {
         });
         // console.log(data);
         handleSetTheme(ChatContent.receiver, data.setting.theme);
+        handleSetBackgroundImage(ChatContent.receiver, data.setting.backgroundImage);
         handleChangeSetting(ChatContent.receiver, true);
     };
 

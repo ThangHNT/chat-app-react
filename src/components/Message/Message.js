@@ -42,7 +42,6 @@ function Message({
     // console.log('message==');
     const { theme, handleSetTheme } = useContext(SettingContext);
     const ChatContent = useContext(ChatContentContext);
-    // const Socket = useContext(SocketContext);
     const {
         newReaction,
         newTheme,

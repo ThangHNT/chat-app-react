@@ -88,6 +88,9 @@ function SocketContextProvider({ children }) {
         if (theme) {
             setNewTheme(undefined);
         }
+        if (backgroundImage) {
+            setNewBackgroundImage(undefined);
+        }
     };
 
     const handleSetBackground = (sender, receiver, background) => {

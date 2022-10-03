@@ -69,25 +69,22 @@
     position: absolute;
     display: flex;
     align-items: center;
-    justify-content: space-around;
+    flex-direction: column;
+    justify-content: space-evenly;
     width: 100%;
-    height: 60px;
+    height: 190px;
     padding: 0 5px;
     border-radius: 5px;
-    bottom: -72px;
+    top: 54px;
     background-color: #eee;
     z-index: 2;
     animation: displayChooseImgBackground 0.5s linear;
+}
 
-    &::after {
-        content: '';
-        display: block;
-        position: absolute;
-        width: 100%;
-        height: 140px;
-        background-color: #fff;
-        bottom: -140px;
-    }
+.row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .background-input {
@@ -103,6 +100,17 @@
 
     &:hover {
         background-color: var(--primary-hover);
+    }
+}
+
+.remove-background-btn {
+    text-decoration: underline;
+    font-size: 18px;
+    cursor: pointer;
+    color: rgb(141, 48, 48);
+
+    &:hover {
+        color: red;
     }
 }
 

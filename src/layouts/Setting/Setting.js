@@ -1,6 +1,7 @@
 import { useState, useMemo, useContext } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { ToastContainer, toast } from 'react-toastify';
 import { faAngleDown, faAngleUp, faBan, faFont, faImage, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import classNames from 'classnames/bind';
 import host from '~/ulties/serverHost';
@@ -12,11 +13,11 @@ import { SocketContext } from '~/components/Context/SocketContext';
 const cx = classNames.bind(styles);
 
 function Setting({ receiver, darkmode }) {
-    const { blockStatus, handlSetBlockStatus, handleDisplayThemeList, handleSetBackground } =
+    const { blockStatus, handlSetBlockStatus, handleDisplayThemeList, handleSetBackgroundImage, backgroundImage } =
         useContext(SettingContext);
     const { handleBlockUser, handleUnblockUser } = useContext(SocketContext);
     const Socket = useContext(SocketContext);
-    const [background, setBackground] = useState(false);
+    const [displaySelectImageForBackgroun, setDisplaySelectImageForBackgroun] = useState(false);
     const [imageInput, setImageInput] = useState(false);
 
     const currentUser = useMemo(() => {
@@ -46,8 +47,8 @@ function Setting({ receiver, darkmode }) {
         handlSetBlockStatus({ blocked: blockStatus.blocked, block: !blockStatus.block, receiver: receiver.id });
     };
 
-    const handleSetBackgroundImage = (e) => {
-        setBackground((pre) => !pre);
+    const handleDisplayChooseBackgoundUI = (e) => {
+        setDisplaySelectImageForBackgroun((pre) => !pre);
     };
 
     const handleChooseImage = (e) => {
@@ -65,18 +66,48 @@ function Setting({ receiver, darkmode }) {
     };
 
     const handleStoreBackgroundImage = () => {
-        handleSetBackground(imageInput);
-        Socket.handleSetBackground(currentUser._id, receiver.id, imageInput);
-        // axios
-        //     .post(`${host}/api/set/background-image`, {
-        //         sender: currentUser._id,
-        //         receiver: receiver.id,
-        //         image: imageInput,
-        //     })
-        //     .then(({ data }) => {
-        //         console.log(data);
-        //     })
-        //     .catch((err) => console.log('loi doi anh nen'));
+        if (imageInput) {
+            // console.log(receiver);
+            axios
+                .post(`${host}/api/set/background-image`, {
+                    sender: currentUser._id,
+                    receiver: receiver.id,
+                    image: imageInput,
+                })
+                .then(({ data }) => {
+                    // console.log(data);
+                    toast.success('Chọn ảnh nền thành công');
+                })
+                .catch((err) => console.log('loi doi anh nen'));
+            handleDisplayChooseBackgoundUI();
+            handleSetBackgroundImage(receiver.id, imageInput);
+            Socket.handleSetBackground(currentUser._id, receiver.id, imageInput);
+            setImageInput(false);
+        }
+    };
+
+    const handleDeleteBackgroundImage = () => {
+        const userId = receiver.id;
+        backgroundImage.forEach((item) => {
+            if (item.id === userId && item.backgroundImage.length > 0) {
+                axios
+                    .post(`${host}/api/set/background-image`, {
+                        sender: currentUser._id,
+                        receiver: receiver.id,
+                        image: '',
+                    })
+                    .then(({ data }) => {
+                        // console.log(data);
+                        toast.success('Xóa ảnh nền thành công');
+                    })
+                    .catch((err) => console.log('loi doi anh nen'));
+
+                handleDisplayChooseBackgoundUI();
+                handleSetBackgroundImage(receiver.id, '');
+                Socket.handleSetBackground(currentUser._id, receiver.id, '');
+                setImageInput(false);
+            }
+        });
     };
 
     return (
@@ -89,31 +120,38 @@ function Setting({ receiver, darkmode }) {
                     </div>
                 </div>
                 <div className={cx('item', { darkmodeItem: darkmode })}>
-                    <div className={cx('title')} onClick={handleSetBackgroundImage}>
+                    <div className={cx('title')} onClick={handleDisplayChooseBackgoundUI}>
                         <FontAwesomeIcon className={cx('icon')} icon={faImage} />
                         <span>Thay đổi ảnh nền</span>
                     </div>
                     <div className={cx('arrow')}>
-                        {background ? (
+                        {displaySelectImageForBackgroun ? (
                             <FontAwesomeIcon className={cx('icon')} icon={faAngleUp} />
                         ) : (
                             <FontAwesomeIcon className={cx('icon')} icon={faAngleDown} />
                         )}
                     </div>
-                    {background && (
+                    {displaySelectImageForBackgroun && (
                         <div className={cx('choose-background')}>
-                            <input
-                                onChange={handleChooseImage}
-                                className={cx('background-input')}
-                                type="file"
-                                accept="image/*"
-                            />
-                            <span
-                                className={cx('store-background-btn', { disabled: !imageInput })}
-                                onClick={handleStoreBackgroundImage}
-                            >
-                                Lưu
-                            </span>
+                            <div className={cx('row')}>
+                                <input
+                                    onChange={handleChooseImage}
+                                    className={cx('background-input')}
+                                    type="file"
+                                    accept="image/*"
+                                />
+                                <span
+                                    className={cx('store-background-btn', { disabled: !imageInput })}
+                                    onClick={handleStoreBackgroundImage}
+                                >
+                                    Lưu
+                                </span>
+                            </div>
+                            <div className={cx('row')}>
+                                <span className={cx('remove-background-btn')} onClick={handleDeleteBackgroundImage}>
+                                    Xóa ảnh nền
+                                </span>
+                            </div>
                         </div>
                     )}
                 </div>
@@ -140,6 +178,16 @@ function Setting({ receiver, darkmode }) {
                     </div>
                 </div>
             </div>
+            <ToastContainer
+                position="bottom-center"
+                autoClose={1500}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover={false}
+            />
         </div>
     );
 }

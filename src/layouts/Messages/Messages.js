@@ -15,15 +15,17 @@ const cx = classNames.bind(styles);
 
 function Messages({ receiver, darkmodeMsg = false }) {
     // console.log('Messages');
-    const { background } = useContext(SettingContext);
+    const { backgroundImage, handleSetBackgroundImage } = useContext(SettingContext);
     const ChatContent = useContext(ChatContentContext);
     const {
         newMessage,
         messageSended,
+        newBackgroundImage,
         checkGetMessagesFromDB,
         handlSetMessageSended,
         handleCheckGetMessagesFromDB,
         handleSetNewMessage,
+        handleRemoveSocketEvent,
     } = useContext(SocketContext);
 
     const [scrollDown, setScrollDown] = useState(false);
@@ -36,16 +38,30 @@ function Messages({ receiver, darkmodeMsg = false }) {
     const contentRef = useRef();
     const backgroundRef = useRef();
 
-    useEffect(() => {
-        backgroundRef.current.style.display = 'none';
-    }, []);
+    useLayoutEffect(() => {
+        if (newBackgroundImage) {
+            if (newBackgroundImage.user === receiver.id) {
+                handleSetBackgroundImage(receiver.id, newBackgroundImage.backgroundImage);
+                handleRemoveSocketEvent(false, true);
+            }
+        }
+        // eslint-disable-next-line
+    }, [newBackgroundImage]);
 
     useLayoutEffect(() => {
-        if (background) {
-            backgroundRef.current.style.display = 'block';
-            backgroundRef.current.style.backgroundImage = `url(${background})`;
-        }
-    }, [background]);
+        // console.log(backgroundImage);
+        const userId = receiver.id;
+        backgroundImage.forEach((item) => {
+            if (item.id === userId) {
+                if (item.backgroundImage === '') {
+                    backgroundRef.current.style.display = 'none';
+                } else {
+                    handleChangeBackgroundMessage(item.backgroundImage);
+                }
+            }
+        });
+        // eslint-disable-next-line
+    }, [backgroundImage]);
 
     // nhận tin nhắn mới nhất từ socket
     useEffect(() => {
@@ -183,6 +199,11 @@ function Messages({ receiver, darkmodeMsg = false }) {
 
     const handleScrollDown = () => {
         contentRef.current.scrollTop = contentRef.current.scrollHeight;
+    };
+
+    const handleChangeBackgroundMessage = (background) => {
+        backgroundRef.current.style.display = 'block';
+        backgroundRef.current.style.backgroundImage = `url(${background})`;
     };
 
     return (
