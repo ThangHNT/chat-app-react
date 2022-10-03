@@ -123,6 +123,72 @@ a {
     );
 }
 
+.theme6 {
+    background-image: radial-gradient(
+        circle at center 75%,
+        rgb(42, 127, 227) 0%,
+        rgb(0, 191, 145) 50%,
+        rgb(159, 213, 45) 100%
+    );
+}
+
+.theme7 {
+    background-image: radial-gradient(
+        circle at center 75%,
+        rgb(242, 92, 84) 0%,
+        rgb(244, 132, 95) 50%,
+        rgb(247, 178, 103) 100%
+    );
+}
+
+.theme8 {
+    background-color: rgb(251, 69, 222);
+}
+
+.theme9 {
+    background-image: radial-gradient(
+        circle at center 75%,
+        rgb(255, 143, 178) 0%,
+        rgb(167, 151, 255) 50%,
+        rgb(0, 229, 255) 100%
+    );
+}
+
+.theme10 {
+    background-image: radial-gradient(circle at center 75%, rgb(0, 213, 47) 0%, rgb(0, 101, 40) 100%);
+}
+
+.theme11 {
+    background-image: radial-gradient(
+        circle at center 75%,
+        rgb(247, 215, 0) 0%,
+        rgb(247, 215, 0) 50%,
+        rgb(247, 215, 0) 100%
+    );
+}
+
+.theme12 {
+    background-image: radial-gradient(
+        circle at center 75%,
+        rgb(147, 20, 16) 0%,
+        rgb(147, 20, 16) 50%,
+        rgb(147, 20, 16) 100%
+    );
+}
+
+.theme13 {
+    background-image: radial-gradient(circle at center 75%, rgb(0, 128, 255) 0%, rgb(159, 26, 255) 100%);
+}
+
+.theme14 {
+    background-image: radial-gradient(
+        circle at center 75%,
+        rgb(255, 210, 0) 0%,
+        rgb(110, 223, 0) 50%,
+        rgb(0, 223, 187) 100%
+    );
+}
+
 .add-theme {
     background-clip: text;
     -webkit-background-clip: text;

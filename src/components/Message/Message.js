@@ -94,6 +94,7 @@ function Message({
         // eslint-disable-next-line
     }, [theme.get(receiver)]);
 
+    // listen send reaction icon on socket
     useEffect(() => {
         if (newReaction) {
             if (currentUser === newReaction.receiver && newReaction.messageId === messageId) {
@@ -105,6 +106,7 @@ function Message({
         // eslint-disable-next-line
     }, [newReaction]);
 
+    // hiện reaction ngay sau khi chọn
     useEffect(() => {
         if (ChatContent.reactionIcon) {
             if (messageId === ChatContent.reactionIcon.messageId) {

@@ -9,6 +9,15 @@ const themeList = [
     { type: 'theme3' },
     { type: 'theme4' },
     { type: 'theme5' },
+    { type: 'theme6' },
+    { type: 'theme7' },
+    { type: 'theme8' },
+    { type: 'theme9' },
+    { type: 'theme10' },
+    { type: 'theme11' },
+    { type: 'theme12' },
+    { type: 'theme13' },
+    { type: 'theme14' },
 ];
 
 function SettingProvider({ children }) {
