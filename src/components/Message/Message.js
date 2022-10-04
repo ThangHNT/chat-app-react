@@ -180,7 +180,8 @@ function Message({
     };
 
     const handleDisplayRemoveMessageModal = () => {
-        handleSetDisplayRemoveMessageModal();
+        handleSetDisplayRemoveMessageModal({ receiver, messageId });
+        // console.log(messageId);
     };
 
     return (
@@ -188,6 +189,11 @@ function Message({
             <div className={cx('wrapper-content', { sender })}>
                 {type === 'text' && !isValidUrl(children) && (
                     <p ref={pRef} className={cx('text-message', { darkmodeText: darkmodeMsg })} {...props}>
+                        {children}
+                    </p>
+                )}
+                {type === 'revoked' && !isValidUrl(children) && (
+                    <p ref={pRef} className={cx('revoked-message', { darkmodeText: darkmodeMsg })} {...props}>
                         {children}
                     </p>
                 )}

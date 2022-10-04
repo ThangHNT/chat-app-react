@@ -29,10 +29,13 @@ function SettingProvider({ children }) {
     const [backgroundImage, setBackgroundImage] = useState([]);
     const [displayRemoveMessageModal, setDisplayRemoveMessageModal] = useState(false);
 
-    const handleSetDisplayRemoveMessageModal = () => {
-        setDisplayRemoveMessageModal((pre) => !pre);
+    // hiện modal xóa tin nhắn
+    const handleSetDisplayRemoveMessageModal = (data) => {
+        setDisplayRemoveMessageModal((pre) => {
+            return pre === false ? data : false;
+        });
     };
-
+    // thay đổi ảnh nền
     const handleSetBackgroundImage = (key, value) => {
         setBackgroundImage((pre) => {
             const newObj = {
@@ -42,21 +45,23 @@ function SettingProvider({ children }) {
             return [...pre, newObj];
         });
     };
-
+    // chọn theme
     const handleSetTheme = (key, value) => {
         setTheme((pre) => {
             return pre.set(key, value);
         });
     };
-
+    // hiển thị ds chủ đề theme
     const handleDisplayThemeList = () => {
         setDisplayTheme((pre) => !pre);
     };
 
+    // set tình trạng chặn
     const handlSetBlockStatus = (status) => {
         setBlockStatus(status);
     };
 
+    // chuyển đổi giao diện sáng tối
     const handleChangeDarkLightMode = () => {
         setDarkLightMode((pre) => !pre);
     };

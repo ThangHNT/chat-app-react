@@ -38,6 +38,7 @@ function Messages({ receiver, darkmodeMsg = false }) {
     const contentRef = useRef();
     const backgroundRef = useRef();
 
+    // thay đổi ảnh nền khi nhận event từ socket
     useLayoutEffect(() => {
         if (newBackgroundImage) {
             if (newBackgroundImage.user === receiver.id) {
@@ -48,8 +49,8 @@ function Messages({ receiver, darkmodeMsg = false }) {
         // eslint-disable-next-line
     }, [newBackgroundImage]);
 
+    // thay đổi ảnh nền
     useLayoutEffect(() => {
-        // console.log(backgroundImage);
         const userId = receiver.id;
         backgroundImage.forEach((item) => {
             if (item.id === userId) {
@@ -209,7 +210,7 @@ function Messages({ receiver, darkmodeMsg = false }) {
     return (
         <div ref={contentRef} onScroll={handleScroll} className={cx('wrapper')}>
             <div className={cx('body')}>
-                {messages.length > 0 &&
+                {/* {messages.length > 0 &&
                     messages.map((message, index) => (
                         <div key={index} className={cx('message-item')}>
                             <Message
@@ -229,7 +230,19 @@ function Messages({ receiver, darkmodeMsg = false }) {
                                     : message.file}
                             </Message>
                         </div>
-                    ))}
+                    ))} */}
+                <Message
+                    type="revoked"
+                    receiver="62f0bda97ed6bdef2eae1ea7"
+                    time="14 : 12"
+                    sender={true}
+                    messageId="62fd0377bfd8faa6b0b2dc14"
+                    messageBody={contentRef}
+                    reaction=""
+                    darkmodeMsg={false}
+                >
+                    {'tin nhan da thu hoi'}
+                </Message>
             </div>
             <div ref={backgroundRef} className={cx('background-image')}></div>
             {scrollDown && (
