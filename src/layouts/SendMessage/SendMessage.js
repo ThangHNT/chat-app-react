@@ -259,11 +259,13 @@ function SendMessage({ receiver, darkmode = false }) {
                 handleSendMessage(messages);
                 ChatContent.handleAddMessage(messages);
                 try {
-                    // axios.post(`${host}/api/send/message`, {
-                    //     sender: currentUser._id,
-                    //     receiver: receiver.id,
-                    //     messages,
-                    // });
+                    // axios
+                    //     .post(`${host}/api/send/message`, {
+                    //         sender: currentUser._id,
+                    //         receiver: receiver.id,
+                    //         messages,
+                    //     })
+                    //     .catch(() => console.log('loi gui tin nhan'));
                     setInputValue('');
                     setBlobUrlImg('');
                     setImgBase64('');

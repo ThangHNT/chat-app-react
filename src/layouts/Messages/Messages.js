@@ -38,6 +38,17 @@ function Messages({ receiver, darkmodeMsg = false }) {
     const contentRef = useRef();
     const backgroundRef = useRef();
 
+    useLayoutEffect(() => {
+        if (ChatContent.messageDeleted) {
+            // console.log(messages);
+            setMessages((pre) => {
+                return pre.filter((message) => {
+                    return message.id !== ChatContent.messageDeleted;
+                });
+            });
+        }
+    }, [ChatContent.messageDeleted]);
+
     // thay đổi ảnh nền khi nhận event từ socket
     useLayoutEffect(() => {
         if (newBackgroundImage) {
@@ -67,7 +78,7 @@ function Messages({ receiver, darkmodeMsg = false }) {
     // nhận tin nhắn mới nhất từ socket
     useEffect(() => {
         if (newMessage) {
-            // console.log('new msg', newMessage.content);
+            console.log('new msg', newMessage.content);
             if (newMessage.sender === receiver.id) {
                 setMessages((pre) => {
                     return [...pre, ...newMessage.content];
@@ -210,7 +221,7 @@ function Messages({ receiver, darkmodeMsg = false }) {
     return (
         <div ref={contentRef} onScroll={handleScroll} className={cx('wrapper')}>
             <div className={cx('body')}>
-                {/* {messages.length > 0 &&
+                {messages.length > 0 &&
                     messages.map((message, index) => (
                         <div key={index} className={cx('message-item')}>
                             <Message
@@ -227,22 +238,12 @@ function Messages({ receiver, darkmodeMsg = false }) {
                                     ? message.text
                                     : message.type === 'img'
                                     ? message.img
+                                    : message.type === 'revoked'
+                                    ? message.text
                                     : message.file}
                             </Message>
                         </div>
-                    ))} */}
-                <Message
-                    type="revoked"
-                    receiver="62f0bda97ed6bdef2eae1ea7"
-                    time="14 : 12"
-                    sender={true}
-                    messageId="62fd0377bfd8faa6b0b2dc14"
-                    messageBody={contentRef}
-                    reaction=""
-                    darkmodeMsg={false}
-                >
-                    {'tin nhan da thu hoi'}
-                </Message>
+                    ))}
             </div>
             <div ref={backgroundRef} className={cx('background-image')}></div>
             {scrollDown && (

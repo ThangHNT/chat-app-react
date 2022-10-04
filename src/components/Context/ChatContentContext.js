@@ -9,6 +9,11 @@ function ChatContentProvider({ children }) {
     const [zoomImg, setZoomImg] = useState();
     const [reactionIcon, setReactionIcon] = useState('');
     const [blockStatus, setBlockStatus] = useState();
+    const [messageDeleted, setMessageDeleted] = useState(false);
+
+    const handleSetMessageDeleted = (msg) => {
+        setMessageDeleted(msg);
+    };
 
     const handleSetBlockStatus = (status) => {
         setBlockStatus(status);
@@ -41,12 +46,14 @@ function ChatContentProvider({ children }) {
         fileInput,
         reactionIcon,
         blockStatus,
+        messageDeleted,
         handleDisplayChatContent,
         handleAddMessage,
         handleGetFileInput,
         handleZoomImgae,
         handleSetReactionIcon,
         handleSetBlockStatus,
+        handleSetMessageDeleted,
     };
 
     return <ChatContentContext.Provider value={values}>{children}</ChatContentContext.Provider>;

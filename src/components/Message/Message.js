@@ -180,7 +180,7 @@ function Message({
     };
 
     const handleDisplayRemoveMessageModal = () => {
-        handleSetDisplayRemoveMessageModal({ receiver, messageId });
+        handleSetDisplayRemoveMessageModal({ userId: receiver, messageId, type, sender, senderId: currentUser });
         // console.log(messageId);
     };
 

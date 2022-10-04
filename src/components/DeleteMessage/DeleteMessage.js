@@ -6,11 +6,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNames from 'classnames/bind';
 import styles from './DeleteMessage.module.scss';
 import { SettingContext } from '~/components/Context/SettingContext';
+import { SocketContext } from '~/components/Context/SocketContext';
+import { ChatContentContext } from '~/components/Context/ChatContentContext';
 
 const cx = classNames.bind(styles);
 
 function DeleteMessage() {
     const { displayRemoveMessageModal, handleSetDisplayRemoveMessageModal } = useContext(SettingContext);
+    const { handleRemoveMessageSended, handleRemoveMessageSocket } = useContext(SocketContext);
+    const { handleSetMessageDeleted } = useContext(ChatContentContext);
 
     const [selected, setSlected] = useState(false);
     const [messageInfo, setMessageInfo] = useState();
@@ -34,9 +38,17 @@ function DeleteMessage() {
 
     const handleStoreRemoveMessage = () => {
         if (messageInfo && selected) {
+            console.log(messageInfo);
+            if (selected === 'revoke') {
+                handleRemoveMessageSocket(messageInfo.senderId, messageInfo.userId, messageInfo.messageId, true);
+                handleRemoveMessageSended(messageInfo.userId, messageInfo.messageId, false, true);
+            } else {
+                handleRemoveMessageSended(messageInfo.userId, messageInfo.messageId, false, false, true);
+                handleSetMessageDeleted(messageInfo.messageId);
+            }
             handleSetDisplayRemoveMessageModal('');
             axios
-                .post(`${host}/api/revoked-message`, { type: selected, ...messageInfo })
+                .post(`${host}/api/revoke-message`, { action: selected, ...messageInfo })
                 .then(({ data }) => {
                     // console.log(data);
                 })
@@ -53,13 +65,15 @@ function DeleteMessage() {
             </div>
             <div className={cx('header')}>Bạn muốn gỡ tin nhắn này phía ai ?</div>
             <div className={cx('body')}>
-                <span
-                    className={cx({ chose: selected === 'revoked' })}
-                    onClick={handleSelectRemoveType}
-                    removetype="revoked"
-                >
-                    Thu hồi với mọi người
-                </span>
+                {displayRemoveMessageModal.type !== 'revoked' && displayRemoveMessageModal.sender && (
+                    <span
+                        className={cx({ chose: selected === 'revoke' })}
+                        onClick={handleSelectRemoveType}
+                        removetype="revoke"
+                    >
+                        Thu hồi với mọi người
+                    </span>
+                )}
                 <span
                     className={cx({ chose: selected === 'delete' })}
                     onClick={handleSelectRemoveType}

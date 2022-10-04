@@ -32,7 +32,7 @@ function SocketContextProvider({ children }) {
                 setUserList((pre) => [...pre, user]);
             });
             socket.on('private message', (data) => {
-                // console.log(data.content);
+                // console.log(data);
                 document.title = 'Co tin nhan moi';
                 handleCheckGetMessagesFromDB(data.sender);
                 handlSetMessageSended(data.sender, data.content);
@@ -74,6 +74,16 @@ function SocketContextProvider({ children }) {
     // khoi tao socket
     const handleInitSocket = (socket) => {
         setSocket(socket);
+    };
+
+    const handleRemoveMessageSocket = (sender, receiver, messageId, revoke = false, remove = false) => {
+        if (revoke) {
+            handleRemoveMessageSended(receiver, messageId, false, true);
+        } else if (remove) {
+            handleRemoveMessageSended(receiver, messageId, false, false, true);
+        }
+        let to = getSocketIdFromReceiverId(userList, receiver);
+        socket.emit('revoke message', { to, from: socket.id, sender, messageId });
     };
 
     const handleChangeSetting = (key, value) => {
@@ -154,8 +164,9 @@ function SocketContextProvider({ children }) {
     };
 
     // xóa bỏ tin nhắn đã gửi
-    const handleRemoveMessageSended = (key, value, reaction = false) => {
+    const handleRemoveMessageSended = (key, value, reaction = false, revoked = false, remove = false) => {
         const checkKey = messageSended.has(key);
+        // value = messageId
         if (checkKey) {
             const oldData = messageSended.get(key);
             if (reaction) {
@@ -163,6 +174,25 @@ function SocketContextProvider({ children }) {
                     if (item.id === value) {
                         item.reactionIcon = '';
                     }
+                });
+            } else if (revoked) {
+                // console.log('thu hoi tin nhan ');
+                oldData.forEach((message) => {
+                    if (message.id === value) {
+                        message.type = 'revoked';
+                        message.file = undefined;
+                        message.img = undefined;
+                        message.time = new Date().getTime();
+                        message.text = 'Bạn đã thu hồi 1 tin nhắn';
+                    }
+                });
+            } else if (remove) {
+                const newArr = oldData.filter((item) => {
+                    return item.id !== value;
+                });
+                // console.log('xoa tn', newArr);
+                setMessageSended(() => {
+                    return messageSended.set(key, [...newArr]);
                 });
             }
         }
@@ -286,6 +316,7 @@ function SocketContextProvider({ children }) {
         handleSetBackground,
         handleChangeSetting,
         handleRemoveSocketEvent,
+        handleRemoveMessageSocket,
     };
 
     return <SocketContext.Provider value={values}>{children}</SocketContext.Provider>;
