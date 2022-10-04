@@ -4,6 +4,15 @@
     height: 100%;
 }
 
+@keyframes display {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
 .modal {
     position: fixed;
     display: flex;
@@ -13,6 +22,7 @@
     z-index: 5;
     overflow: hidden;
     transition: 0.2s linear;
+    animation: display 0.25s linear;
 
     .modal-overlay {
         position: fixed;
