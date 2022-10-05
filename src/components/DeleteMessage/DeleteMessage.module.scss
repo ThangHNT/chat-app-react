@@ -27,7 +27,7 @@
     cursor: pointer;
 
     &:hover {
-        background-color: #ccc;
+        background-color: #aaa;
     }
 }
 
@@ -53,6 +53,8 @@
         cursor: pointer;
         background-color: #17a2b8;
         border-radius: 10px;
+        border: 1px solid transparent;
+        color: #222;
 
         &:hover {
             transform: scale(1.05);
@@ -60,7 +62,7 @@
     }
 
     span + span {
-        margin-top: 15px;
+        margin-top: 25px;
     }
 }
 
@@ -94,5 +96,15 @@
 }
 
 .chose {
-    color: #fff;
+    color: yellow !important;
+}
+
+// =========================== dark mode =========================
+.darkMode {
+    background-color: var(--dark-mode);
+}
+
+.darkModeBtn {
+    background-color: #555 !important;
+    color: #ccc;
 }

@@ -33,6 +33,7 @@
 .revoked-message {
     font-style: italic;
     font-size: 15px;
+    color: #000 !important;
 }
 
 .darkmodeText {
@@ -112,6 +113,7 @@
     border-radius: 2px;
     user-select: none;
     display: none;
+    color: #000 !important;
 }
 
 .reaction-icon {
@@ -137,9 +139,11 @@
     }
 }
 
+.reply-message-tippy,
 .delete-message-tippy {
     padding: 4px 5px;
     background-color: #fff;
+    color: #000 !important;
     font-size: 14px;
     border-radius: 5px;
     user-select: none;

@@ -36,6 +36,7 @@ function Modal() {
         // eslint-disable-next-line
     }, []);
 
+    // zoom anh khi ấn vào ảnh
     useEffect(() => {
         if (ChatContentMsg.zoomImg) {
             setZoomImg(true);

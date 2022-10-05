@@ -1,4 +1,4 @@
-import { useContext, useState, useEffect, memo } from 'react';
+import { useContext, useState, useEffect, memo, useRef } from 'react';
 import axios from 'axios';
 import host from '~/ulties/serverHost';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
@@ -12,18 +12,20 @@ import { ChatContentContext } from '~/components/Context/ChatContentContext';
 const cx = classNames.bind(styles);
 
 function DeleteMessage() {
-    const { displayRemoveMessageModal, handleSetDisplayRemoveMessageModal } = useContext(SettingContext);
+    const { displayRemoveMessageModal, handleSetDisplayRemoveMessageModal, darkLightMode } = useContext(SettingContext);
     const { handleRemoveMessageSended, handleRemoveMessageSocket } = useContext(SocketContext);
     const { handleSetMessageDeleted } = useContext(ChatContentContext);
 
     const [selected, setSlected] = useState(false);
     const [messageInfo, setMessageInfo] = useState();
 
+    const spanRef = useRef();
+    const headerTextRef = useRef();
+
     useEffect(() => {
         if (displayRemoveMessageModal) {
             setMessageInfo(displayRemoveMessageModal);
         }
-        // console.log(displayRemoveMessageModal);
         // eslint-disable-next-line
     }, []);
 
@@ -59,7 +61,7 @@ function DeleteMessage() {
     };
 
     return (
-        <div className={cx('wrapper')}>
+        <div className={cx('wrapper', { darkMode: darkLightMode })}>
             <div className={cx('close-btn')} onClick={handleCloseDeleteMessageModal}>
                 <FontAwesomeIcon icon={faXmark} />
             </div>
@@ -67,7 +69,7 @@ function DeleteMessage() {
             <div className={cx('body')}>
                 {displayRemoveMessageModal.type !== 'revoked' && displayRemoveMessageModal.sender && (
                     <span
-                        className={cx({ chose: selected === 'revoke' })}
+                        className={cx({ chose: selected === 'revoke', darkModeBtn: darkLightMode })}
                         onClick={handleSelectRemoveType}
                         removetype="revoke"
                     >
@@ -75,7 +77,7 @@ function DeleteMessage() {
                     </span>
                 )}
                 <span
-                    className={cx({ chose: selected === 'delete' })}
+                    className={cx({ chose: selected === 'delete', darkModeBtn: darkLightMode })}
                     onClick={handleSelectRemoveType}
                     removetype="delete"
                 >

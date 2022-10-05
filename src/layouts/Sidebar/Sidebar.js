@@ -22,10 +22,6 @@ function Sidebar() {
 
     const sidebarContentRef = useRef();
 
-    // useEffect(() => {
-    //     // eslint-disable-next-line
-    // }, []);
-
     useEffect(() => {
         if (currentUser) {
             axios.post(`${host}/api/message-item`, { sender: currentUser._id }).then((data) => {

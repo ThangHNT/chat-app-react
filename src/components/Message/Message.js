@@ -143,14 +143,16 @@ function Message({
     const handleChangeTheme = (theme) => {
         if (pRef.current) {
             // console.log(pRef.current);
-            for (let i = 0; i < 15; i++) {
-                if (i !== theme) {
-                    pRef.current.classList.remove(`theme${i}`);
-                    pRef.current.classList.remove(`add-theme`);
+            if (!pRef.current.getAttribute('revoked')) {
+                for (let i = 0; i < 15; i++) {
+                    if (i !== theme) {
+                        pRef.current.classList.remove(`theme${i}`);
+                        pRef.current.classList.remove(`add-theme`);
+                    }
                 }
+                pRef.current.classList.add(`theme${theme}`);
+                pRef.current.classList.add(`add-theme`);
             }
-            pRef.current.classList.add(`theme${theme}`);
-            pRef.current.classList.add(`add-theme`);
         }
     };
 
@@ -193,7 +195,7 @@ function Message({
                     </p>
                 )}
                 {type === 'revoked' && !isValidUrl(children) && (
-                    <p ref={pRef} className={cx('revoked-message', { darkmodeText: darkmodeMsg })} {...props}>
+                    <p ref={pRef} revoked="true" className={cx('revoked-message')} {...props}>
                         {children}
                     </p>
                 )}
@@ -293,7 +295,7 @@ function Message({
                         interactive
                         placement="bottom"
                         render={(attrs) => (
-                            <div className={cx('delete-message-tippy')} tabIndex="-1" {...attrs}>
+                            <div className={cx('reply-message-tippy')} tabIndex="-1" {...attrs}>
                                 Trả lời
                             </div>
                         )}
