@@ -35,17 +35,20 @@ function MessageItem({ receiver, darkmode = false, avatar, username, searchResul
         if (newMessage) {
             if (newMessage.sender === receiver) {
                 // console.log(newMessage);
-                messageSound.play();
+                // messageSound.play();
                 if (ChatContent.receiver !== receiver) {
                     setMessageNotify(true);
                 }
-                const newestMessage = newMessage.content[newMessage.content.length - 1];
-                if (newestMessage.type === 'text') {
-                    setlastestMessage(newestMessage.text);
-                } else if (newestMessage.type === 'img') {
-                    setlastestMessage('Ban nhan dc 1 anh');
+                if (newMessage.revoked) {
                 } else {
-                    setlastestMessage('Ban nhan dc 1 file');
+                    const newestMessage = newMessage.content[newMessage.content.length - 1];
+                    if (newestMessage.type === 'text') {
+                        setlastestMessage(newestMessage.text);
+                    } else if (newestMessage.type === 'img') {
+                        setlastestMessage('Ban nhan dc 1 anh');
+                    } else {
+                        setlastestMessage('Ban nhan dc 1 file');
+                    }
                 }
             }
         }

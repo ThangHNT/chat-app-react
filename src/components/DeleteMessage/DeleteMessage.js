@@ -38,7 +38,7 @@ function DeleteMessage() {
 
     const handleStoreRemoveMessage = () => {
         if (messageInfo && selected) {
-            console.log(messageInfo);
+            // console.log(messageInfo);
             if (selected === 'revoke') {
                 handleRemoveMessageSocket(messageInfo.senderId, messageInfo.userId, messageInfo.messageId, true);
                 handleRemoveMessageSended(messageInfo.userId, messageInfo.messageId, false, true);

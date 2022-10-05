@@ -64,6 +64,13 @@ function SocketContextProvider({ children }) {
                 // console.log(data);
                 setNewBackgroundImage(data);
             });
+
+            socket.on('revoke message private', (data) => {
+                // console.log(data);
+                // handleRemoveMessageSended(data.sender, data.messageId, false, true);
+                setNewMessage({ sender: data.sender, revoked: true, messageId: data.messageId });
+            });
+
             socket.on('user disconnected', (socketId) => {
                 setUserDisconnect(socketId);
             });
@@ -76,6 +83,7 @@ function SocketContextProvider({ children }) {
         setSocket(socket);
     };
 
+    // phát sự kiện gỡ bỏ or xóa tin nhắn
     const handleRemoveMessageSocket = (sender, receiver, messageId, revoke = false, remove = false) => {
         if (revoke) {
             handleRemoveMessageSended(receiver, messageId, false, true);
@@ -86,6 +94,7 @@ function SocketContextProvider({ children }) {
         socket.emit('revoke message', { to, from: socket.id, sender, messageId });
     };
 
+    // phát sự kiện thay đổi setting (lấy setting lần đầu từ db)
     const handleChangeSetting = (key, value) => {
         if (key && value) {
             setGetSetting((pre) => {
@@ -94,6 +103,7 @@ function SocketContextProvider({ children }) {
         }
     };
 
+    // bỏ event thay đổi chủ đề và ảnh nền
     const handleRemoveSocketEvent = (theme = false, backgroundImage = false) => {
         if (theme) {
             setNewTheme(undefined);
@@ -176,16 +186,19 @@ function SocketContextProvider({ children }) {
                     }
                 });
             } else if (revoked) {
-                // console.log('thu hoi tin nhan ');
+                console.log('thu hoi tin nhan ');
                 oldData.forEach((message) => {
                     if (message.id === value) {
                         message.type = 'revoked';
                         message.file = undefined;
                         message.img = undefined;
                         message.time = new Date().getTime();
-                        message.text = 'Bạn đã thu hồi 1 tin nhắn';
+                        message.text = '1 tin nhắn đã bị thu hồi';
                     }
                 });
+                const map = new Map();
+                map.set(key, oldData);
+                setMessageSended(map);
             } else if (remove) {
                 const newArr = oldData.filter((item) => {
                     return item.id !== value;

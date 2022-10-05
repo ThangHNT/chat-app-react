@@ -78,11 +78,24 @@ function Messages({ receiver, darkmodeMsg = false }) {
     // nhận tin nhắn mới nhất từ socket
     useEffect(() => {
         if (newMessage) {
-            console.log('new msg', newMessage.content);
+            // console.log('new msg', newMessage);
             if (newMessage.sender === receiver.id) {
-                setMessages((pre) => {
-                    return [...pre, ...newMessage.content];
-                });
+                if (newMessage.revoked) {
+                    messages.forEach((item) => {
+                        if (item.id === newMessage.messageId) {
+                            item.text = '1 tin nhắn đã bị thu hồi';
+                            item.file = undefined;
+                            item.audio = undefined;
+                            item.video = undefined;
+                        }
+                    });
+                    // console.log(messages);
+                    setMessages(messages);
+                } else {
+                    setMessages((pre) => {
+                        return [...pre, ...newMessage.content];
+                    });
+                }
                 document.title = 'Chat app';
                 handleSetNewMessage(undefined);
             }
