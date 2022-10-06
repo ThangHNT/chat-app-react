@@ -14,7 +14,7 @@ import { useRef } from 'react';
 const cx = classNames.bind(styles);
 
 function Setting({ receiver, darkmode }) {
-    console.log('setting');
+    // console.log('setting');
     const { blockStatus, handlSetBlockStatus, handleDisplayThemeList, handleSetBackgroundImage, backgroundImage } =
         useContext(SettingContext);
     const { handleBlockUser, handleUnblockUser } = useContext(SocketContext);

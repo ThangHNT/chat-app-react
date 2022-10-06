@@ -27,7 +27,7 @@ function Sidebar() {
             axios.post(`${host}/api/message-item`, { sender: currentUser._id }).then((data) => {
                 const data2 = data.data;
                 if (data2.status) {
-                    const arr = data2.userList.slice(0, 6);
+                    const arr = data2.userList.slice(0, 7);
                     setListUser(arr);
                 } else {
                     console.log('loi lay ds user');
