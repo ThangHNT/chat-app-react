@@ -15,7 +15,7 @@ function Theme({ receiver }) {
     // console.log('theme');
     const Socket = useContext(SocketContext);
     const [theme, setTheme] = useState(false);
-    const { handleDisplayThemeList, themeList, handleSetTheme } = useContext(SettingContext);
+    const { handleDisplayThemeList, themeList, handleSetTheme, darkLightMode } = useContext(SettingContext);
     const Setting = useContext(SettingContext);
 
     const user = useMemo(() => {
@@ -27,19 +27,20 @@ function Theme({ receiver }) {
         setTheme(false);
     };
 
+    // thay đổi background color theme-item khi click vào
     const handleGetTheme = (e) => {
         const target = e.currentTarget;
-        target.style.backgroundColor = '#aaa';
-        themeList.forEach((item, index) => {
-            if (index !== Number(target.id)) {
-                document.getElementById(index).style.backgroundColor = '#fff';
-            }
-        });
-        if (Setting.theme !== target.id) {
+        if (Setting.theme.get(receiver) !== target.id) {
+            target.style.backgroundColor = 'rgba(170, 170, 170,0.6)';
             setTheme(target.id);
         } else {
             setTheme(false);
         }
+        themeList.forEach((item, index) => {
+            if (index !== Number(target.id)) {
+                document.getElementById(index).style.backgroundColor = 'transparent';
+            }
+        });
     };
 
     const handleChangeTheme = async (e) => {
@@ -64,8 +65,8 @@ function Theme({ receiver }) {
     };
 
     return (
-        <div className={cx('wrapper')}>
-            <div className={cx('theme-header')}>
+        <div className={cx('wrapper', { darkmode: darkLightMode })}>
+            <div className={cx('theme-header', { darkmode: darkLightMode })}>
                 <span>Chủ Đề</span>
                 <FontAwesomeIcon icon={faXmark} className={cx('close-icon')} onClick={handleSetDisplayThemeList} />
             </div>

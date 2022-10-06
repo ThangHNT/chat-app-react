@@ -38,10 +38,10 @@ function Message({
     type,
     children,
     onClick,
-    darkmodeMsg,
+    darkmodeMsg = false,
     ...passprops
 }) {
-    // console.log('message==');
+    console.log('message==');
     const { theme, handleSetTheme, handleSetDisplayRemoveMessageModal } = useContext(SettingContext);
     const ChatContent = useContext(ChatContentContext);
     const {
@@ -83,12 +83,14 @@ function Message({
 
     // thay đổi theme khi ấn lưu
     useLayoutEffect(() => {
-        if (theme.get(receiver)) {
-            // console.log(theme.get(receiver));
-            handleChangeTheme(theme.get(receiver));
+        if (!darkmodeMsg) {
+            if (theme.get(receiver)) {
+                // console.log(theme.get(receiver));
+                handleChangeTheme(theme.get(receiver));
+            }
         }
         // eslint-disable-next-line
-    }, [theme.get(receiver)]);
+    }, [theme.get(receiver), darkmodeMsg]);
 
     // listen send reaction icon on socket
     useEffect(() => {

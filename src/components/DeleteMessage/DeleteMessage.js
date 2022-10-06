@@ -1,4 +1,4 @@
-import { useContext, useState, useEffect, memo, useRef } from 'react';
+import { useContext, useState, useEffect, memo } from 'react';
 import axios from 'axios';
 import host from '~/ulties/serverHost';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
@@ -18,9 +18,6 @@ function DeleteMessage() {
 
     const [selected, setSlected] = useState(false);
     const [messageInfo, setMessageInfo] = useState();
-
-    const spanRef = useRef();
-    const headerTextRef = useRef();
 
     useEffect(() => {
         if (displayRemoveMessageModal) {
