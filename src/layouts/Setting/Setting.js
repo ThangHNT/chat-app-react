@@ -1,4 +1,4 @@
-import { useState, useMemo, useContext } from 'react';
+import { useState, useMemo, useContext, memo } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ToastContainer, toast } from 'react-toastify';
@@ -9,10 +9,12 @@ import styles from './Setting.module.scss';
 import { faEthereum } from '@fortawesome/free-brands-svg-icons';
 import { SettingContext } from '~/components/Context/SettingContext';
 import { SocketContext } from '~/components/Context/SocketContext';
+import { useRef } from 'react';
 
 const cx = classNames.bind(styles);
 
 function Setting({ receiver, darkmode }) {
+    console.log('setting');
     const { blockStatus, handlSetBlockStatus, handleDisplayThemeList, handleSetBackgroundImage, backgroundImage } =
         useContext(SettingContext);
     const { handleBlockUser, handleUnblockUser } = useContext(SocketContext);
@@ -23,6 +25,8 @@ function Setting({ receiver, darkmode }) {
     const currentUser = useMemo(() => {
         return JSON.parse(localStorage.getItem('chat-app-hnt'));
     }, []);
+
+    const inputRef = useRef();
 
     const handleBlock = async (e) => {
         if (blockStatus.block) {
@@ -49,6 +53,7 @@ function Setting({ receiver, darkmode }) {
 
     const handleDisplayChooseBackgoundUI = (e) => {
         setDisplaySelectImageForBackgroun((pre) => !pre);
+        setImageInput(false);
     };
 
     const handleChooseImage = (e) => {
@@ -59,7 +64,6 @@ function Setting({ receiver, darkmode }) {
             reader.readAsDataURL(file);
             reader.onload = () => {
                 let base64String = reader.result;
-                // console.log(base64String);
                 setImageInput(base64String);
             };
         }
@@ -88,6 +92,8 @@ function Setting({ receiver, darkmode }) {
 
     const handleDeleteBackgroundImage = () => {
         const userId = receiver.id;
+        setImageInput(false);
+        inputRef.current.value = '';
         backgroundImage.forEach((item) => {
             if (item.id === userId && item.backgroundImage.length > 0) {
                 axios
@@ -132,9 +138,10 @@ function Setting({ receiver, darkmode }) {
                         )}
                     </div>
                     {displaySelectImageForBackgroun && (
-                        <div className={cx('choose-background')}>
+                        <div className={cx('choose-background', { darkmode })}>
                             <div className={cx('row')}>
                                 <input
+                                    ref={inputRef}
                                     onChange={handleChooseImage}
                                     className={cx('background-input')}
                                     type="file"
@@ -192,4 +199,4 @@ function Setting({ receiver, darkmode }) {
     );
 }
 
-export default Setting;
+export default memo(Setting);

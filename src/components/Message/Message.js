@@ -41,7 +41,7 @@ function Message({
     darkmodeMsg = false,
     ...passprops
 }) {
-    console.log('message==');
+    // console.log('message==');
     const { theme, handleSetTheme, handleSetDisplayRemoveMessageModal } = useContext(SettingContext);
     const ChatContent = useContext(ChatContentContext);
     const {
