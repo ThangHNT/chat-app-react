@@ -28,7 +28,7 @@ function Header() {
 
     useEffect(() => {
         if (user) {
-            // console.log('set socket');
+            // console.log('co user');
             const socket = io(host);
             socket.auth = { userId: user._id };
             handleInitSocket(socket);

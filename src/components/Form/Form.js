@@ -72,6 +72,7 @@ function Form({ login, signup }) {
                         toast(data.msg);
                     } else {
                         console.log('login');
+                        // console.log(data.user);
                         localStorage.setItem('chat-app-hnt', JSON.stringify(data.user));
                         User.setUser(data.user);
                         toast('Chuyển hướng đến trang chủ');

@@ -62,8 +62,14 @@ function SettingProvider({ children }) {
     };
 
     // chuyển đổi giao diện sáng tối
-    const handleChangeDarkLightMode = () => {
-        setDarkLightMode((pre) => !pre);
+    const handleChangeDarkLightMode = (data, value) => {
+        if (data) {
+            setDarkLightMode(value);
+        } else {
+            setDarkLightMode((pre) => {
+                return !pre;
+            });
+        }
     };
 
     const values = {
