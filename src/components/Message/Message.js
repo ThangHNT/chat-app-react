@@ -42,7 +42,7 @@ function Message({
     ...passprops
 }) {
     // console.log('message==');
-    const { theme, handleSetTheme, handleSetDisplayRemoveMessageModal } = useContext(SettingContext);
+    const { theme, handleSetTheme, handleSetDisplayRemoveMessageModal, darkLightMode } = useContext(SettingContext);
     const ChatContent = useContext(ChatContentContext);
     const {
         newReaction,
@@ -69,6 +69,11 @@ function Message({
     const spanRef = useRef();
     const pRef = useRef();
 
+    useLayoutEffect(() => {
+        handleChangeTheme(theme.get(receiver));
+        // eslint-disable-next-line
+    }, [darkLightMode]);
+
     // new theme event from socket
     useLayoutEffect(() => {
         if (newTheme) {
@@ -83,14 +88,12 @@ function Message({
 
     // thay đổi theme khi ấn lưu
     useLayoutEffect(() => {
-        if (!darkmodeMsg) {
-            if (theme.get(receiver)) {
-                // console.log(theme.get(receiver));
-                handleChangeTheme(theme.get(receiver));
-            }
+        if (theme.get(receiver)) {
+            // console.log(theme.get(receiver));
+            handleChangeTheme(theme.get(receiver));
         }
         // eslint-disable-next-line
-    }, [theme.get(receiver), darkmodeMsg]);
+    }, [theme.get(receiver)]);
 
     // listen send reaction icon on socket
     useEffect(() => {
@@ -184,20 +187,31 @@ function Message({
     };
 
     const handleDisplayRemoveMessageModal = () => {
-        handleSetDisplayRemoveMessageModal({ userId: receiver, messageId, type, sender, senderId: currentUser });
         // console.log(messageId);
+        handleSetDisplayRemoveMessageModal({ userId: receiver, messageId, type, sender, senderId: currentUser });
     };
 
     return (
         <div className={cx('wrapper', { sender })} onMouseOver={handleDisplayAction} onMouseOut={handleHideAction}>
-            <div className={cx('wrapper-content', { sender })}>
+            <div
+                className={cx('wrapper-content', {
+                    sender,
+                    darkModeWrapperMsg: darkmodeMsg,
+                    WrapperMsgNotText: type !== 'text',
+                })}
+            >
                 {type === 'text' && !isValidUrl(children) && (
                     <p ref={pRef} className={cx('text-message', { darkmodeText: darkmodeMsg })} {...props}>
                         {children}
                     </p>
                 )}
                 {type === 'revoked' && !isValidUrl(children) && (
-                    <p ref={pRef} revoked="true" className={cx('revoked-message')} {...props}>
+                    <p
+                        ref={pRef}
+                        revoked="true"
+                        className={cx('revoked-message', { revokedMsgDarkmode: darkmodeMsg })}
+                        {...props}
+                    >
                         {children}
                     </p>
                 )}

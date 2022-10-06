@@ -10,10 +10,17 @@
 .wrapper-content {
     max-width: 80%;
     display: flex;
+    align-items: center;
+    justify-content: center;
     position: relative;
     background-color: #fff;
     border-radius: 20px;
     border: 1px solid #aaa;
+}
+
+.WrapperMsgNotText {
+    background-color: transparent !important;
+    border: none;
 }
 
 .revoked-message,
@@ -29,17 +36,18 @@
     line-height: 20px;
     font-family: Arial, sans-serif;
     font-size: 16px;
-    border: 1px solid #ccc;
 }
 
 .revoked-message {
     font-style: italic;
     font-size: 15px;
-    color: #000 !important;
+    color: #666768 !important;
+    background-color: #ddd;
+    border: 1px solid #aaa;
 }
 
-.darkmodeText {
-    color: #000;
+.revokedMsgDarkmode {
+    background-color: var(--dark-mode);
 }
 
 .urlText {
@@ -149,4 +157,9 @@
     font-size: 14px;
     border-radius: 5px;
     user-select: none;
+}
+
+// =========================== dark mode =========================
+.darkModeWrapperMsg {
+    background-color: #222;
 }

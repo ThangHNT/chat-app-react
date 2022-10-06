@@ -23,7 +23,7 @@ const themeList = [
 function SettingProvider({ children }) {
     // console.log('setting context');
     const [blockStatus, setBlockStatus] = useState('');
-    const [darkLightMode, setDarkLightMode] = useState(false);
+    const [darkLightMode, setDarkLightMode] = useState();
     const [displayTheme, setDisplayTheme] = useState();
     const [theme, setTheme] = useState(new Map());
     const [backgroundImage, setBackgroundImage] = useState([]);

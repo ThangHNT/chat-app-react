@@ -20,25 +20,28 @@ function Sidebar() {
         return JSON.parse(localStorage.getItem('chat-app-hnt'));
     }, []);
 
-    const debounce = useDebounce(darkLightMode, 2000);
+    const debounce = useDebounce(darkLightMode, 2500);
 
     const checkboxRef = useRef();
     const sidebarContentRef = useRef();
 
     useEffect(() => {
         // console.log(debounce);
-        axios
-            .post(`${host}/api/change/general-settings`, {
-                type: 'dark mode',
-                value: darkLightMode,
-                userId: currentUser._id,
-            })
-            .catch(() => console.log('loi thay doi dark mode to data base'));
+        if (debounce !== undefined) {
+            axios
+                .post(`${host}/api/change/general-settings`, {
+                    type: 'dark mode',
+                    value: darkLightMode,
+                    userId: currentUser._id,
+                })
+                .catch(() => console.log('loi thay doi dark mode to data base'));
+        }
         // eslint-disable-next-line
     }, [debounce]);
 
     useLayoutEffect(() => {
         handleChangeDarkLightModeHtml();
+        checkboxRef.current.checked = darkLightMode;
         // eslint-disable-next-line
     }, [darkLightMode]);
 

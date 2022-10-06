@@ -200,6 +200,7 @@ function SocketContextProvider({ children }) {
                 map.set(key, oldData);
                 setMessageSended(map);
             } else if (remove) {
+                // console.log(value);
                 const newArr = oldData.filter((item) => {
                     return item.id !== value;
                 });

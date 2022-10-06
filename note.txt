@@ -1,1 +1,1 @@
-tao socket event
+ko xóa đc tn vừa gửi qua socket vì chưa có message id đc tạo
