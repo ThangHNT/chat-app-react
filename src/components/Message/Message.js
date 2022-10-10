@@ -8,6 +8,7 @@ import {
     faFilePdf,
     // faEllipsisVertical,
 } from '@fortawesome/free-solid-svg-icons';
+import { faTrashCan } from '@fortawesome/free-regular-svg-icons';
 import axios from 'axios';
 import Tippy from '@tippyjs/react/headless';
 import host from '~/ulties/serverHost';
@@ -24,7 +25,7 @@ import likeIcon from '~/assets/images/like-reaction-icon.png';
 import { ChatContentContext } from '~/components/Context/ChatContentContext';
 import { SocketContext } from '~/components/Context/SocketContext';
 import { SettingContext } from '~/components/Context/SettingContext';
-import { faTrashCan } from '@fortawesome/free-regular-svg-icons';
+import { MessageContext } from '~/components/Context/MessageContext';
 
 const cx = classNames.bind(styles);
 
@@ -42,6 +43,7 @@ function Message({
     ...passprops
 }) {
     // console.log('message==');
+    const { handleSetMessages } = useContext(MessageContext);
     const { theme, handleSetTheme, handleSetDisplayRemoveMessageModal, darkLightMode } = useContext(SettingContext);
     const ChatContent = useContext(ChatContentContext);
     const {
@@ -107,11 +109,19 @@ function Message({
         // eslint-disable-next-line
     }, [newReaction]);
 
+    useEffect(() => {
+        if (reactionRemoved.messageId) {
+        }
+    }, [reactionRemoved.messageId]);
+
     // hiện reaction ngay sau khi chọn
     useEffect(() => {
-        if (ChatContent.reactionIcon) {
+        if (ChatContent.reactionIcon.icon) {
             if (messageId === ChatContent.reactionIcon.messageId) {
                 setReactionIcon(getReactionIcon(ChatContent.reactionIcon.icon));
+                // console.log(receiver);
+                handleSetMessages(receiver, ChatContent.reactionIcon.icon, ChatContent.reactionIcon.messageId, true);
+                ChatContent.handleSetReactionIcon({ icon: undefined, messageId: ChatContent.reactionIcon.messageId });
             }
         }
         // eslint-disable-next-line
@@ -161,11 +171,13 @@ function Message({
         }
     };
 
+    // click vào icon dưới tn để xóa
     const handleRemoveIcon = async (e) => {
         // console.log(reactionIcon);
         if (!sender) {
             setReactionIcon(false);
-            handleRemoveReactionIcon(receiver, messageId);
+            handleRemoveReactionIcon({ receiver, messageId, sender: currentUser });
+            handleSetMessages(receiver, '', ChatContent.reactionIcon.messageId, true);
         }
         // const data = await axios.post(`${host}/api/remove/reaction-icon`, { messageId });
         // if (!data.status) {
@@ -305,7 +317,7 @@ function Message({
                 )}
             </div>
             <div ref={btnRef} className={cx('message-sended-actions')}>
-                {!sender && !reactionRemoved && <ReactMessageIcon messageId={messageId} messageBody={messageBody} />}
+                {!sender && <ReactMessageIcon messageId={messageId} messageBody={messageBody} />}
                 <div className={cx('wapper-tippy')}>
                     <Tippy
                         interactive

@@ -57,6 +57,7 @@ function ReactMessageIcon({ messageId, messageBody }) {
     const handleClickIcon = (e) => {
         // console.log(e.target.alt);
         const icon = e.target.alt;
+        // console.log(icon, messageId);
         handleSetReactionIcon({ icon, messageId });
         handleSendMessage({ icon, messageId, sender: currentUser, receiver }, true);
         // axios

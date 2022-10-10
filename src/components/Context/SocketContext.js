@@ -12,7 +12,7 @@ function SocketContextProvider({ children }) {
     const [userDisconnect, setUserDisconnect] = useState();
     const [newReaction, setNewReaction] = useState();
     const [preventation, setPreventation] = useState();
-    const [reactionRemoved, setReactionRemoved] = useState();
+    const [reactionRemoved, setReactionRemoved] = useState({});
     const [newTheme, setNewTheme] = useState();
     const [newBackgroundImage, setNewBackgroundImage] = useState();
     const [getSetting, setGetSetting] = useState(new Map());
@@ -46,9 +46,9 @@ function SocketContextProvider({ children }) {
                 // console.log(sender);
                 setPreventation({ receiver, sender, unblock: true });
             });
-            socket.on('remove reaction icon private', ({ receiver, messageId }) => {
-                // console.log(receiver);
-                setReactionRemoved(messageId);
+            socket.on('remove reaction icon private', ({ receiver, messageId, sender }) => {
+                // console.log(sender);
+                setReactionRemoved({ messageId, sender });
             });
             socket.on('change theme private', (data) => {
                 // console.log(data);
@@ -127,9 +127,10 @@ function SocketContextProvider({ children }) {
         }
     };
     // phát sự kiện xóa bỏ reaction icon
-    const handleRemoveReactionIcon = (receiver, messageId) => {
+    const handleRemoveReactionIcon = ({ receiver, messageId, sender }) => {
+        console.log(sender);
         let to = getSocketIdFromReceiverId(userList, receiver);
-        socket.emit('remove reaction icon', { from: socket.id, to, receiver, messageId });
+        socket.emit('remove reaction icon', { from: socket.id, to, sender, receiver, messageId });
     };
 
     // thay đổi ds người online
