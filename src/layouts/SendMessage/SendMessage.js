@@ -99,7 +99,6 @@ function SendMessage({ receiver, darkmode = false }) {
             let checkFileImage = newFile.type.includes('image');
             base64String = base64String.replace('data:', '').replace(/^.+,/, '');
             // console.log(newFile.type);
-            // console.log(base64String);
             if (checkFileImage) {
                 setImgBase64(base64String);
             } else if (newFile.type === 'text/plain') {
@@ -215,7 +214,7 @@ function SendMessage({ receiver, darkmode = false }) {
     };
 
     // ấn enter để gửi tin nhắn
-    const handleEnterSubmit = (e) => {
+    const handleEnterSubmit = async (e) => {
         let shiftKey = 0;
         if (e.shiftKey) shiftKey = 16;
         if (e.which === 13 && shiftKey !== 16) {
@@ -255,23 +254,23 @@ function SendMessage({ receiver, darkmode = false }) {
             if (messages.content.length > 0) {
                 inputRef.current.setHeight(32);
                 messageSound.src = 'send-message-sound.mp3';
-                messageSound.play();
-                handleSendMessage(messages);
-                ChatContent.handleAddMessage(messages);
-                try {
-                    // axios
-                    //     .post(`${host}/api/send/message`, {
-                    //         sender: currentUser._id,
-                    //         receiver: receiver.id,
-                    //         messages,
-                    //     })
-                    //     .catch(() => console.log('loi gui tin nhan'));
+                // messageSound.play();
+                const data = await axios.post(`${host}/api/send/message`, {
+                    sender: currentUser._id,
+                    receiver: receiver.id,
+                    messages,
+                });
+                if (data.status) {
+                    // console.log(data.data.messages);
+                    const newMessages = data.data.messages;
+                    handleSendMessage(newMessages);
+                    ChatContent.handleAddMessage(newMessages);
                     setInputValue('');
                     setBlobUrlImg('');
                     setImgBase64('');
                     setFile('');
-                } catch (e) {
-                    console.log('loi gui tin nhan');
+                } else {
+                    alert('Lỗi gửi tin nhắn');
                 }
             }
         }

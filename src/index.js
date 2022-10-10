@@ -6,6 +6,7 @@ import { UserProvider } from './components/Context/UserContext';
 import { ChatContentProvider } from '~/components/Context/ChatContentContext';
 import { SocketContextProvider } from '~/components/Context/SocketContext';
 import { SettingProvider } from '~/components/Context/SettingContext';
+import { MessageProvider } from '~/components/Context/MessageContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -13,11 +14,13 @@ root.render(
     <UserProvider>
         <SettingProvider>
             <SocketContextProvider>
-                <ChatContentProvider>
-                    <GlobalStyles>
-                        <App />
-                    </GlobalStyles>
-                </ChatContentProvider>
+                <MessageProvider>
+                    <ChatContentProvider>
+                        <GlobalStyles>
+                            <App />
+                        </GlobalStyles>
+                    </ChatContentProvider>
+                </MessageProvider>
             </SocketContextProvider>
         </SettingProvider>
     </UserProvider>,

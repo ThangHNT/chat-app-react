@@ -39,16 +39,13 @@ function MessageItem({ receiver, darkmode = false, avatar, username, searchResul
                 if (ChatContent.receiver !== receiver) {
                     setMessageNotify(true);
                 }
-                if (newMessage.revoked) {
+                const newestMessage = newMessage.content[newMessage.content.length - 1];
+                if (newestMessage.type === 'text') {
+                    setlastestMessage(newestMessage.text);
+                } else if (newestMessage.type === 'img') {
+                    setlastestMessage('Ban nhan dc 1 anh');
                 } else {
-                    const newestMessage = newMessage.content[newMessage.content.length - 1];
-                    if (newestMessage.type === 'text') {
-                        setlastestMessage(newestMessage.text);
-                    } else if (newestMessage.type === 'img') {
-                        setlastestMessage('Ban nhan dc 1 anh');
-                    } else {
-                        setlastestMessage('Ban nhan dc 1 file');
-                    }
+                    setlastestMessage('Ban nhan dc 1 file');
                 }
             }
         }
@@ -141,6 +138,7 @@ function MessageItem({ receiver, darkmode = false, avatar, username, searchResul
     const handleClick = async () => {
         setMessageNotify(false);
         handleDisplayChatContent(receiver);
+        document.title = 'Chat App';
     };
 
     return (

@@ -10,23 +10,16 @@ import Button from '~/components/Button';
 import { ChatContentContext } from '~/components/Context/ChatContentContext';
 import { SocketContext } from '~/components/Context/SocketContext';
 import { SettingContext } from '~/components/Context/SettingContext';
+import { MessageContext } from '~/components/Context/MessageContext';
 
 const cx = classNames.bind(styles);
 
 function Messages({ receiver, darkmodeMsg = false }) {
     // console.log('Messages');
+    const Messages = useContext(MessageContext);
     const { backgroundImage, handleSetBackgroundImage } = useContext(SettingContext);
     const ChatContent = useContext(ChatContentContext);
-    const {
-        newMessage,
-        messageSended,
-        newBackgroundImage,
-        checkGetMessagesFromDB,
-        handlSetMessageSended,
-        handleCheckGetMessagesFromDB,
-        handleSetNewMessage,
-        handleRemoveSocketEvent,
-    } = useContext(SocketContext);
+    const { newMessage, handleSetNewMessage, newBackgroundImage, handleRemoveSocketEvent } = useContext(SocketContext);
 
     const [scrollDown, setScrollDown] = useState(false);
     const [messages, setMessages] = useState([]);
@@ -38,16 +31,34 @@ function Messages({ receiver, darkmodeMsg = false }) {
     const contentRef = useRef();
     const backgroundRef = useRef();
 
-    useLayoutEffect(() => {
-        if (ChatContent.messageDeleted) {
-            // console.log(messages);
-            setMessages((pre) => {
-                return pre.filter((message) => {
-                    return message.id !== ChatContent.messageDeleted;
+    // tải messages từ database lần đầu, lần sau lấy từ client store
+    useEffect(() => {
+        const checkGetMessagesFromDB = Messages.messages.get(receiver.id);
+        // console.log(checkGetMessagesFromDB);
+        if (checkGetMessagesFromDB) {
+            // console.log('get from client');
+            setMessages([...checkGetMessagesFromDB]);
+        } else {
+            // console.log('get from db');
+            axios
+                .post(`${host}/api/get/messages`, {
+                    sender: sender,
+                    receiver: receiver.id,
+                })
+                .then((data) => {
+                    if (data.data.status) {
+                        let data2 = data.data.arr;
+                        // console.log('data from db', data2);
+                        setMessages([...data2]);
+                        Messages.handleSetMessages(receiver.id, data2);
+                    }
+                })
+                .catch((error) => {
+                    console.log('loi lay tin nhan');
                 });
-            });
         }
-    }, [ChatContent.messageDeleted]);
+        // eslint-disable-next-line
+    }, []);
 
     // thay đổi ảnh nền khi nhận event từ socket
     useLayoutEffect(() => {
@@ -78,26 +89,13 @@ function Messages({ receiver, darkmodeMsg = false }) {
     // nhận tin nhắn mới nhất từ socket
     useEffect(() => {
         if (newMessage) {
-            // console.log('new msg', newMessage);
             if (newMessage.sender === receiver.id) {
-                if (newMessage.revoked) {
-                    messages.forEach((item) => {
-                        if (item.id === newMessage.messageId) {
-                            item.text = '1 tin nhắn đã bị thu hồi';
-                            item.file = undefined;
-                            item.audio = undefined;
-                            item.video = undefined;
-                        }
-                    });
-                    // console.log(messages);
-                    setMessages(messages);
-                } else {
-                    setMessages((pre) => {
-                        return [...pre, ...newMessage.content];
-                    });
-                }
-                document.title = 'Chat app';
-                handleSetNewMessage(undefined);
+                console.log('new message');
+                setMessages((pre) => {
+                    return [...pre, ...newMessage.content];
+                });
+                Messages.handleSetMessages(receiver.id, newMessage.content);
+                handleSetNewMessage('', '', true);
             }
         }
         // eslint-disable-next-line
@@ -107,32 +105,37 @@ function Messages({ receiver, darkmodeMsg = false }) {
     useEffect(() => {
         const msg = ChatContent.messages;
         if (msg) {
-            // console.log(msg);
-            const arr = msg.content.map((message) => {
-                return {
-                    text: message.type === 'text' ? message.text : '',
-                    img: message.type === 'img' ? message.img : '',
-                    file:
-                        message.type === 'text-file' ||
-                        message.type === 'doc-file' ||
-                        message.type === 'pdf-file' ||
-                        message.type === 'excel-file' ||
-                        message.type === 'video' ||
-                        message.type === 'audio'
-                            ? {
-                                  content: message.file.content,
-                                  filename: message.file.filename,
-                                  size: message.file.size,
-                              }
-                            : '',
-                    sender,
-                    time: new Date().getTime(),
-                    type: message.type,
-                };
-            });
-            setMessages((pre) => {
-                return [...pre, ...arr];
-            });
+            if (msg.receiver === receiver.id) {
+                console.log('an enter');
+                const arr = msg.content.map((message) => {
+                    return {
+                        text: message.type === 'text' ? message.text : '',
+                        img: message.type === 'img' ? message.img : '',
+                        id: message.id,
+                        file:
+                            message.type === 'text-file' ||
+                            message.type === 'doc-file' ||
+                            message.type === 'pdf-file' ||
+                            message.type === 'excel-file' ||
+                            message.type === 'video' ||
+                            message.type === 'audio'
+                                ? {
+                                      content: message.file.content,
+                                      filename: message.file.filename,
+                                      size: message.file.size,
+                                  }
+                                : '',
+                        sender,
+                        time: new Date().getTime(),
+                        type: message.type,
+                    };
+                });
+                setMessages((pre) => {
+                    return [...pre, ...arr];
+                });
+                ChatContent.handleAddMessage(undefined);
+                Messages.handleSetMessages(receiver.id, arr);
+            }
         }
         // eslint-disable-next-line
     }, [ChatContent.messages]);
@@ -142,65 +145,6 @@ function Messages({ receiver, darkmodeMsg = false }) {
         contentRef.current.scrollTop = contentRef.current.scrollHeight;
         // eslint-disable-next-line
     }, [messages]);
-
-    // tải messages từ database lần đầu, lần sau lấy từ client store
-    useEffect(() => {
-        const messagesSended = messageSended.get(receiver.id);
-        if (messagesSended) {
-            // console.log(messagesSended);
-            // click vào messageItem lần đầu khi có tin nhắn mới
-            const checkGetData = checkGetMessagesFromDB.some((userId) => {
-                return userId === receiver.id;
-            });
-            if (!checkGetData) {
-                // nếu chưa load data from db lần đầu
-                // console.log('can goi api');
-                axios
-                    .post(`${host}/api/get/messages`, {
-                        sender: sender,
-                        receiver: receiver.id,
-                    })
-                    .then((data) => {
-                        // console.log('data from db', data.data.arr);
-                        if (data.data.status) {
-                            let data2 = data.data.arr;
-                            setMessages([...data2, ...messagesSended]);
-                            handleCheckGetMessagesFromDB(receiver.id);
-                            handlSetMessageSended(receiver.id, data2, true);
-                        }
-                    })
-                    .catch((error) => {
-                        console.log('loi lay tin nhan 2');
-                    });
-            } else {
-                // từ lần 2 chỉ load data từ bộ nhớ client
-                // console.log('ko can goi api');
-                // console.log(messagesSended);
-                setMessages([...messagesSended]);
-            }
-        } else {
-            // click vào messageItem khi chưa có tn mới và load data from db
-            // console.log('get data from db');
-            axios
-                .post(`${host}/api/get/messages`, {
-                    sender: sender,
-                    receiver: receiver.id,
-                })
-                .then((data) => {
-                    if (data.data.status) {
-                        let data2 = data.data.arr;
-                        // console.log('data from db', data2);
-                        setMessages([...data2]);
-                        handlSetMessageSended(receiver.id, data2);
-                        handleCheckGetMessagesFromDB(receiver.id);
-                    }
-                })
-                .catch((error) => {
-                    console.log('loi lay tin nhan');
-                });
-        }
-        // eslint-disable-next-line
-    }, []);
 
     // chuyển đổi thời gian về dạng giờ phút cho mỗi tin nhắn
     const getTime = (millisecond) => {
@@ -237,6 +181,7 @@ function Messages({ receiver, darkmodeMsg = false }) {
                 {messages.length > 0 &&
                     messages.map((message, index) => (
                         <div key={index} className={cx('message-item')}>
+                            {/* {console.log(message)} */}
                             <Message
                                 type={message.type}
                                 receiver={receiver.id}

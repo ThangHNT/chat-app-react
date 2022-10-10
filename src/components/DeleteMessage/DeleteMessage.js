@@ -7,14 +7,12 @@ import classNames from 'classnames/bind';
 import styles from './DeleteMessage.module.scss';
 import { SettingContext } from '~/components/Context/SettingContext';
 import { SocketContext } from '~/components/Context/SocketContext';
-import { ChatContentContext } from '~/components/Context/ChatContentContext';
 
 const cx = classNames.bind(styles);
 
 function DeleteMessage() {
     const { displayRemoveMessageModal, handleSetDisplayRemoveMessageModal, darkLightMode } = useContext(SettingContext);
     const { handleRemoveMessageSended, handleRemoveMessageSocket } = useContext(SocketContext);
-    const { handleSetMessageDeleted } = useContext(ChatContentContext);
 
     const [selected, setSlected] = useState(false);
     const [messageInfo, setMessageInfo] = useState();
@@ -43,7 +41,6 @@ function DeleteMessage() {
                 handleRemoveMessageSended(messageInfo.userId, messageInfo.messageId, false, true);
             } else {
                 handleRemoveMessageSended(messageInfo.userId, messageInfo.messageId, false, false, true);
-                handleSetMessageDeleted(messageInfo.messageId);
             }
             handleSetDisplayRemoveMessageModal('');
             axios

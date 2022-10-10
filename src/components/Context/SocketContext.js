@@ -6,10 +6,8 @@ function SocketContextProvider({ children }) {
     // console.log('socket-context');
     const [userList, setUserList] = useState([]);
     const [socket, setSocket] = useState();
-    const [newMessage, setNewMessage] = useState();
-    const [messageSended, setMessageSended] = useState(new Map());
+    const [newMessage, setNewMessage] = useState(new Map());
     const [blockStatus, setBlockStatus] = useState(new Map());
-    const [checkGetMessagesFromDB, setCheckGetMessagesFromDB] = useState([]);
     const [newUser, setNewUser] = useState();
     const [userDisconnect, setUserDisconnect] = useState();
     const [newReaction, setNewReaction] = useState();
@@ -34,13 +32,10 @@ function SocketContextProvider({ children }) {
             socket.on('private message', (data) => {
                 // console.log(data);
                 document.title = 'Co tin nhan moi';
-                handleCheckGetMessagesFromDB(data.sender);
-                handlSetMessageSended(data.sender, data.content);
-                setNewMessage(data);
+                handleSetNewMessage(data.sender, data.content);
             });
             socket.on('private reaction message', (data) => {
                 // console.log(data);
-                handlSetMessageSended(data.sender, [data], false, true);
                 setNewReaction(data);
             });
             socket.on('user is blocked', ({ receiver, sender }) => {
@@ -53,7 +48,6 @@ function SocketContextProvider({ children }) {
             });
             socket.on('remove reaction icon private', ({ receiver, messageId }) => {
                 // console.log(receiver);
-                handleRemoveMessageSended(receiver, messageId, true);
                 setReactionRemoved(messageId);
             });
             socket.on('change theme private', (data) => {
@@ -67,8 +61,7 @@ function SocketContextProvider({ children }) {
 
             socket.on('revoke message private', (data) => {
                 // console.log(data);
-                // handleRemoveMessageSended(data.sender, data.messageId, false, true);
-                setNewMessage({ sender: data.sender, revoked: true, messageId: data.messageId });
+                // setNewMessage({ sender: data.sender, revoked: true, messageId: data.messageId });
             });
 
             socket.on('user disconnected', (socketId) => {
@@ -83,15 +76,12 @@ function SocketContextProvider({ children }) {
         setSocket(socket);
     };
 
-    // phát sự kiện gỡ bỏ or xóa tin nhắn
-    const handleRemoveMessageSocket = (sender, receiver, messageId, revoke = false, remove = false) => {
-        if (revoke) {
-            handleRemoveMessageSended(receiver, messageId, false, true);
-        } else if (remove) {
-            handleRemoveMessageSended(receiver, messageId, false, false, true);
+    const handleSetNewMessage = (sender, content, remove = false) => {
+        if (!remove) {
+            setNewMessage({ sender, content });
+        } else {
+            setNewMessage(undefined);
         }
-        let to = getSocketIdFromReceiverId(userList, receiver);
-        socket.emit('revoke message', { to, from: socket.id, sender, messageId });
     };
 
     // phát sự kiện thay đổi setting (lấy setting lần đầu từ db)
@@ -124,11 +114,6 @@ function SocketContextProvider({ children }) {
         socket.emit('change theme', { from: socket.id, to, sender, theme });
     };
 
-    // kiểm tra xem đã lấy dữ liệu chưa, lấy r thì thêm userid vào mảng
-    const handleCheckGetMessagesFromDB = (userId) => {
-        setCheckGetMessagesFromDB((pre) => [...pre, userId]);
-    };
-
     // set tình trạng chặn
     const handleSetBlockStatus = (key, value) => {
         const checkKey = blockStatus.has(key);
@@ -141,80 +126,8 @@ function SocketContextProvider({ children }) {
             });
         }
     };
-
-    // lưu tin nhắn vào bộ nhớ của client
-    const handlSetMessageSended = (key, value, fromDB = false, reaction = false) => {
-        const checkKey = messageSended.has(key);
-        // console.log(value);
-        if (!checkKey) {
-            if (!reaction) {
-                messageSended.set(key, value);
-            }
-        } else {
-            if (fromDB) {
-                const oldData = messageSended.get(key);
-                setMessageSended(() => {
-                    return messageSended.set(key, [...value, ...oldData]);
-                });
-            } else {
-                const oldData = messageSended.get(key);
-                if (reaction) {
-                    // console.log(value);
-                    oldData.forEach((data) => {
-                        if (data.id === value[0].messageId) {
-                            data.reactionIcon = value[0].icon;
-                        }
-                    });
-                }
-                setMessageSended(() => {
-                    return messageSended.set(key, [...oldData, ...value]);
-                });
-            }
-        }
-    };
-
-    // xóa bỏ tin nhắn đã gửi
-    const handleRemoveMessageSended = (key, value, reaction = false, revoked = false, remove = false) => {
-        const checkKey = messageSended.has(key);
-        // value = messageId
-        if (checkKey) {
-            const oldData = messageSended.get(key);
-            if (reaction) {
-                oldData.forEach((item) => {
-                    if (item.id === value) {
-                        item.reactionIcon = '';
-                    }
-                });
-            } else if (revoked) {
-                console.log('thu hoi tin nhan ');
-                oldData.forEach((message) => {
-                    if (message.id === value) {
-                        message.type = 'revoked';
-                        message.file = undefined;
-                        message.img = undefined;
-                        message.time = new Date().getTime();
-                        message.text = '1 tin nhắn đã bị thu hồi';
-                    }
-                });
-                const map = new Map();
-                map.set(key, oldData);
-                setMessageSended(map);
-            } else if (remove) {
-                // console.log(value);
-                const newArr = oldData.filter((item) => {
-                    return item.id !== value;
-                });
-                // console.log('xoa tn', newArr);
-                setMessageSended(() => {
-                    return messageSended.set(key, [...newArr]);
-                });
-            }
-        }
-    };
-
     // phát sự kiện xóa bỏ reaction icon
     const handleRemoveReactionIcon = (receiver, messageId) => {
-        handleRemoveMessageSended(receiver, messageId, true);
         let to = getSocketIdFromReceiverId(userList, receiver);
         socket.emit('remove reaction icon', { from: socket.id, to, receiver, messageId });
     };
@@ -222,11 +135,6 @@ function SocketContextProvider({ children }) {
     // thay đổi ds người online
     const handleSetUserList = (newUserList) => {
         setUserList(newUserList);
-    };
-
-    // set tin nhắn mới
-    const handleSetNewMessage = (message) => {
-        setNewMessage(message);
     };
 
     // set reaction icon mới
@@ -286,13 +194,6 @@ function SocketContextProvider({ children }) {
                     receiver,
                 };
             }
-            const formatMessage = content.map((msg) => {
-                return {
-                    ...msg,
-                    sender,
-                };
-            });
-            handlSetMessageSended(receiver, formatMessage);
             socket.emit('send message', message);
             // console.log('from', socket.id);
             // console.log('to', to);
@@ -307,30 +208,24 @@ function SocketContextProvider({ children }) {
         socket,
         userList,
         newMessage,
-        messageSended,
-        checkGetMessagesFromDB,
         newReaction,
         reactionRemoved,
         newTheme,
         newBackgroundImage,
         getSetting,
-        handlSetMessageSended,
         handleSendMessage,
         handleSetNewMessage,
         handleInitSocket,
-        handleCheckGetMessagesFromDB,
         handleSetNewReaction,
         handleSetUserList,
         handleSetBlockStatus,
         handleBlockUser,
         handleUnblockUser,
-        handleRemoveMessageSended,
         handleRemoveReactionIcon,
         handleChangeTheme,
         handleSetBackground,
         handleChangeSetting,
         handleRemoveSocketEvent,
-        handleRemoveMessageSocket,
     };
 
     return <SocketContext.Provider value={values}>{children}</SocketContext.Provider>;
