@@ -4,8 +4,16 @@ const MessageContext = createContext();
 
 function MessageProvider({ children }) {
     const [messages, setMessages] = useState(new Map());
-
     const [removeMessage, setRemoveMessage] = useState();
+    const [lastestMsg, setLastMsg] = useState();
+
+    const handleSetLastestMsg = (msg) => {
+        setLastMsg(msg);
+    };
+
+    const handleSetRemoveMessage = (messageId) => {
+        setRemoveMessage(messageId);
+    };
 
     const handleSetMessages = (key, value, messageId, reaction = false, revoke = false, remove = false) => {
         const allMessage = messages.get(key);
@@ -26,7 +34,7 @@ function MessageProvider({ children }) {
                     return pre.set(key, [...allMessage]);
                 });
             } else if (remove) {
-                setRemoveMessage({ messageId, receiver: key });
+                handleSetRemoveMessage({ messageId, receiver: key });
                 let index = '';
                 allMessage.forEach((item, thisIndex) => {
                     if (item.id === messageId) {
@@ -59,7 +67,10 @@ function MessageProvider({ children }) {
     const values = {
         messages,
         removeMessage,
+        lastestMsg,
         handleSetMessages,
+        handleSetRemoveMessage,
+        handleSetLastestMsg,
     };
 
     return <MessageContext.Provider value={values}>{children}</MessageContext.Provider>;

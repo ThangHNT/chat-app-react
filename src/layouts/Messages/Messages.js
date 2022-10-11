@@ -87,6 +87,7 @@ function Messages({ receiver, darkmodeMsg = false }) {
         // eslint-disable-next-line
     }, [revokeMessage]);
 
+    // cập nhật giao diện khi xóa tin nhắn
     useEffect(() => {
         if (Messages.removeMessage) {
             if (Messages.removeMessage.receiver === receiver.id) {
@@ -99,7 +100,18 @@ function Messages({ receiver, darkmodeMsg = false }) {
                 if (index) {
                     messages.splice(index, 1);
                     setMessages([...messages]);
+                    let lastestMessge = messages[messages.length - 1];
+                    if (lastestMessge) {
+                        let checkYourMsg = lastestMessge.sender !== receiver.id;
+                        // console.log(checkYourMsg);
+                        Messages.handleSetLastestMsg({
+                            yourMsg: checkYourMsg,
+                            receiver: receiver.id,
+                            message: lastestMessge,
+                        });
+                    }
                 }
+                Messages.handleSetRemoveMessage(undefined);
             }
         }
         // eslint-disable-next-line

@@ -11,12 +11,13 @@ import Menu from '~/components/Menu';
 import PositiveStatus from '~/components/PositiveStatus';
 import { SocketContext } from '~/components/Context/SocketContext';
 import { ChatContentContext } from '~/components/Context/ChatContentContext';
+import { MessageContext } from '~/components/Context/MessageContext';
 
 const cx = classNames.bind(styles);
 
 function MessageItem({ receiver, darkmode = false, avatar, username, searchResult = false }) {
     // console.log('message-item');
-
+    const { lastestMsg } = useContext(MessageContext);
     const { messages, handleDisplayChatContent } = useContext(ChatContentContext);
     const ChatContent = useContext(ChatContentContext);
     const { newMessage } = useContext(SocketContext);
@@ -29,6 +30,17 @@ function MessageItem({ receiver, darkmode = false, avatar, username, searchResul
     const messageSound = new Audio('messenger-sound.mp3');
 
     const btnRef = useRef();
+
+    useEffect(() => {
+        if (lastestMsg) {
+            if (lastestMsg.receiver === receiver) {
+                const { yourMsg, message } = lastestMsg;
+                // console.log(yourMsg);
+                setlastestMessage(handleSetLastestMessage(yourMsg, message.type, message.text));
+            }
+        }
+        // eslint-disable-next-line
+    }, [lastestMsg]);
 
     // nhận tin nhắn mới nhất từ socket và hiển thị bên sidebar
     useEffect(() => {
@@ -58,13 +70,7 @@ function MessageItem({ receiver, darkmode = false, avatar, username, searchResul
             if (messages.receiver === receiver) {
                 // console.log(messages);
                 let lastestMessage = messages.content[messages.content.length - 1];
-                let msg = 'Ban da gui 1 file';
-                if (lastestMessage.type === 'text') {
-                    msg = 'Ban: ' + lastestMessage.text;
-                } else if (lastestMessage.type === 'img') {
-                    msg = 'Ban da gui 1 anh';
-                }
-                setlastestMessage(msg);
+                setlastestMessage(handleSetLastestMessage(true, lastestMessage.type, lastestMessage.text));
             }
         }
         // eslint-disable-next-line
@@ -83,23 +89,13 @@ function MessageItem({ receiver, darkmode = false, avatar, username, searchResul
                     // console.log(data2);
                     if (data2.status) {
                         let typeMsg = data2.message.message.type;
-                        if (data2.message.message.sender === senderId) {
-                            if (typeMsg === 'text') {
-                                setlastestMessage('Ban: ' + data2.message.message.text);
-                            } else if (typeMsg === 'img') {
-                                setlastestMessage('Ban gui 1 anh ');
-                            } else {
-                                setlastestMessage('Ban da gui 1 file');
-                            }
-                        } else {
-                            if (typeMsg === 'text') {
-                                setlastestMessage(data2.message.message.text);
-                            } else if (typeMsg === 'img') {
-                                setlastestMessage('Ban nhan 1 anh');
-                            } else {
-                                setlastestMessage('Ban nhan 1 file');
-                            }
-                        }
+                        setlastestMessage(
+                            handleSetLastestMessage(
+                                data2.message.message.sender === senderId,
+                                typeMsg,
+                                data2.message.message.text,
+                            ),
+                        );
                     }
                 })
                 .catch((error) => {
@@ -128,6 +124,28 @@ function MessageItem({ receiver, darkmode = false, avatar, username, searchResul
             document.removeEventListener('click', (e) => {});
         };
     }, []);
+
+    const handleSetLastestMessage = (sender, type, text) => {
+        if (sender) {
+            if (type === 'text') return `Ban: ${text}`;
+            else if (type === 'img') {
+                return 'Ban gui 1 anh';
+            } else if (type === 'revoked') {
+                return 'Tin nhan bi thu hoi';
+            } else {
+                return 'Ban gui 1 file';
+            }
+        } else {
+            if (type === 'text') return text;
+            else if (type === 'img') {
+                return 'Ban nhan 1 anh';
+            } else if (type === 'revoked') {
+                return 'Tin nhan bi thu hoi';
+            } else {
+                return 'Ban nhan 1 file';
+            }
+        }
+    };
 
     // display menu-action
     const handleDisplayMenu = (e) => {
