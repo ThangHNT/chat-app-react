@@ -23,6 +23,7 @@ function HomeContent() {
                 .get(`${host}/api/get/general-settings/?userId=${user._id}`)
                 .then(({ data }) => {
                     const darkMode = data.setting.darkMode;
+                    console.log(darkMode);
                     handleChangeDarkLightMode(true, darkMode);
                 })
                 .catch(() => console.log('lay cài đặt chung bị lỗi'));

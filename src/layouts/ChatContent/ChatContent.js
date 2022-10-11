@@ -63,6 +63,7 @@ function ChatContent() {
 
     // lấy setting data từ db
     const handleGetChatSettingData = async () => {
+        console.log('get setting');
         const { data } = await axios.post(`${host}/api/get-theme`, {
             sender: currentUser._id,
             receiver: ChatContent.receiver,
