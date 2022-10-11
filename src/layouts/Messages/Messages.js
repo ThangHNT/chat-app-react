@@ -24,8 +24,8 @@ function Messages({ receiver, darkmodeMsg = false }) {
         handleSetNewMessage,
         newBackgroundImage,
         handleRemoveSocketEvent,
-        revokeOrRemoveMessage,
-        handleRevokeOrRemoveMessage,
+        revokeMessage,
+        handleRevokeMessage,
     } = useContext(SocketContext);
 
     const [scrollDown, setScrollDown] = useState(false);
@@ -43,10 +43,8 @@ function Messages({ receiver, darkmodeMsg = false }) {
         const checkGetMessagesFromDB = Messages.messages.get(receiver.id);
         // console.log(checkGetMessagesFromDB);
         if (checkGetMessagesFromDB) {
-            // console.log('get from client');
             setMessages([...checkGetMessagesFromDB]);
         } else {
-            // console.log('get from db');
             axios
                 .post(`${host}/api/get/messages`, {
                     sender: sender,
@@ -67,16 +65,45 @@ function Messages({ receiver, darkmodeMsg = false }) {
         // eslint-disable-next-line
     }, []);
 
+    // lắng nghe event thu hồi or xóa tin nhắn từ socket
     useEffect(() => {
-        if (revokeOrRemoveMessage) {
+        if (revokeMessage) {
             // console.log(revokeOrRemoveMessage);
-            let { sender, messageId, action } = revokeOrRemoveMessage;
-            hanleRemoveOrRevokeMessage(messageId, action);
+            let { sender, messageId } = revokeMessage;
+            messages.forEach((item) => {
+                if (item.id === messageId) {
+                    item.reactionIcon = '';
+                    item.type = 'revoked';
+                    item.text = 'Tin nhắn đã bị thu hồi';
+                    item.file = undefined;
+                    item.video = undefined;
+                    item.audio = undefined;
+                }
+            });
+            setMessages(messages);
             Messages.handleSetMessages(sender, '', messageId, false, true);
         }
-        handleRevokeOrRemoveMessage();
+        handleRevokeMessage();
         // eslint-disable-next-line
-    }, [revokeOrRemoveMessage]);
+    }, [revokeMessage]);
+
+    useEffect(() => {
+        if (Messages.removeMessage) {
+            if (Messages.removeMessage.receiver === receiver.id) {
+                let index;
+                messages.forEach((item, thisIndex) => {
+                    if (item.id === Messages.removeMessage.messageId) {
+                        index = thisIndex;
+                    }
+                });
+                if (index) {
+                    messages.splice(index, 1);
+                    setMessages([...messages]);
+                }
+            }
+        }
+        // eslint-disable-next-line
+    }, [Messages.removeMessage]);
 
     // thay đổi ảnh nền khi nhận event từ socket
     useLayoutEffect(() => {
@@ -164,22 +191,6 @@ function Messages({ receiver, darkmodeMsg = false }) {
         contentRef.current.scrollTop = contentRef.current.scrollHeight;
         // eslint-disable-next-line
     }, [messages]);
-
-    const hanleRemoveOrRevokeMessage = (messageId, action) => {
-        if (action === 'revoke') {
-            messages.forEach((item) => {
-                if (item.id === messageId) {
-                    item.reactionIcon = '';
-                    item.type = 'revoked';
-                    item.text = 'Tin nhắn đã bị thu hồi';
-                    item.file = undefined;
-                    item.video = undefined;
-                    item.audio = undefined;
-                }
-            });
-        }
-        setMessages(messages);
-    };
 
     // chuyển đổi thời gian về dạng giờ phút cho mỗi tin nhắn
     const getTime = (millisecond) => {

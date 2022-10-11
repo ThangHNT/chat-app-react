@@ -13,7 +13,7 @@ const cx = classNames.bind(styles);
 
 function DeleteMessage() {
     const { handleSetMessages } = useContext(MessageContext);
-    const { handleEmitRevokeOrRemoveMsgEvent } = useContext(SocketContext);
+    const { handleEmitRevokeMsgEvent } = useContext(SocketContext);
     const { displayRemoveMessageModal, handleSetDisplayRemoveMessageModal, darkLightMode } = useContext(SettingContext);
 
     const [selected, setSlected] = useState(false);
@@ -40,11 +40,12 @@ function DeleteMessage() {
         if (messageInfo && selected) {
             // console.log(messageInfo);
             const { receiver, messageId, senderId } = displayRemoveMessageModal;
+            let sender = senderId;
             if (selected === 'revoke') {
                 handleSetMessages(receiver, '', messageId, false, true);
-                let sender = senderId;
-                handleEmitRevokeOrRemoveMsgEvent(sender, receiver, messageId, true);
+                handleEmitRevokeMsgEvent(sender, receiver, messageId);
             } else {
+                handleSetMessages(receiver, '', messageId, false, false, true);
             }
             handleSetDisplayRemoveMessageModal('');
             axios

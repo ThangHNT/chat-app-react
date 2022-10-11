@@ -16,7 +16,7 @@ function SocketContextProvider({ children }) {
     const [newTheme, setNewTheme] = useState();
     const [newBackgroundImage, setNewBackgroundImage] = useState();
     const [getSetting, setGetSetting] = useState(new Map());
-    const [revokeOrRemoveMessage, SetRevokeOrRemoveMessage] = useState();
+    const [revokeMessage, SetRevokeMessage] = useState();
 
     // lắng nghe event từ socket
     useEffect(() => {
@@ -59,10 +59,9 @@ function SocketContextProvider({ children }) {
                 // console.log(data);
                 setNewBackgroundImage(data);
             });
-
             socket.on('revoke message private', (data) => {
                 // console.log(data);
-                handleRevokeOrRemoveMessage(data.sender, data.messageId, true);
+                handleRevokeMessage(data.sender, data.messageId, true);
             });
 
             socket.on('user disconnected', (socketId) => {
@@ -78,21 +77,18 @@ function SocketContextProvider({ children }) {
     };
 
     // listen event revoke or remove msg from socket
-    const handleRevokeOrRemoveMessage = (sender, messageId, revoke = false, remove = false) => {
+    const handleRevokeMessage = (sender, messageId, revoke = false) => {
         if (revoke) {
-            SetRevokeOrRemoveMessage({ sender, messageId, action: 'revoke' });
-        } else if (remove) {
+            SetRevokeMessage({ sender, messageId });
         } else {
-            SetRevokeOrRemoveMessage(undefined);
+            SetRevokeMessage(undefined);
         }
     };
 
     // emit event revoke or remove message
-    const handleEmitRevokeOrRemoveMsgEvent = (sender, receiver, messageId, revoke = false) => {
+    const handleEmitRevokeMsgEvent = (sender, receiver, messageId) => {
         const to = getSocketIdFromReceiverId(userList, receiver);
-        if (revoke) {
-            socket.emit('revoke message', { to, from: socket.id, sender, messageId });
-        }
+        socket.emit('revoke message', { to, from: socket.id, sender, messageId });
     };
 
     const handleSetNewMessage = (sender, content, remove = false) => {
@@ -233,7 +229,7 @@ function SocketContextProvider({ children }) {
         newTheme,
         newBackgroundImage,
         getSetting,
-        revokeOrRemoveMessage,
+        revokeMessage,
         handleSendMessage,
         handleSetNewMessage,
         handleInitSocket,
@@ -247,8 +243,8 @@ function SocketContextProvider({ children }) {
         handleSetBackground,
         handleChangeSetting,
         handleRemoveSocketEvent,
-        handleRevokeOrRemoveMessage,
-        handleEmitRevokeOrRemoveMsgEvent,
+        handleRevokeMessage,
+        handleEmitRevokeMsgEvent,
     };
 
     return <SocketContext.Provider value={values}>{children}</SocketContext.Provider>;
