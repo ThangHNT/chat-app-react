@@ -47,8 +47,8 @@ function SocketContextProvider({ children }) {
                 setPreventation({ receiver, sender, unblock: true });
             });
             socket.on('remove reaction icon private', ({ receiver, messageId, sender }) => {
-                // console.log(sender);
-                setReactionRemoved({ messageId, sender });
+                console.log(sender);
+                setReactionRemoved({ messageId, sender, receiver });
             });
             socket.on('change theme private', (data) => {
                 // console.log(data);

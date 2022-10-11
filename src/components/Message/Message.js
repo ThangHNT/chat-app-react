@@ -109,10 +109,15 @@ function Message({
         // eslint-disable-next-line
     }, [newReaction]);
 
+    // loại bỏ icon từ socket
     useEffect(() => {
         if (reactionRemoved.messageId) {
+            if (reactionRemoved.messageId === messageId) {
+                setReactionIcon(false);
+            }
         }
-    }, [reactionRemoved.messageId]);
+        // eslint-disable-next-line
+    }, [reactionRemoved]);
 
     // hiện reaction ngay sau khi chọn
     useEffect(() => {
