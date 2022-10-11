@@ -90,12 +90,13 @@ function Messages({ receiver, darkmodeMsg = false }) {
     useEffect(() => {
         if (newMessage) {
             if (newMessage.sender === receiver.id) {
-                console.log('new message');
+                // console.log('new message');
                 setMessages((pre) => {
                     return [...pre, ...newMessage.content];
                 });
                 Messages.handleSetMessages(receiver.id, newMessage.content);
                 handleSetNewMessage('', '', true);
+                document.title = 'Chap App';
             }
         }
         // eslint-disable-next-line
@@ -106,7 +107,7 @@ function Messages({ receiver, darkmodeMsg = false }) {
         const msg = ChatContent.messages;
         if (msg) {
             if (msg.receiver === receiver.id) {
-                console.log('an enter');
+                // console.log('an enter');
                 const arr = msg.content.map((message) => {
                     return {
                         text: message.type === 'text' ? message.text : '',

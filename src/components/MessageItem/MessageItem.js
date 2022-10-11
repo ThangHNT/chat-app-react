@@ -138,7 +138,6 @@ function MessageItem({ receiver, darkmode = false, avatar, username, searchResul
     const handleClick = async () => {
         setMessageNotify(false);
         handleDisplayChatContent(receiver);
-        document.title = 'Chat App';
     };
 
     return (

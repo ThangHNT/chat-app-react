@@ -61,9 +61,9 @@ function ChatContent() {
         // eslint-disable-next-line
     }, [ChatContent.receiver]);
 
+    // lấy setting data từ db
     const handleGetChatSettingData = async () => {
         const { data } = await axios.post(`${host}/api/get-theme`, {
-            // .post(`${host}/api/delete-all`, { sender: currentUser._id, receiver: ChatContent.receiver })
             sender: currentUser._id,
             receiver: ChatContent.receiver,
         });
