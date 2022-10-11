@@ -19,7 +19,14 @@ function Messages({ receiver, darkmodeMsg = false }) {
     const Messages = useContext(MessageContext);
     const { backgroundImage, handleSetBackgroundImage } = useContext(SettingContext);
     const ChatContent = useContext(ChatContentContext);
-    const { newMessage, handleSetNewMessage, newBackgroundImage, handleRemoveSocketEvent } = useContext(SocketContext);
+    const {
+        newMessage,
+        handleSetNewMessage,
+        newBackgroundImage,
+        handleRemoveSocketEvent,
+        revokeOrRemoveMessage,
+        handleRevokeOrRemoveMessage,
+    } = useContext(SocketContext);
 
     const [scrollDown, setScrollDown] = useState(false);
     const [messages, setMessages] = useState([]);
@@ -59,6 +66,17 @@ function Messages({ receiver, darkmodeMsg = false }) {
         }
         // eslint-disable-next-line
     }, []);
+
+    useEffect(() => {
+        if (revokeOrRemoveMessage) {
+            // console.log(revokeOrRemoveMessage);
+            let { sender, messageId, action } = revokeOrRemoveMessage;
+            hanleRemoveOrRevokeMessage(messageId, action);
+            Messages.handleSetMessages(sender, '', messageId, false, true);
+        }
+        handleRevokeOrRemoveMessage();
+        // eslint-disable-next-line
+    }, [revokeOrRemoveMessage]);
 
     // thay đổi ảnh nền khi nhận event từ socket
     useLayoutEffect(() => {
@@ -146,6 +164,22 @@ function Messages({ receiver, darkmodeMsg = false }) {
         contentRef.current.scrollTop = contentRef.current.scrollHeight;
         // eslint-disable-next-line
     }, [messages]);
+
+    const hanleRemoveOrRevokeMessage = (messageId, action) => {
+        if (action === 'revoke') {
+            messages.forEach((item) => {
+                if (item.id === messageId) {
+                    item.reactionIcon = '';
+                    item.type = 'revoked';
+                    item.text = 'Tin nhắn đã bị thu hồi';
+                    item.file = undefined;
+                    item.video = undefined;
+                    item.audio = undefined;
+                }
+            });
+        }
+        setMessages(messages);
+    };
 
     // chuyển đổi thời gian về dạng giờ phút cho mỗi tin nhắn
     const getTime = (millisecond) => {

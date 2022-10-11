@@ -7,12 +7,14 @@ import classNames from 'classnames/bind';
 import styles from './DeleteMessage.module.scss';
 import { SettingContext } from '~/components/Context/SettingContext';
 import { SocketContext } from '~/components/Context/SocketContext';
+import { MessageContext } from '~/components/Context/MessageContext';
 
 const cx = classNames.bind(styles);
 
 function DeleteMessage() {
+    const { handleSetMessages } = useContext(MessageContext);
+    const { handleEmitRevokeOrRemoveMsgEvent } = useContext(SocketContext);
     const { displayRemoveMessageModal, handleSetDisplayRemoveMessageModal, darkLightMode } = useContext(SettingContext);
-    const { handleRemoveMessageSended, handleRemoveMessageSocket } = useContext(SocketContext);
 
     const [selected, setSlected] = useState(false);
     const [messageInfo, setMessageInfo] = useState();
@@ -31,16 +33,18 @@ function DeleteMessage() {
     const handleSelectRemoveType = (e) => {
         const removeType = e.currentTarget.getAttribute('removetype');
         setSlected(removeType);
+        // console.log(displayRemoveMessageModal);
     };
 
     const handleStoreRemoveMessage = () => {
         if (messageInfo && selected) {
             // console.log(messageInfo);
+            const { receiver, messageId, senderId } = displayRemoveMessageModal;
             if (selected === 'revoke') {
-                handleRemoveMessageSocket(messageInfo.senderId, messageInfo.userId, messageInfo.messageId, true);
-                handleRemoveMessageSended(messageInfo.userId, messageInfo.messageId, false, true);
+                handleSetMessages(receiver, '', messageId, false, true);
+                let sender = senderId;
+                handleEmitRevokeOrRemoveMsgEvent(sender, receiver, messageId, true);
             } else {
-                handleRemoveMessageSended(messageInfo.userId, messageInfo.messageId, false, false, true);
             }
             handleSetDisplayRemoveMessageModal('');
             axios
