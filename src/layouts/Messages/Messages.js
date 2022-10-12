@@ -85,24 +85,20 @@ function Messages({ receiver, darkmodeMsg = false }) {
     useEffect(() => {
         if (Messages.removeMessage) {
             if (Messages.removeMessage.receiver === receiver.id) {
-                let index;
-                messages.forEach((item, thisIndex) => {
-                    if (item.id === Messages.removeMessage.messageId) {
-                        index = thisIndex;
-                    }
-                });
-                if (index) {
-                    messages.splice(index, 1);
-                    setMessages([...messages]);
-                    let lastestMessge = messages[messages.length - 1];
-                    if (lastestMessge) {
-                        let checkYourMsg = lastestMessge.sender !== receiver.id;
-                        Messages.handleSetLastestMsg({
-                            yourMsg: checkYourMsg,
-                            receiver: receiver.id,
-                            message: lastestMessge,
-                        });
-                    }
+                let lastestMessge = messages[messages.length - 1];
+                if (lastestMessge) {
+                    let checkYourMsg = lastestMessge.sender !== receiver.id;
+                    Messages.handleSetLastestMsg({
+                        yourMsg: checkYourMsg,
+                        receiver: receiver.id,
+                        message: lastestMessge,
+                    });
+                } else {
+                    Messages.handleSetLastestMsg({
+                        yourMsg: false,
+                        receiver: receiver.id,
+                        message: { type: 'text', text: '' },
+                    });
                 }
                 Messages.handleSetRemoveMessage(undefined);
             }

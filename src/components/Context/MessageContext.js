@@ -76,7 +76,6 @@ function MessageProvider({ children }) {
                 });
                 return;
             } else {
-                console.log('from socket');
                 setMessages((pre) => {
                     return pre.set(key, [...allMessage, ...value]);
                 });
