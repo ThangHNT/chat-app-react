@@ -34,7 +34,7 @@ function SocketContextProvider({ children }) {
             });
             socket.on('private message', async (data) => {
                 // console.log(data);
-                // document.title = 'Co tin nhan moi';
+                document.title = 'Co tin nhan moi';
                 handleSetNewMessage(data.sender, data.content);
                 handleSetMessages(data.sender, data.content);
             });

@@ -156,6 +156,12 @@ function MessageItem({ receiver, darkmode = false, avatar, username, searchResul
     const handleClick = async () => {
         setMessageNotify(false);
         handleDisplayChatContent(receiver);
+        if (newMessage) {
+            // console.log(newMessage);
+            if (newMessage.sender === receiver) {
+                document.title = 'Chap App';
+            }
+        }
     };
 
     return (

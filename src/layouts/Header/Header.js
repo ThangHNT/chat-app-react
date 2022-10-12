@@ -67,6 +67,7 @@ function Header() {
                                     darkmodeBtn={darkLightMode}
                                     children="Tài khoản"
                                     text
+                                    to="/account"
                                     leftIcon={<FontAwesomeIcon icon={faUser} />}
                                 />
                                 <Button
@@ -89,7 +90,7 @@ function Header() {
                                     darkmode={darkLightMode}
                                 />
                             ) : (
-                                <Image darkmode={darkLightMode} src={user.avatar} alt="avatar" arounded />
+                                <Image darkmode={darkLightMode} avatar src={user.avatar} alt="avatar" arounded />
                             )}
                         </div>
                     </Tippy>

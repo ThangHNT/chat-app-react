@@ -1,0 +1,35 @@
+.wrapper {
+    margin-top: 75px;
+    padding: 0 15%;
+}
+
+.avatar {
+    width: 30%;
+}
+
+.choose-img-btn-wrapper {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.choose-img-btn {
+    cursor: pointer;
+    border-radius: 5px;
+    background-color: var(--primary);
+    padding: 5px 15px;
+    color: #fff;
+
+    &:hover {
+        background-color: var(--primary-hover);
+    }
+}
+
+.choose-img-input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    transform: scale(1.5) translateX(-70px);
+}
