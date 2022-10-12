@@ -19,14 +19,8 @@ function Messages({ receiver, darkmodeMsg = false }) {
     const Messages = useContext(MessageContext);
     const { backgroundImage, handleSetBackgroundImage } = useContext(SettingContext);
     const ChatContent = useContext(ChatContentContext);
-    const {
-        newMessage,
-        handleSetNewMessage,
-        newBackgroundImage,
-        handleRemoveSocketEvent,
-        revokeMessage,
-        handleRevokeMessage,
-    } = useContext(SocketContext);
+    const { newBackgroundImage, handleRemoveSocketEvent, revokeMessage, handleRevokeMessage } =
+        useContext(SocketContext);
 
     const [scrollDown, setScrollDown] = useState(false);
     const [messages, setMessages] = useState([]);
@@ -40,27 +34,27 @@ function Messages({ receiver, darkmodeMsg = false }) {
 
     // tải messages từ database lần đầu, lần sau lấy từ client store
     useEffect(() => {
-        const checkGetMessagesFromDB = Messages.messages.get(receiver.id);
-        // console.log(checkGetMessagesFromDB);
-        if (checkGetMessagesFromDB) {
-            setMessages([...checkGetMessagesFromDB]);
-        } else {
-            axios
-                .post(`${host}/api/get/messages`, {
+        const checkGetFromDB = Messages.checkGetMessagesFromDB.some((userId) => {
+            return userId === receiver.id;
+        });
+        if (!checkGetFromDB) {
+            // console.log(Messages.messages.get(receiver.id));
+            Messages.handleSetCheckGetMessagesFromDB(receiver.id);
+            const getMessagesFromdb = async () => {
+                const { data } = await axios.post(`${host}/api/get/messages`, {
                     sender: sender,
                     receiver: receiver.id,
-                })
-                .then((data) => {
-                    if (data.data.status) {
-                        let data2 = data.data.arr;
-                        // console.log('data from db', data2);
-                        setMessages([...data2]);
-                        Messages.handleSetMessages(receiver.id, data2);
-                    }
-                })
-                .catch((error) => {
-                    console.log('loi lay tin nhan');
                 });
+                if (data.status) {
+                    let data2 = data.arr;
+                    setMessages([...data2]);
+                    Messages.handleSetMessages(receiver.id, data2, false, false, false, false, true);
+                }
+            };
+            getMessagesFromdb();
+        } else {
+            const checkGetMessagesFromDB = Messages.messages.get(receiver.id);
+            if (checkGetMessagesFromDB) setMessages([...checkGetMessagesFromDB]);
         }
         // eslint-disable-next-line
     }, []);
@@ -103,7 +97,6 @@ function Messages({ receiver, darkmodeMsg = false }) {
                     let lastestMessge = messages[messages.length - 1];
                     if (lastestMessge) {
                         let checkYourMsg = lastestMessge.sender !== receiver.id;
-                        // console.log(checkYourMsg);
                         Messages.handleSetLastestMsg({
                             yourMsg: checkYourMsg,
                             receiver: receiver.id,
@@ -143,21 +136,13 @@ function Messages({ receiver, darkmodeMsg = false }) {
         // eslint-disable-next-line
     }, [backgroundImage]);
 
-    // nhận tin nhắn mới nhất từ socket
     useEffect(() => {
-        if (newMessage) {
-            if (newMessage.sender === receiver.id) {
-                // console.log('new message');
-                setMessages((pre) => {
-                    return [...pre, ...newMessage.content];
-                });
-                Messages.handleSetMessages(receiver.id, newMessage.content);
-                handleSetNewMessage('', '', true);
-                document.title = 'Chap App';
-            }
+        const allMsg = Messages.messages.get(receiver.id);
+        if (allMsg) {
+            setMessages(allMsg);
         }
         // eslint-disable-next-line
-    }, [newMessage]);
+    }, [Messages.messages.get(receiver.id)]);
 
     // hiện tin nhắn trên đoạn chat khi vừa ấn enter
     useEffect(() => {

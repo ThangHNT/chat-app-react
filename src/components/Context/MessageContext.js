@@ -1,11 +1,17 @@
 import { createContext, useState } from 'react';
-
 const MessageContext = createContext();
 
 function MessageProvider({ children }) {
     const [messages, setMessages] = useState(new Map());
     const [removeMessage, setRemoveMessage] = useState();
     const [lastestMsg, setLastMsg] = useState();
+    const [checkGetMessagesFromDB, setCheckGetMessagesFromDB] = useState([]);
+
+    const handleSetCheckGetMessagesFromDB = (userId) => {
+        setCheckGetMessagesFromDB((pre) => {
+            return [...pre, userId];
+        });
+    };
 
     const handleSetLastestMsg = (msg) => {
         setLastMsg(msg);
@@ -15,9 +21,17 @@ function MessageProvider({ children }) {
         setRemoveMessage(messageId);
     };
 
-    const handleSetMessages = (key, value, messageId, reaction = false, revoke = false, remove = false) => {
+    const handleSetMessages = (
+        key,
+        value,
+        messageId,
+        reaction = false,
+        revoke = false,
+        remove = false,
+        fromDB = false,
+    ) => {
         const allMessage = messages.get(key);
-        // console.log(key);
+        // console.log(key, value);
         if (allMessage) {
             if (revoke) {
                 allMessage.forEach((item) => {
@@ -33,6 +47,7 @@ function MessageProvider({ children }) {
                 setMessages((pre) => {
                     return pre.set(key, [...allMessage]);
                 });
+                return;
             } else if (remove) {
                 handleSetRemoveMessage({ messageId, receiver: key });
                 let index = '';
@@ -42,12 +57,9 @@ function MessageProvider({ children }) {
                     }
                 });
                 allMessage.splice(index, 1);
+                return;
             }
-            if (!reaction) {
-                setMessages((pre) => {
-                    return pre.set(key, [...allMessage, ...value]);
-                });
-            } else {
+            if (reaction) {
                 allMessage.forEach((item) => {
                     if (item.id === messageId) {
                         item.reactionIcon = value;
@@ -56,6 +68,19 @@ function MessageProvider({ children }) {
                 setMessages((pre) => {
                     return pre.set(key, [...allMessage]);
                 });
+                return;
+            }
+            if (fromDB) {
+                setMessages((pre) => {
+                    return pre.set(key, [...value, ...allMessage]);
+                });
+                return;
+            } else {
+                console.log('from socket');
+                setMessages((pre) => {
+                    return pre.set(key, [...allMessage, ...value]);
+                });
+                return;
             }
         } else {
             setMessages((pre) => {
@@ -68,9 +93,11 @@ function MessageProvider({ children }) {
         messages,
         removeMessage,
         lastestMsg,
+        checkGetMessagesFromDB,
         handleSetMessages,
         handleSetRemoveMessage,
         handleSetLastestMsg,
+        handleSetCheckGetMessagesFromDB,
     };
 
     return <MessageContext.Provider value={values}>{children}</MessageContext.Provider>;

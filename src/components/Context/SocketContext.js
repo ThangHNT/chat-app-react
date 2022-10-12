@@ -1,12 +1,14 @@
-import { createContext, useEffect, useState } from 'react';
+import { createContext, useEffect, useState, useContext } from 'react';
+import { MessageContext } from './MessageContext';
 
 const SocketContext = createContext();
 
 function SocketContextProvider({ children }) {
     // console.log('socket-context');
+    const { handleSetMessages } = useContext(MessageContext);
     const [userList, setUserList] = useState([]);
     const [socket, setSocket] = useState();
-    const [newMessage, setNewMessage] = useState(new Map());
+    const [newMessage, setNewMessage] = useState();
     const [blockStatus, setBlockStatus] = useState(new Map());
     const [newUser, setNewUser] = useState();
     const [userDisconnect, setUserDisconnect] = useState();
@@ -30,10 +32,11 @@ function SocketContextProvider({ children }) {
                 setNewUser(user);
                 setUserList((pre) => [...pre, user]);
             });
-            socket.on('private message', (data) => {
+            socket.on('private message', async (data) => {
                 // console.log(data);
-                document.title = 'Co tin nhan moi';
+                // document.title = 'Co tin nhan moi';
                 handleSetNewMessage(data.sender, data.content);
+                handleSetMessages(data.sender, data.content);
             });
             socket.on('private reaction message', (data) => {
                 // console.log(data);

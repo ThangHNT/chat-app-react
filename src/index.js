@@ -13,15 +13,15 @@ root.render(
     // <React.StrictMode>
     <UserProvider>
         <SettingProvider>
-            <SocketContextProvider>
-                <MessageProvider>
+            <MessageProvider>
+                <SocketContextProvider>
                     <ChatContentProvider>
                         <GlobalStyles>
                             <App />
                         </GlobalStyles>
                     </ChatContentProvider>
-                </MessageProvider>
-            </SocketContextProvider>
+                </SocketContextProvider>
+            </MessageProvider>
         </SettingProvider>
     </UserProvider>,
     // </React.StrictMode>,
