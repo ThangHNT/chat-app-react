@@ -60,16 +60,14 @@ function ReactMessageIcon({ messageId, messageBody }) {
         // console.log(icon, messageId);
         handleSetReactionIcon({ icon, messageId });
         handleSendMessage({ icon, messageId, sender: currentUser, receiver }, true);
-        // axios
-        // .post(`${host}/api/send/reaction-icon`, { messageId, reaction: icon })
-        // .then((data) => {
-        //     const data2 = data.data;
-        //     if (data2.status) {
-        //         // console.log('send reaction successcully');
-        //     } else {
-        //         // console.log('send reaction failed');
-        //     }
-        // })
+        axios.post(`${host}/api/send/reaction-icon`, { messageId, reaction: icon }).then((data) => {
+            const data2 = data.data;
+            if (data2.status) {
+                // console.log('send reaction successcully');
+            } else {
+                // console.log('send reaction failed');
+            }
+        });
     };
 
     return (

@@ -80,14 +80,14 @@ function Account() {
                     <div className={cx('form')} method="POST">
                         <div className={cx('info-item')}>
                             <label>Tên Tài Khoản</label>
-                            <span>{currentUser.username}</span>
+                            <span>{currentUser.account}</span>
                         </div>
                         <div className={cx('info-item')}>
                             <label>Tên người dùng</label>
                             <Input
                                 type="text"
                                 name="nickname"
-                                placeholder={currentUser.nickname}
+                                placeholder={currentUser.username}
                                 noLabel
                                 normal
                                 maxLength="30"

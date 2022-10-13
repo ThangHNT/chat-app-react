@@ -18,18 +18,18 @@ function Form({ login, signup }) {
     const navigate = useNavigate();
 
     const [values, setValues] = useState({
-        username: '',
+        account: '',
         password: '',
         confirmPassword: '',
         email: '',
     });
 
     const checkValues = () => {
-        let username = values.username;
+        let account = values.account;
         let password = values.password;
         let confirmPassword = values.confirmPassword;
 
-        if (username.length < 3) {
+        if (account.length < 3) {
             toast.warning('Độ dài tối thiểu là 3 ký tự');
             return false;
         }
@@ -91,19 +91,19 @@ function Form({ login, signup }) {
         <form className={cx('form')} onSubmit={handlSubmit}>
             <div className={cx('wrapper-input')}>
                 <Input
-                    value={values.username}
+                    value={values.account}
                     onInput={(e) => {
                         setValues((pre) => {
-                            pre.username = e.target.value.trim();
+                            pre.account = e.target.value.trim();
                             return {
                                 ...pre,
                             };
                         });
                     }}
                     type="text"
-                    title="Tên người dùng"
+                    title="Tài khoản"
                     input
-                    name="username"
+                    name="account"
                     autoComplete="off"
                     required
                 />
