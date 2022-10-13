@@ -72,7 +72,7 @@ function MessageProvider({ children }) {
             }
             if (fromDB) {
                 setMessages((pre) => {
-                    return pre.set(key, [...value, ...allMessage]);
+                    return pre.set(key, [...value]);
                 });
                 return;
             } else {
