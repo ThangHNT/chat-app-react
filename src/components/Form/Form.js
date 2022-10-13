@@ -12,7 +12,7 @@ import { UserContext } from '../Context/UserContext';
 const cx = classNames.bind(styles);
 
 function Form({ login, signup }) {
-    const User = useContext(UserContext);
+    const { handleSeCurrenttUser } = useContext(UserContext);
 
     // eslint-disable-next-line
     const navigate = useNavigate();
@@ -54,7 +54,7 @@ function Form({ login, signup }) {
                     const { data } = await axios.post('/register', values);
                     if (data.status === true) {
                         toast('Đăng ký thành công');
-                        User.setUser(data.newUser);
+                        handleSeCurrenttUser(data.newUser);
                         localStorage.setItem('chat-app-hnt', JSON.stringify(data.newUser));
                         setTimeout(function () {
                             navigate('/', { replace: true });
@@ -74,7 +74,7 @@ function Form({ login, signup }) {
                         console.log('login');
                         // console.log(data.user);
                         localStorage.setItem('chat-app-hnt', JSON.stringify(data.user));
-                        User.setUser(data.user);
+                        handleSeCurrenttUser(data.user);
                         toast('Chuyển hướng đến trang chủ');
                         setTimeout(function () {
                             navigate('/', { replace: true });

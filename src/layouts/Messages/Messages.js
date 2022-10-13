@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, memo, useContext, useRef, useLayoutEffect } from 'react';
+import { useEffect, useState, memo, useContext, useRef, useLayoutEffect } from 'react';
 import classNames from 'classnames/bind';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -11,11 +11,13 @@ import { ChatContentContext } from '~/components/Context/ChatContentContext';
 import { SocketContext } from '~/components/Context/SocketContext';
 import { SettingContext } from '~/components/Context/SettingContext';
 import { MessageContext } from '~/components/Context/MessageContext';
+import { UserContext } from '~/components/Context/UserContext';
 
 const cx = classNames.bind(styles);
 
 function Messages({ receiver, darkmodeMsg = false }) {
     // console.log('Messages');
+    const { currentUser } = useContext(UserContext);
     const Messages = useContext(MessageContext);
     const { backgroundImage, handleSetBackgroundImage } = useContext(SettingContext);
     const ChatContent = useContext(ChatContentContext);
@@ -24,10 +26,6 @@ function Messages({ receiver, darkmodeMsg = false }) {
 
     const [scrollDown, setScrollDown] = useState(false);
     const [messages, setMessages] = useState([]);
-
-    const sender = useMemo(() => {
-        return JSON.parse(localStorage.getItem('chat-app-hnt'))._id;
-    }, []);
 
     const contentRef = useRef();
     const backgroundRef = useRef();
@@ -42,7 +40,7 @@ function Messages({ receiver, darkmodeMsg = false }) {
             Messages.handleSetCheckGetMessagesFromDB(receiver.id);
             const getMessagesFromdb = async () => {
                 const { data } = await axios.post(`${host}/api/get/messages`, {
-                    sender: sender,
+                    sender: currentUser._id,
                     receiver: receiver.id,
                 });
                 if (data.status) {
@@ -168,7 +166,7 @@ function Messages({ receiver, darkmodeMsg = false }) {
                                       size: message.file.size,
                                   }
                                 : '',
-                        sender,
+                        sender: currentUser._id,
                         time: new Date().getTime(),
                         type: message.type,
                     };
@@ -229,7 +227,7 @@ function Messages({ receiver, darkmodeMsg = false }) {
                                 type={message.type}
                                 receiver={receiver.id}
                                 time={getTime(messages[index].time)}
-                                sender={sender === message.sender}
+                                sender={currentUser._id === message.sender}
                                 messageId={message.id}
                                 messageBody={contentRef}
                                 reaction={message.reactionIcon}

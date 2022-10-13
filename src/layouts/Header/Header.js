@@ -1,4 +1,4 @@
-import { useMemo, memo, useEffect, useContext } from 'react';
+import { memo, useEffect, useContext } from 'react';
 import classNames from 'classnames/bind';
 import Tippy from '@tippyjs/react/headless';
 import 'tippy.js/dist/tippy.css';
@@ -13,28 +13,25 @@ import Button from '~/components/Button';
 import { SocketContext } from '~/components/Context/SocketContext';
 import { ChatContentContext } from '~/components/Context/ChatContentContext';
 import { SettingContext } from '~/components/Context/SettingContext';
+import { UserContext } from '~/components/Context/UserContext';
 
 const cx = classNames.bind(styles);
 
 function Header() {
     // console.log('Header');
+    const { currentUser } = useContext(UserContext);
     const { darkLightMode } = useContext(SettingContext);
     const { handleInitSocket, socket, messageSended } = useContext(SocketContext);
     const { handleDisplayChatContent, handleAddMessage } = useContext(ChatContentContext);
 
-    const user = useMemo(() => {
-        return JSON.parse(localStorage.getItem('chat-app-hnt'));
-    }, []);
-
     useEffect(() => {
-        if (user) {
-            // console.log('co user');
+        if (currentUser) {
             const socket = io(host);
-            socket.auth = { userId: user._id };
+            socket.auth = { userId: currentUser._id };
             handleInitSocket(socket);
         }
         // eslint-disable-next-line
-    }, [user]);
+    }, [currentUser]);
 
     const handleLogout = () => {
         localStorage.removeItem('chat-app-hnt');
@@ -47,15 +44,15 @@ function Header() {
     return (
         <header className={cx('header', { darkmode: darkLightMode, darkmodeBorder: darkLightMode })}>
             <div className={cx('wrapper-logo')}>
-                <Link to={user ? '/' : '/login'} className={cx('logo-link')}>
+                <Link to={currentUser ? '/' : '/login'} className={cx('logo-link')}>
                     <Image src="/logo.png" alt="logo" className={cx('logo')} />
                 </Link>
                 <span className={cx('header-title')}>Welcome</span>
             </div>
             <h1 className={cx('app-name')}>Chat app</h1>
-            {user ? (
+            {currentUser ? (
                 <div className={cx('user-info')}>
-                    <span className={cx('user-name')}>{user.username}</span>
+                    <span className={cx('user-name')}>{currentUser.username}</span>
                     <Tippy
                         interactive
                         delay={[100, 200]}
@@ -82,7 +79,7 @@ function Header() {
                         )}
                     >
                         <div className={cx('current-user')}>
-                            {user === null ? (
+                            {currentUser === null ? (
                                 <Image
                                     src="https://toanthaydinh.com/wp-content/uploads/2020/04/wallpaper-4k-hinh-nen-4k-hinh-anh-ve-ruong-bac-thang-dep_101311157-1400x788-1.jpg"
                                     alt="avatar"
@@ -90,7 +87,7 @@ function Header() {
                                     darkmode={darkLightMode}
                                 />
                             ) : (
-                                <Image darkmode={darkLightMode} avatar src={user.avatar} alt="avatar" arounded />
+                                <Image darkmode={darkLightMode} avatar src={currentUser.avatar} alt="avatar" arounded />
                             )}
                         </div>
                     </Tippy>

@@ -1,7 +1,5 @@
 truyen du lieu tu localStorage vao usercontext
 
-thu hồi xog xóa tn bị mất màu tn
-
 
 
 

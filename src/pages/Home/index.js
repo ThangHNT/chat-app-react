@@ -1,16 +1,15 @@
-import { useMemo, useEffect } from 'react';
+import { useContext, useLayoutEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '~/layouts/Header';
 import HomeContent from '~/layouts/HomeContent';
+import { UserContext } from '~/components/Context/UserContext';
 
 function Home() {
-    const user = useMemo(() => {
-        return JSON.parse(localStorage.getItem('chat-app-hnt'));
-    }, []);
+    const { currentUser } = useContext(UserContext);
     const navigate = useNavigate();
 
-    useEffect(() => {
-        if (!user) {
+    useLayoutEffect(() => {
+        if (!currentUser) {
             document.querySelector('html').classList.remove('darkmode');
             navigate('/login');
         }

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useLayoutEffect, useMemo, useContext, memo } from 'react';
+import { useState, useEffect, useRef, useLayoutEffect, useContext, memo } from 'react';
 import classNames from 'classnames/bind';
 import axios from 'axios';
 import Picker from 'emoji-picker-react';
@@ -14,11 +14,13 @@ import host from '~/ulties/serverHost';
 import { ChatContentContext } from '~/components/Context/ChatContentContext';
 import { SocketContext } from '~/components/Context/SocketContext';
 import { SettingContext } from '~/components/Context/SettingContext';
+import { UserContext } from '~/components/Context/UserContext';
 
 const cx = classNames.bind(styles);
 
 function SendMessage({ receiver, darkmode = false }) {
     // console.log('Send-message');
+    const { currentUser } = useContext(UserContext);
     const ChatContent = useContext(ChatContentContext);
     const { handleSendMessage, preventation } = useContext(SocketContext);
     const { handlSetBlockStatus, blockStatus } = useContext(SettingContext);
@@ -32,10 +34,6 @@ function SendMessage({ receiver, darkmode = false }) {
     const [block, setBlock] = useState({});
 
     let messageSound = new Audio();
-
-    const currentUser = useMemo(() => {
-        return JSON.parse(localStorage.getItem('chat-app-hnt'));
-    }, []);
 
     const inputRef = useRef();
     const emojiListBtnRef = useRef();

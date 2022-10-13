@@ -1,4 +1,4 @@
-import { useContext, useState, useMemo, memo } from 'react';
+import { useContext, useState, memo } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
@@ -8,19 +8,17 @@ import styles from './Theme.module.scss';
 import host from '~/ulties/serverHost';
 import { SettingContext } from '~/components/Context/SettingContext';
 import { SocketContext } from '~/components/Context/SocketContext';
+import { UserContext } from '~/components/Context/UserContext';
 
 const cx = classNames.bind(styles);
 
 function Theme({ receiver }) {
     // console.log('theme');
+    const { currentUser } = useContext(UserContext);
     const Socket = useContext(SocketContext);
     const [theme, setTheme] = useState(false);
     const { handleDisplayThemeList, themeList, handleSetTheme, darkLightMode } = useContext(SettingContext);
     const Setting = useContext(SettingContext);
-
-    const user = useMemo(() => {
-        return JSON.parse(localStorage.getItem('chat-app-hnt'));
-    }, []);
 
     const handleSetDisplayThemeList = () => {
         handleDisplayThemeList();
@@ -48,12 +46,12 @@ function Theme({ receiver }) {
             await handleSetTheme(receiver, theme);
             toast.success('Thay đổi chủ đề thành công');
             const data = await axios.post(`${host}/api/change-theme`, {
-                sender: user._id,
+                sender: currentUser._id,
                 receiver: receiver,
                 theme,
             });
             // console.log(theme);
-            Socket.handleChangeTheme(user._id, receiver, theme);
+            Socket.handleChangeTheme(currentUser._id, receiver, theme);
             if (!data.status) {
                 console.log('yeu cau doi theme that bai');
                 if (!data.data.status) {

@@ -1,4 +1,4 @@
-import { useState, memo, useEffect, useContext, useRef, useMemo } from 'react';
+import { useState, memo, useEffect, useContext, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFaceGrinWide } from '@fortawesome/free-solid-svg-icons';
 import classNames from 'classnames/bind';
@@ -13,19 +13,17 @@ import likeIcon from '~/assets/images/like-reaction-icon.png';
 import host from '~/ulties/serverHost';
 import { SocketContext } from '~/components/Context/SocketContext';
 import { ChatContentContext } from '~/components/Context/ChatContentContext';
+import { UserContext } from '~/components/Context/UserContext';
 
 const cx = classNames.bind(styles);
 
 function ReactMessageIcon({ messageId, messageBody }) {
     // console.log('reaction-icon');
+    const { currentUser } = useContext(UserContext);
     const { handleSetReactionIcon, receiver } = useContext(ChatContentContext);
     const { handleSendMessage } = useContext(SocketContext);
     const [displayReactIcon, setDisplayReactIcon] = useState(false);
     const listIconRef = useRef();
-
-    const currentUser = useMemo(() => {
-        return JSON.parse(localStorage.getItem('chat-app-hnt'))._id;
-    }, []);
 
     // set vị trí cho list reaction icon để ko bị mất
     useEffect(() => {
@@ -35,8 +33,6 @@ function ReactMessageIcon({ messageId, messageBody }) {
             let overflowLeft = messagesWrapper.left - listIconLeft.left;
             let overflowRight = listIconLeft.right - messagesWrapper.right;
             let overflowTop = listIconLeft.top - messagesWrapper.top;
-            // console.log(messageBody.current.getBoundingClientRect());
-            // console.log(listIconRef.current.getBoundingClientRect());
             if (overflowTop < 0) {
                 listIconRef.current.style.top = `2.4rem`;
             }
@@ -57,9 +53,8 @@ function ReactMessageIcon({ messageId, messageBody }) {
     const handleClickIcon = (e) => {
         // console.log(e.target.alt);
         const icon = e.target.alt;
-        // console.log(icon, messageId);
         handleSetReactionIcon({ icon, messageId });
-        handleSendMessage({ icon, messageId, sender: currentUser, receiver }, true);
+        handleSendMessage({ icon, messageId, sender: currentUser._id, receiver }, true);
         axios.post(`${host}/api/send/reaction-icon`, { messageId, reaction: icon }).then((data) => {
             const data2 = data.data;
             if (data2.status) {

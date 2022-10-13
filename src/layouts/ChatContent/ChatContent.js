@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useMemo, useCallback, memo } from 'react';
+import React, { useState, useEffect, useContext, useCallback, memo } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import classNames from 'classnames/bind';
@@ -13,11 +13,13 @@ import HeaderChat from '~/layouts/HeaderChat';
 import Setting from '~/layouts/Setting';
 import { SettingContext } from '~/components/Context/SettingContext';
 import { SocketContext } from '~/components/Context/SocketContext';
+import { UserContext } from '~/components/Context/UserContext';
 
 const cx = classNames.bind(styles);
 
 function ChatContent() {
     // console.log('Chat-content');
+    const { currentUser } = useContext(UserContext);
     const { darkLightMode, handleSetTheme, handleSetBackgroundImage } = useContext(SettingContext);
     const Socket = useContext(SocketContext);
     const { handleChangeSetting } = useContext(SocketContext);
@@ -25,10 +27,6 @@ function ChatContent() {
     const [receiver, setReceiver] = useState();
     const [loading, setLoading] = useState(false);
     const [setting, setSetting] = useState(false);
-
-    const currentUser = useMemo(() => {
-        return JSON.parse(localStorage.getItem('chat-app-hnt'));
-    }, []);
 
     // lấy thông tin ng nhận khi ấn vào user bên sidebar
     useEffect(() => {

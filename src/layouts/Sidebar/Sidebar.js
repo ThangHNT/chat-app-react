@@ -1,4 +1,4 @@
-import React, { useState, memo, useEffect, useMemo, useRef, useContext, useLayoutEffect } from 'react';
+import React, { useState, memo, useEffect, useRef, useContext, useLayoutEffect } from 'react';
 import classNames from 'classnames/bind';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -9,16 +9,15 @@ import MessageItem from '~/components/MessageItem';
 import host from '~/ulties/serverHost';
 import { SettingContext } from '~/components/Context/SettingContext';
 import { useDebounce } from '~/hooks';
+import { UserContext } from '~/components/Context/UserContext';
 
 const cx = classNames.bind(styles);
 
 function Sidebar() {
     // console.log('sidebar');
+    const { currentUser } = useContext(UserContext);
     const { handleChangeDarkLightMode, darkLightMode } = useContext(SettingContext);
     const [listUser, setListUser] = useState([]);
-    const currentUser = useMemo(() => {
-        return JSON.parse(localStorage.getItem('chat-app-hnt'));
-    }, []);
 
     const debounce = useDebounce(darkLightMode, 2500);
 

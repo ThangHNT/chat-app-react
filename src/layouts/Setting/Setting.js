@@ -1,4 +1,4 @@
-import { useState, useMemo, useContext, memo } from 'react';
+import { useState, useContext, memo, useRef } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ToastContainer, toast } from 'react-toastify';
@@ -9,22 +9,19 @@ import styles from './Setting.module.scss';
 import { faEthereum } from '@fortawesome/free-brands-svg-icons';
 import { SettingContext } from '~/components/Context/SettingContext';
 import { SocketContext } from '~/components/Context/SocketContext';
-import { useRef } from 'react';
+import { UserContext } from '~/components/Context/UserContext';
 
 const cx = classNames.bind(styles);
 
 function Setting({ receiver, darkmode }) {
     // console.log('setting');
+    const { currentUser } = useContext(UserContext);
     const { blockStatus, handlSetBlockStatus, handleDisplayThemeList, handleSetBackgroundImage, backgroundImage } =
         useContext(SettingContext);
     const { handleBlockUser, handleUnblockUser } = useContext(SocketContext);
     const Socket = useContext(SocketContext);
     const [displaySelectImageForBackgroun, setDisplaySelectImageForBackgroun] = useState(false);
     const [imageInput, setImageInput] = useState(false);
-
-    const currentUser = useMemo(() => {
-        return JSON.parse(localStorage.getItem('chat-app-hnt'));
-    }, []);
 
     const inputRef = useRef();
 

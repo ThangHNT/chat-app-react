@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, memo, useMemo, useContext } from 'react';
+import { useEffect, useState, useRef, memo, useContext } from 'react';
 import classNames from 'classnames/bind';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -12,11 +12,13 @@ import PositiveStatus from '~/components/PositiveStatus';
 import { SocketContext } from '~/components/Context/SocketContext';
 import { ChatContentContext } from '~/components/Context/ChatContentContext';
 import { MessageContext } from '~/components/Context/MessageContext';
+import { UserContext } from '~/components/Context/UserContext';
 
 const cx = classNames.bind(styles);
 
 function MessageItem({ receiver, darkmode = false, avatar, username, searchResult = false }) {
     // console.log('message-item');
+    const { currentUser } = useContext(UserContext);
     const { lastestMsg } = useContext(MessageContext);
     const { messages, handleDisplayChatContent } = useContext(ChatContentContext);
     const ChatContent = useContext(ChatContentContext);
@@ -24,9 +26,7 @@ function MessageItem({ receiver, darkmode = false, avatar, username, searchResul
     const [lastestMessage, setlastestMessage] = useState();
     const [menuMessageItem, setmenuMessageItem] = useState(false);
     const [messageNotify, setMessageNotify] = useState(false);
-    const senderId = useMemo(() => {
-        return JSON.parse(localStorage.getItem('chat-app-hnt'))._id;
-    }, []);
+
     const messageSound = new Audio('messenger-sound.mp3');
 
     const btnRef = useRef();
@@ -82,7 +82,7 @@ function MessageItem({ receiver, darkmode = false, avatar, username, searchResul
             axios
                 .post(`${host}/api/lastest-message`, {
                     receiver: receiver,
-                    sender: senderId,
+                    sender: currentUser._id,
                 })
                 .then((data) => {
                     const data2 = data.data;
@@ -91,7 +91,7 @@ function MessageItem({ receiver, darkmode = false, avatar, username, searchResul
                         let typeMsg = data2.message.message.type;
                         setlastestMessage(
                             handleSetLastestMessage(
-                                data2.message.message.sender === senderId,
+                                data2.message.message.sender === currentUser._id,
                                 typeMsg,
                                 data2.message.message.text,
                             ),
@@ -184,7 +184,7 @@ function MessageItem({ receiver, darkmode = false, avatar, username, searchResul
                     </div>
                     {menuMessageItem && (
                         <div className={cx('message-item-action-menu')}>
-                            <Menu sender={senderId} receiver={receiver} />
+                            <Menu sender={currentUser._id} receiver={receiver} />
                         </div>
                     )}
                 </div>

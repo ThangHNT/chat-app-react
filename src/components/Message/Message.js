@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, useContext, memo, useRef, useLayoutEffect } from 'react';
+import React, { useEffect, useState, useContext, memo, useRef, useLayoutEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faFileWord,
@@ -26,6 +26,7 @@ import { ChatContentContext } from '~/components/Context/ChatContentContext';
 import { SocketContext } from '~/components/Context/SocketContext';
 import { SettingContext } from '~/components/Context/SettingContext';
 import { MessageContext } from '~/components/Context/MessageContext';
+import { UserContext } from '~/components/Context/UserContext';
 
 const cx = classNames.bind(styles);
 
@@ -43,6 +44,7 @@ function Message({
     ...passprops
 }) {
     // console.log('message');
+    const { currentUser } = useContext(UserContext);
     const { handleSetMessages } = useContext(MessageContext);
     const { theme, handleSetTheme, handleSetDisplayRemoveMessageModal } = useContext(SettingContext);
     const ChatContent = useContext(ChatContentContext);
@@ -63,13 +65,8 @@ function Message({
         if (reaction === 'angryIcon') return angryIcon;
     });
 
-    const currentUser = useMemo(() => {
-        return JSON.parse(localStorage.getItem('chat-app-hnt'))._id;
-    }, []);
-
     const btnRef = useRef();
     const spanRef = useRef();
-    const pRef = useRef();
 
     // new theme event from socket
     useLayoutEffect(() => {
@@ -86,8 +83,8 @@ function Message({
     // listen send reaction icon on socket
     useEffect(() => {
         if (newReaction) {
-            if (currentUser === newReaction.receiver && newReaction.messageId === messageId) {
-                // console.log(newReaction);
+            if (currentUser._id === newReaction.receiver && newReaction.messageId === messageId) {
+                console.log(newReaction);
                 setReactionIcon(getReactionIcon(newReaction.icon));
                 handleSetNewReaction(undefined);
             }
@@ -151,7 +148,7 @@ function Message({
         // console.log(reactionIcon);
         if (!sender) {
             setReactionIcon(false);
-            handleRemoveReactionIcon({ receiver, messageId, sender: currentUser });
+            handleRemoveReactionIcon({ receiver, messageId, sender: currentUser._id });
             handleSetMessages(receiver, '', ChatContent.reactionIcon.messageId, true);
         }
         const data = await axios.post(`${host}/api/remove/reaction-icon`, { messageId });
@@ -175,7 +172,7 @@ function Message({
 
     const handleDisplayRemoveMessageModal = () => {
         // console.log(messageId);
-        handleSetDisplayRemoveMessageModal({ receiver, messageId, type, sender, senderId: currentUser });
+        handleSetDisplayRemoveMessageModal({ receiver, messageId, type, sender, senderId: currentUser._id });
     };
 
     return (
@@ -189,7 +186,6 @@ function Message({
             >
                 {type === 'text' && !isValidUrl(children) && (
                     <p
-                        ref={pRef}
                         className={cx('text-message', {
                             darkmodeText: darkmodeMsg,
                             [`theme${[theme.get(receiver)]}`]: true,
@@ -201,12 +197,7 @@ function Message({
                     </p>
                 )}
                 {type === 'revoked' && !isValidUrl(children) && (
-                    <p
-                        ref={pRef}
-                        revoked="true"
-                        className={cx('revoked-message', { revokedMsgDarkmode: darkmodeMsg })}
-                        {...props}
-                    >
+                    <p revoked="true" className={cx('revoked-message', { revokedMsgDarkmode: darkmodeMsg })} {...props}>
                         {children}
                     </p>
                 )}

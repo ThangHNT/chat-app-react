@@ -1,11 +1,27 @@
-import { useState, createContext } from 'react';
+import { useState, createContext, useEffect } from 'react';
 
 const UserContext = createContext();
 
 function UserProvider({ children }) {
-    const [user, setUser] = useState({});
+    const [currentUser, setCurrentUser] = useState();
 
-    return <UserContext.Provider value={{ user, setUser }}>{children}</UserContext.Provider>;
+    useEffect(() => {
+        const user = JSON.parse(localStorage.getItem('chat-app-hnt'));
+        if (user) {
+            setCurrentUser(user);
+        }
+    }, []);
+
+    const handleSeCurrenttUser = (user) => {
+        setCurrentUser(user);
+    };
+
+    const values = {
+        currentUser,
+        handleSeCurrenttUser,
+    };
+
+    return <UserContext.Provider value={values}>{children}</UserContext.Provider>;
 }
 
 export { UserContext, UserProvider };

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useContext, useRef, useMemo } from 'react';
+import { useState, useEffect, useCallback, useContext, useRef } from 'react';
 import classNames from 'classnames/bind';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -11,18 +11,17 @@ import { useDebounce } from '~/hooks';
 import host from '~/ulties/serverHost';
 import MessageItem from '~/components/MessageItem';
 import { ChatContentContext } from '~/components/Context/ChatContentContext';
+import { UserContext } from '~/components/Context/UserContext';
 
 const cx = classNames.bind(styles);
 
 function Search({ darkmode = false }) {
     // console.log('Search');
+    const { currentUser } = useContext(UserContext);
     const UserChatContent = useContext(ChatContentContext);
     const [searchValue, setSearchValue] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const [showResults, setShowResults] = useState(false);
-    const currentUser = useMemo(() => {
-        return JSON.parse(localStorage.getItem('chat-app-hnt'));
-    }, []);
 
     const inputRef = useRef();
     const debounce = useDebounce(searchValue, 800);

@@ -146,7 +146,7 @@ function SocketContextProvider({ children }) {
     };
     // phát sự kiện xóa bỏ reaction icon
     const handleRemoveReactionIcon = ({ receiver, messageId, sender }) => {
-        console.log(sender);
+        // console.log(sender);
         let to = getSocketIdFromReceiverId(userList, receiver);
         socket.emit('remove reaction icon', { from: socket.id, to, sender, receiver, messageId });
     };

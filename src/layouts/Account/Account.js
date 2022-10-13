@@ -1,27 +1,28 @@
-import { useMemo, useEffect, useState, useRef, memo } from 'react';
+import { useMemo, useContext, useEffect, useState, useRef, memo } from 'react';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import host from '~/ulties/serverHost';
 import classNames from 'classnames/bind';
 import styles from './Account.module.scss';
 import Input from '~/components/Input';
+import { UserContext } from '~/components/Context/UserContext';
 
 const cx = classNames.bind(styles);
 
 function Account() {
+    const { handleSeCurrenttUser } = useContext(UserContext);
     const [clickChangePwBtn, setClickChangePwBtn] = useState(false);
     const [profile, setProfile] = useState({});
     const [canStoreChange, setCanStoreChange] = useState(false);
-
-    const hanleClickChangePasswordBtn = () => {
-        setClickChangePwBtn((pre) => !pre);
-    };
 
     const currentUser = useMemo(() => {
         return JSON.parse(localStorage.getItem('chat-app-hnt'));
     }, []);
 
-    const imageInputRef = useRef();
+    const inputRef = useRef();
+    const imgRef = useRef();
+    const preImgRef = useRef(currentUser.avatar);
+    // console.log(preImgRef.current);
 
     useEffect(() => {
         if (profile.avatar || profile.username || (profile.oldpassword && profile.newpassword)) {
@@ -31,6 +32,10 @@ function Account() {
         }
     }, [profile]);
 
+    const hanleClickChangePasswordBtn = () => {
+        setClickChangePwBtn((pre) => !pre);
+    };
+
     const handleChooseNewAvatar = (e) => {
         const reader = new FileReader();
         if (e.target.files) {
@@ -38,7 +43,7 @@ function Account() {
             reader.readAsDataURL(file);
             reader.onload = () => {
                 let base64String = reader.result;
-                // console.log(base64String);
+                imgRef.current.src = base64String;
                 setProfile((pre) => {
                     pre.avatar = base64String;
                     pre.change = true;
@@ -59,6 +64,7 @@ function Account() {
     };
 
     const handleRemoveChoseAvatar = () => {
+        imgRef.current.src = preImgRef.current;
         setProfile((pre) => {
             pre.avatar = undefined;
             return { ...pre };
@@ -67,6 +73,17 @@ function Account() {
 
     const handleSubmitForm = async () => {
         if (canStoreChange) {
+            preImgRef.current = imgRef.current.src;
+            // console.log(profile);
+            const newInfo = {
+                avatar: profile.avatar ? profile.avatar : currentUser.avatar,
+                username: profile.username ? profile.username : currentUser.username,
+                account: currentUser.account,
+                _id: currentUser._id,
+                setting: currentUser.setting,
+            };
+            handleSeCurrenttUser(newInfo);
+            localStorage.setItem('chat-app-hnt', JSON.stringify(newInfo));
             const { data } = await axios.post(`${host}/api/update/my-account`, { userId: currentUser._id, ...profile });
             // console.log(data);
             if (data.status) {
@@ -80,12 +97,12 @@ function Account() {
     return (
         <div className={cx('wrapper')}>
             <div className={cx('avatar-wapper')}>
-                <img className={cx('avatar')} src={currentUser.avatar} alt="avatar" />
+                <img ref={imgRef} className={cx('avatar')} src={currentUser.avatar} alt="avatar" />
                 {profile.avatar === undefined ? (
                     <div className={cx('choose-img-btn-wrapper')}>
                         <div className={cx('choose-img-btn')}>Thay Đổi avatar</div>
                         <input
-                            ref={imageInputRef}
+                            ref={inputRef}
                             onChange={handleChooseNewAvatar}
                             className={cx('choose-img-input')}
                             type="file"
