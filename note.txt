@@ -1,1 +1,11 @@
 truyen du lieu tu localStorage vao usercontext
+
+
+
+
+
+
+
+
+
+khi lưu tin nhắn vào db cần set lại hàm handleSetMessages ở messageContext, chỗ fromDB

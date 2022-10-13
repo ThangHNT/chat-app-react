@@ -132,7 +132,11 @@ function Messages({ receiver, darkmodeMsg = false }) {
         // eslint-disable-next-line
     }, [backgroundImage]);
 
+    // cập nhật đoạn chat khi nhận đc tn mới từ socket
     useEffect(() => {
+        if (ChatContent.receiver === receiver.id) {
+            document.title = 'Chap App';
+        }
         const allMsg = Messages.messages.get(receiver.id);
         if (allMsg) {
             setMessages(allMsg);

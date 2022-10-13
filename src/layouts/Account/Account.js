@@ -1,4 +1,7 @@
-import { useMemo, useEffect, useState, useRef, memo, useLayoutEffect } from 'react';
+import { useMemo, useEffect, useState, useRef, memo } from 'react';
+import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
+import host from '~/ulties/serverHost';
 import classNames from 'classnames/bind';
 import styles from './Account.module.scss';
 import Input from '~/components/Input';
@@ -21,7 +24,7 @@ function Account() {
     const imageInputRef = useRef();
 
     useEffect(() => {
-        if (profile.change) {
+        if (profile.avatar || profile.username || (profile.oldpassword && profile.newpassword)) {
             setCanStoreChange(true);
         } else {
             setCanStoreChange(false);
@@ -32,7 +35,6 @@ function Account() {
         const reader = new FileReader();
         if (e.target.files) {
             let file = e.target.files[0];
-            // console.log(file);
             reader.readAsDataURL(file);
             reader.onload = () => {
                 let base64String = reader.result;
@@ -46,34 +48,54 @@ function Account() {
         }
     };
 
-    const handleChangeNickname = (e) => {
+    const handleChangeInput = (e) => {
+        const target = e.target;
         setProfile((pre) => {
-            if (e.target.value === '' || e.target.value === '\n') {
-                pre.change = false;
-            } else {
-                pre.nickname = e.target.value;
-                pre.change = true;
-            }
+            pre[target.name] = target.value;
             return {
                 ...pre,
             };
         });
     };
 
+    const handleRemoveChoseAvatar = () => {
+        setProfile((pre) => {
+            pre.avatar = undefined;
+            return { ...pre };
+        });
+    };
+
+    const handleSubmitForm = async () => {
+        if (canStoreChange) {
+            const { data } = await axios.post(`${host}/api/update/my-account`, { userId: currentUser._id, ...profile });
+            // console.log(data);
+            if (data.status) {
+                toast.success(data.msg);
+            } else {
+                toast.error(data.msg);
+            }
+        }
+    };
+
     return (
         <div className={cx('wrapper')}>
             <div className={cx('avatar-wapper')}>
                 <img className={cx('avatar')} src={currentUser.avatar} alt="avatar" />
-                <div className={cx('choose-img-btn-wrapper')}>
-                    <div className={cx('choose-img-btn')}>Thay Đổi avatar</div>
-                    <input
-                        ref={imageInputRef}
-                        onChange={handleChooseNewAvatar}
-                        className={cx('choose-img-input')}
-                        type="file"
-                    />
-                </div>
-                <div className={cx('remove-img-selected-btn')}>Bỏ chọn ảnh</div>
+                {profile.avatar === undefined ? (
+                    <div className={cx('choose-img-btn-wrapper')}>
+                        <div className={cx('choose-img-btn')}>Thay Đổi avatar</div>
+                        <input
+                            ref={imageInputRef}
+                            onChange={handleChooseNewAvatar}
+                            className={cx('choose-img-input')}
+                            type="file"
+                        />
+                    </div>
+                ) : (
+                    <div className={cx('remove-img-selected-btn')} onClick={handleRemoveChoseAvatar}>
+                        Bỏ chọn ảnh
+                    </div>
+                )}
             </div>
             <div className={cx('main-info')}>
                 <div className={cx('form-wrapper')}>
@@ -86,12 +108,13 @@ function Account() {
                             <label>Tên người dùng</label>
                             <Input
                                 type="text"
-                                name="nickname"
+                                name="username"
                                 placeholder={currentUser.username}
                                 noLabel
                                 normal
-                                maxLength="30"
-                                onChange={handleChangeNickname}
+                                maxLength="20"
+                                onChange={handleChangeInput}
+                                autoComplete="off"
                             />
                         </div>
                         <div className={cx('info-item', { padding: true })}>
@@ -109,6 +132,7 @@ function Account() {
                                                 noLabel
                                                 normal
                                                 maxLength="30"
+                                                onChange={handleChangeInput}
                                             />
                                         </div>
                                         <div className={cx('input-password-item')}>
@@ -119,6 +143,7 @@ function Account() {
                                                 noLabel
                                                 normal
                                                 maxLength="30"
+                                                onChange={handleChangeInput}
                                             />
                                         </div>
                                     </div>
@@ -127,10 +152,20 @@ function Account() {
                         </div>
                     </div>
                 </div>
-                <div className={cx('submit-btn', { disabled: !canStoreChange })}>
+                <div className={cx('submit-btn', { disabled: !canStoreChange })} onClick={handleSubmitForm}>
                     <span>Lưu</span>
                 </div>
             </div>
+            <ToastContainer
+                position="bottom-center"
+                autoClose={1500}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover={false}
+            />
         </div>
     );
 }
