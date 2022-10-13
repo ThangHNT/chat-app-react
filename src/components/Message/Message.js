@@ -42,9 +42,9 @@ function Message({
     darkmodeMsg = false,
     ...passprops
 }) {
-    // console.log('message==');
+    // console.log('message');
     const { handleSetMessages } = useContext(MessageContext);
-    const { theme, handleSetTheme, handleSetDisplayRemoveMessageModal, darkLightMode } = useContext(SettingContext);
+    const { theme, handleSetTheme, handleSetDisplayRemoveMessageModal } = useContext(SettingContext);
     const ChatContent = useContext(ChatContentContext);
     const {
         newReaction,
@@ -71,11 +71,6 @@ function Message({
     const spanRef = useRef();
     const pRef = useRef();
 
-    useLayoutEffect(() => {
-        handleChangeTheme(theme.get(receiver));
-        // eslint-disable-next-line
-    }, [darkLightMode]);
-
     // new theme event from socket
     useLayoutEffect(() => {
         if (newTheme) {
@@ -87,15 +82,6 @@ function Message({
         }
         // eslint-disable-next-line
     }, [newTheme]);
-
-    // thay đổi theme khi ấn lưu
-    useLayoutEffect(() => {
-        if (theme.get(receiver)) {
-            // console.log(theme.get(receiver));
-            handleChangeTheme(theme.get(receiver));
-        }
-        // eslint-disable-next-line
-    }, [theme.get(receiver)]);
 
     // listen send reaction icon on socket
     useEffect(() => {
@@ -160,22 +146,6 @@ function Message({
         ChatContent.handleZoomImgae(e.target.src);
     };
 
-    const handleChangeTheme = (theme) => {
-        if (pRef.current) {
-            // console.log(pRef.current);
-            if (!pRef.current.getAttribute('revoked')) {
-                for (let i = 0; i < 15; i++) {
-                    if (i !== theme) {
-                        pRef.current.classList.remove(`theme${i}`);
-                        pRef.current.classList.remove(`add-theme`);
-                    }
-                }
-                pRef.current.classList.add(`theme${theme}`);
-                pRef.current.classList.add(`add-theme`);
-            }
-        }
-    };
-
     // click vào icon dưới tn để xóa
     const handleRemoveIcon = async (e) => {
         // console.log(reactionIcon);
@@ -184,10 +154,10 @@ function Message({
             handleRemoveReactionIcon({ receiver, messageId, sender: currentUser });
             handleSetMessages(receiver, '', ChatContent.reactionIcon.messageId, true);
         }
-        // const data = await axios.post(`${host}/api/remove/reaction-icon`, { messageId });
-        // if (!data.status) {
-        //     console.log('xoa icon that bai');
-        // }
+        const data = await axios.post(`${host}/api/remove/reaction-icon`, { messageId });
+        if (!data.status) {
+            console.log('xoa icon that bai');
+        }
     };
 
     const isValidUrl = (urlString) => {
@@ -218,7 +188,15 @@ function Message({
                 })}
             >
                 {type === 'text' && !isValidUrl(children) && (
-                    <p ref={pRef} className={cx('text-message', { darkmodeText: darkmodeMsg })} {...props}>
+                    <p
+                        ref={pRef}
+                        className={cx('text-message', {
+                            darkmodeText: darkmodeMsg,
+                            [`theme${[theme.get(receiver)]}`]: true,
+                            [`add-theme`]: true,
+                        })}
+                        {...props}
+                    >
                         {children}
                     </p>
                 )}
