@@ -12,6 +12,17 @@
     letter-spacing: 1.5px;
 }
 
+.normal {
+    border-radius: 5px;
+    border: 2px solid var(--border-input);
+    outline: none;
+    padding: 8px 15px;
+
+    &:focus {
+        border-color: var(--primary);
+    }
+}
+
 .input {
     border-radius: 5px;
     padding: 10px 20px;

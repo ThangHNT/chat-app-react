@@ -1,1 +1,1 @@
-ko xóa đc tn vừa gửi qua socket vì chưa có message id đc tạo
+truyen du lieu tu localStorage vao usercontext

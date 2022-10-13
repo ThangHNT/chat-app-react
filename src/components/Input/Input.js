@@ -18,12 +18,14 @@ const Input = forwardRef(
             chat = false,
             file = false,
             darkmode = false,
+            normal = false,
             onInput,
             onFocus,
             onKeyDown,
             onPaste,
             handleType,
             value,
+            maxLength = '100',
             ...passprops
         },
         ref,
@@ -75,7 +77,6 @@ const Input = forwardRef(
             onPaste,
             onKeyDown,
             value,
-            maxLength: '100',
         };
 
         if (chat) {
@@ -89,6 +90,7 @@ const Input = forwardRef(
             arounded,
             file,
             darkmode,
+            normal,
         });
 
         return (
@@ -100,6 +102,7 @@ const Input = forwardRef(
                     title={title}
                     type={type}
                     placeholder={placeholder}
+                    maxLength={maxLength}
                     onChange={handleChange}
                     onInput={handleType}
                     {...props}
