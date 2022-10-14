@@ -2,16 +2,18 @@ import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from '~/pages/Home';
 import Login from '~/pages/Login';
-import MyAccount from '~/pages/MyAccount';
+import Account from '~/pages/Account';
+import Setting from '~/pages/Setting';
 
 function App() {
     // console.log('App');
     return (
         <BrowserRouter>
             <Routes>
-                <Route path="/login" element={<Login />} />
                 <Route path="/" element={<Home />} />
-                <Route path="/account" element={<MyAccount />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/account" element={<Account />} />
+                <Route path="/setting" element={<Setting />} />
             </Routes>
         </BrowserRouter>
     );

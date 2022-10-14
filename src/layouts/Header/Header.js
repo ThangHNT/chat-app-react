@@ -1,27 +1,71 @@
-import { memo, useEffect, useContext } from 'react';
+import { memo, useEffect, useContext, useCallback } from 'react';
 import classNames from 'classnames/bind';
 import Tippy from '@tippyjs/react/headless';
 import 'tippy.js/dist/tippy.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowRightFromBracket, faCircleQuestion, faGear, faHouse, faUser } from '@fortawesome/free-solid-svg-icons';
+import {
+    faArrowRightFromBracket,
+    faCircleQuestion,
+    faGear,
+    faHouse,
+    faUser,
+    faMoon,
+    faCheck,
+} from '@fortawesome/free-solid-svg-icons';
 import { io } from 'socket.io-client';
 import host from '~/ulties/serverHost';
 import { Link } from 'react-router-dom';
 import styles from './Header.module.scss';
 import Image from '~/components/Image';
-import Button from '~/components/Button';
 import { SocketContext } from '~/components/Context/SocketContext';
 import { ChatContentContext } from '~/components/Context/ChatContentContext';
 import { SettingContext } from '~/components/Context/SettingContext';
 import { UserContext } from '~/components/Context/UserContext';
+import { MessageContext } from '~/components/Context/MessageContext';
+import Menu from '~/components/Menu';
 
 const cx = classNames.bind(styles);
 
 function Header() {
+    const menuHeader = [
+        {
+            icon: <FontAwesomeIcon icon={faHouse} />,
+            text: 'Trang chủ',
+            to: '/',
+        },
+        {
+            icon: <FontAwesomeIcon icon={faUser} />,
+            text: 'Tài khoản',
+            to: '/account',
+        },
+        {
+            icon: <FontAwesomeIcon icon={faGear} />,
+            text: 'Cài đặt',
+            to: '/setting',
+        },
+        {
+            icon: <FontAwesomeIcon icon={faMoon} />,
+            text: 'Chế độ tối',
+            children: {
+                text: 'Chế độ tối',
+                data: [
+                    { text: 'Bật', icon: <FontAwesomeIcon icon={faCheck} /> },
+                    { text: 'Tắt', icon: <FontAwesomeIcon icon={faCheck} /> },
+                ],
+            },
+        },
+        {
+            icon: <FontAwesomeIcon icon={faArrowRightFromBracket} />,
+            text: 'Đăng xuất',
+            href: '/login',
+            click: true,
+        },
+    ];
     // console.log('Header');
     const { currentUser } = useContext(UserContext);
+    const { messages } = useContext(MessageContext);
     const { darkLightMode } = useContext(SettingContext);
-    const { handleInitSocket, socket, messageSended } = useContext(SocketContext);
+    const { handleInitSocket, socket } = useContext(SocketContext);
     const { handleDisplayChatContent, handleAddMessage } = useContext(ChatContentContext);
 
     useEffect(() => {
@@ -33,13 +77,13 @@ function Header() {
         // eslint-disable-next-line
     }, [currentUser]);
 
-    const handleLogout = () => {
+    const handleLogout = useCallback(() => {
         localStorage.removeItem('chat-app-hnt');
         socket.close();
-        messageSended.clear();
+        messages.clear();
         handleDisplayChatContent('');
         handleAddMessage('');
-    };
+    }, []);
 
     return (
         <header className={cx('header', { darkmode: darkLightMode, darkmodeBorder: darkLightMode })}>
@@ -56,39 +100,11 @@ function Header() {
                     <Tippy
                         interactive
                         delay={[100, 200]}
-                        // visible
+                        visible
                         placement="bottom-end"
                         render={(attrs) => (
                             <div className={cx('user-menu', { darkmode: darkLightMode })} tabIndex="-1" {...attrs}>
-                                <Button
-                                    darkmodeBtn={darkLightMode}
-                                    children="Trang chủ"
-                                    text
-                                    to="/"
-                                    leftIcon={<FontAwesomeIcon icon={faHouse} />}
-                                />
-                                <Button
-                                    darkmodeBtn={darkLightMode}
-                                    children="Tài khoản"
-                                    text
-                                    to="/account"
-                                    leftIcon={<FontAwesomeIcon icon={faUser} />}
-                                />
-                                <Button
-                                    darkmodeBtn={darkLightMode}
-                                    children="Cài đặt"
-                                    text
-                                    to="/setting"
-                                    leftIcon={<FontAwesomeIcon icon={faGear} />}
-                                />
-                                <Button
-                                    darkmodeBtn={darkLightMode}
-                                    onClick={handleLogout}
-                                    children="Đăng xuất"
-                                    text
-                                    href="/login"
-                                    leftIcon={<FontAwesomeIcon icon={faArrowRightFromBracket} />}
-                                />
+                                <Menu menu={menuHeader} onClick={handleLogout} />
                             </div>
                         )}
                     >

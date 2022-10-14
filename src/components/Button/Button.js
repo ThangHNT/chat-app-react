@@ -22,6 +22,7 @@ function Button({
     scrollDown = false,
     darkmodeBtn = false,
     darkmodeOptionBtn = false,
+    noBorderRadius = false,
     children,
     onClick,
     leftIcon,
@@ -61,6 +62,7 @@ function Button({
         scrollDown,
         darkmodeBtn,
         darkmodeOptionBtn,
+        noBorderRadius,
     });
 
     return (
