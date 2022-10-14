@@ -3,7 +3,7 @@ import classNames from 'classnames/bind';
 import Tippy from '@tippyjs/react/headless';
 import 'tippy.js/dist/tippy.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowRightFromBracket, faCircleQuestion, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faArrowRightFromBracket, faCircleQuestion, faGear, faHouse, faUser } from '@fortawesome/free-solid-svg-icons';
 import { io } from 'socket.io-client';
 import host from '~/ulties/serverHost';
 import { Link } from 'react-router-dom';
@@ -62,10 +62,24 @@ function Header() {
                             <div className={cx('user-menu', { darkmode: darkLightMode })} tabIndex="-1" {...attrs}>
                                 <Button
                                     darkmodeBtn={darkLightMode}
+                                    children="Trang chủ"
+                                    text
+                                    to="/"
+                                    leftIcon={<FontAwesomeIcon icon={faHouse} />}
+                                />
+                                <Button
+                                    darkmodeBtn={darkLightMode}
                                     children="Tài khoản"
                                     text
                                     to="/account"
                                     leftIcon={<FontAwesomeIcon icon={faUser} />}
+                                />
+                                <Button
+                                    darkmodeBtn={darkLightMode}
+                                    children="Cài đặt"
+                                    text
+                                    to="/setting"
+                                    leftIcon={<FontAwesomeIcon icon={faGear} />}
                                 />
                                 <Button
                                     darkmodeBtn={darkLightMode}

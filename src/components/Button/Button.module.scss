@@ -18,11 +18,16 @@
     margin: 0;
     padding: 0;
     font-size: 15px;
+    min-width: 70px;
+}
+
+.icon {
+    min-width: 18px;
 }
 
 .icon + .title,
 .title + .icon {
-    margin-left: 15px;
+    margin-left: 10px;
 }
 
 .text {

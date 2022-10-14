@@ -10,7 +10,7 @@ import { ChatContentContext } from '~/components/Context/ChatContentContext';
 import SendMessage from '~/layouts/SendMessage';
 import host from '~/ulties/serverHost';
 import HeaderChat from '~/layouts/HeaderChat';
-import Setting from '~/layouts/Setting';
+import Setting from '~/layouts/ChatSetting';
 import { SettingContext } from '~/components/Context/SettingContext';
 import { SocketContext } from '~/components/Context/SocketContext';
 import { UserContext } from '~/components/Context/UserContext';

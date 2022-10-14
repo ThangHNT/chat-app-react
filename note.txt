@@ -1,4 +1,4 @@
-truyen du lieu tu localStorage vao usercontext
+setting am thanh
 
 
 

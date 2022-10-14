@@ -13,7 +13,7 @@ function Account() {
     const { handleSeCurrenttUser } = useContext(UserContext);
     const [clickChangePwBtn, setClickChangePwBtn] = useState(false);
     const [profile, setProfile] = useState({});
-    const [canStoreChange, setCanStoreChange] = useState(false);
+    const [canStoreChange, setCanStoreChange] = useState(false); // có thể ấn nút lưu để lưu
 
     const currentUser = useMemo(() => {
         return JSON.parse(localStorage.getItem('chat-app-hnt'));
@@ -24,6 +24,7 @@ function Account() {
     const preImgRef = useRef(currentUser.avatar);
     // console.log(preImgRef.current);
 
+    // thay đổi ảnh or input sẽ ấn đc nút lưu
     useEffect(() => {
         if (profile.avatar || profile.username || (profile.oldpassword && profile.newpassword)) {
             setCanStoreChange(true);
@@ -32,10 +33,12 @@ function Account() {
         }
     }, [profile]);
 
+    // ẩn hiện input password khi ấn vào nút đổi mk
     const hanleClickChangePasswordBtn = () => {
         setClickChangePwBtn((pre) => !pre);
     };
 
+    // xét input khi chọn ảnh
     const handleChooseNewAvatar = (e) => {
         const reader = new FileReader();
         if (e.target.files) {
@@ -53,6 +56,7 @@ function Account() {
         }
     };
 
+    // xét thay đổi của input
     const handleChangeInput = (e) => {
         const target = e.target;
         setProfile((pre) => {
@@ -63,6 +67,7 @@ function Account() {
         });
     };
 
+    // ấn nút bỏ chọn ảnh
     const handleRemoveChoseAvatar = () => {
         imgRef.current.src = preImgRef.current;
         setProfile((pre) => {
@@ -71,6 +76,7 @@ function Account() {
         });
     };
 
+    // ấn nút lưu và gửi dữ liệu về db
     const handleSubmitForm = async () => {
         if (canStoreChange) {
             preImgRef.current = imgRef.current.src;

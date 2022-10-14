@@ -5,7 +5,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import { faAngleDown, faAngleUp, faBan, faFont, faImage, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import classNames from 'classnames/bind';
 import host from '~/ulties/serverHost';
-import styles from './Setting.module.scss';
+import styles from './ChatSetting.module.scss';
 import { faEthereum } from '@fortawesome/free-brands-svg-icons';
 import { SettingContext } from '~/components/Context/SettingContext';
 import { SocketContext } from '~/components/Context/SocketContext';
