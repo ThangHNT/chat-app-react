@@ -23,7 +23,7 @@ function SendMessage({ receiver, darkmode = false }) {
     const { currentUser } = useContext(UserContext);
     const ChatContent = useContext(ChatContentContext);
     const { handleSendMessage, preventation } = useContext(SocketContext);
-    const { handlSetBlockStatus, blockStatus } = useContext(SettingContext);
+    const { handlSetBlockStatus, blockStatus, soundSetting } = useContext(SettingContext);
     // eslint-disable-next-line
     const [chosenEmoji, setChosenEmoji] = useState(null);
     const [blobUrlImg, setBlobUrlImg] = useState('');
@@ -181,7 +181,9 @@ function SendMessage({ receiver, darkmode = false }) {
     // xử lý 2 chiều khi gõ vào input
     const handleType = (e) => {
         messageSound.src = 'texting-sound.mp3';
-        // messageSound.play();
+        if (soundSetting.textting) {
+            messageSound.play();
+        }
         setInputValue(e.target.value);
     };
 
@@ -252,14 +254,15 @@ function SendMessage({ receiver, darkmode = false }) {
             if (messages.content.length > 0) {
                 inputRef.current.setHeight(32);
                 messageSound.src = 'send-message-sound.mp3';
-                // messageSound.play();
+                if (soundSetting.send) {
+                    messageSound.play();
+                }
                 const data = await axios.post(`${host}/api/send/message`, {
                     sender: currentUser._id,
                     receiver: receiver.id,
                     messages,
                 });
                 if (data.status) {
-                    // console.log(data.data.messages);
                     const newMessages = data.data.messages;
                     handleSendMessage(newMessages);
                     ChatContent.handleAddMessage(newMessages);

@@ -1,22 +1,28 @@
 import { useContext, useState, useLayoutEffect, useRef } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
 import classNames from 'classnames/bind';
+import axios from 'axios';
+import host from '~/ulties/serverHost';
 import ModalHeader from '../ModalHeader';
 import styles from './Setting.module.scss';
 import { SettingContext } from '~/components/Context/SettingContext';
+import { UserContext } from '~/components/Context/UserContext';
 import ModalFooter from '../ModalFooter';
 
 const cx = classNames.bind(styles);
 
 function Setting() {
-    const { handleSetDisplayGeneralSetting, soundSetting } = useContext(SettingContext);
+    const { currentUser } = useContext(UserContext);
+    const { handleSetDisplayGeneralSetting, soundSetting, handleSetSoundSetting } = useContext(SettingContext);
 
-    const [sound, setSound] = useState({ ...soundSetting });
-    const [currentSound, setCurrentSound] = useState({ ...soundSetting });
+    const [sound, setSound] = useState({ ...soundSetting }); // pre setting sound
+    const [currentSound, setCurrentSound] = useState({ ...soundSetting }); // current setting sound
 
     const inputRef = useRef();
     const inputRef2 = useRef();
     const inputRef3 = useRef();
 
+    // set checked của input khi mở setting
     useLayoutEffect(() => {
         // console.log(soundSetting);
         inputRef.current.checked = soundSetting.notify;
@@ -25,6 +31,7 @@ function Setting() {
         // eslint-disable-next-line
     }, []);
 
+    // xử lý thay đổi khi ấn nút
     const handleGetChangeSetting = (e) => {
         const target = e.currentTarget;
         const checked = target.checked;
@@ -42,7 +49,27 @@ function Setting() {
         }
     };
 
-    const handleStoreSetting = () => {};
+    // khi có thay đổi mới sẽ bấm đc nút lưu
+    const handleStoreSetting = async () => {
+        if (
+            sound.send !== currentSound.send ||
+            sound.textting !== currentSound.textting ||
+            sound.notify !== currentSound.notify
+        ) {
+            setSound({ ...currentSound });
+            handleSetSoundSetting({ ...currentSound });
+            const { data } = await axios.post(`${host}/api/change/general-settings`, {
+                type: 'sound',
+                value: currentSound,
+                userId: currentUser._id,
+            });
+            if (data.status) {
+                toast.success('Thay đổi cài đặt thành công.');
+            } else {
+                toast.error('Thay đổi cài đặt thất bại.');
+            }
+        }
+    };
 
     return (
         <div className={cx('wrapper')}>
@@ -98,6 +125,16 @@ function Setting() {
                     }
                 />
             </div>
+            <ToastContainer
+                position="bottom-center"
+                autoClose={2000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover={false}
+            />
         </div>
     );
 }

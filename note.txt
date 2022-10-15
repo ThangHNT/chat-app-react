@@ -1,11 +1,9 @@
-menu change dark mode
+fix bug : Uncaught (in promise) DOMException: play() failed because the user didn't interact with the document first
 
-setting am thanh
-
-
+button in messageItem
 
 
 
 
 
-khi lưu tin nhắn vào db cần set lại hàm handleSetMessages ở messageContext, chỗ fromDB
+lưu ý: khi lưu tin nhắn vào db cần set lại hàm handleSetMessages ở messageContext, chỗ fromDB

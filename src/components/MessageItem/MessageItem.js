@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, memo, useContext } from 'react';
+import { useEffect, useState, useRef, memo, useContext, useCallback } from 'react';
 import classNames from 'classnames/bind';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -6,13 +6,14 @@ import { faEllipsis, faTrashCan } from '@fortawesome/free-solid-svg-icons';
 import styles from './MessageItem.module.scss';
 import Image from '~/components/Image';
 import host from '~/ulties/serverHost';
-import Button from '~/components/Button';
+// import Button from '~/components/Button';
 import Menu from '~/components/Menu';
 import PositiveStatus from '~/components/PositiveStatus';
 import { SocketContext } from '~/components/Context/SocketContext';
 import { ChatContentContext } from '~/components/Context/ChatContentContext';
 import { MessageContext } from '~/components/Context/MessageContext';
 import { UserContext } from '~/components/Context/UserContext';
+import { SettingContext } from '~/components/Context/SettingContext';
 
 const cx = classNames.bind(styles);
 
@@ -26,6 +27,7 @@ const actionsMessageItem = [
 function MessageItem({ receiver, darkmode = false, avatar, username, searchResult = false }) {
     // console.log('message-item');
     const { currentUser } = useContext(UserContext);
+    const { soundSetting } = useContext(SettingContext);
     const { lastestMsg } = useContext(MessageContext);
     const { messages, handleDisplayChatContent } = useContext(ChatContentContext);
     const ChatContent = useContext(ChatContentContext);
@@ -54,7 +56,9 @@ function MessageItem({ receiver, darkmode = false, avatar, username, searchResul
         if (newMessage) {
             if (newMessage.sender === receiver) {
                 // console.log(newMessage);
-                // messageSound.play();
+                if (soundSetting.notify) {
+                    messageSound.play();
+                }
                 if (ChatContent.receiver !== receiver) {
                     setMessageNotify(true);
                 }
@@ -110,10 +114,6 @@ function MessageItem({ receiver, darkmode = false, avatar, username, searchResul
                 });
         }
 
-        return () => {
-            messageSound.remove();
-        };
-
         // eslint-disable-next-line
     }, []);
 
@@ -129,6 +129,7 @@ function MessageItem({ receiver, darkmode = false, avatar, username, searchResul
 
         return () => {
             document.removeEventListener('click', (e) => {});
+            messageSound.remove();
         };
     }, []);
 
