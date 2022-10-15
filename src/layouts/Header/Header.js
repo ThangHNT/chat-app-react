@@ -49,6 +49,7 @@ function Header() {
         messages.clear();
         handleDisplayChatContent('');
         handleAddMessage('');
+        // eslint-disable-next-line
     }, []);
 
     const menuHeader = [

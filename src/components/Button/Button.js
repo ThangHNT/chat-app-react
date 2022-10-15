@@ -23,6 +23,7 @@ function Button({
     darkmodeBtn = false,
     darkmodeOptionBtn = false,
     noBorderRadius = false,
+    tickBtn = false,
     children,
     onClick,
     leftIcon,
@@ -67,7 +68,7 @@ function Button({
 
     return (
         <Btn className={classes} {...props}>
-            {leftIcon && <span className={cx('icon')}>{leftIcon}</span>}
+            {leftIcon && <span className={cx('icon', { tickBtn })}>{leftIcon}</span>}
             {!noTitle && !message_sended && <span className={cx('title')}>{children}</span>}
         </Btn>
     );

@@ -1,5 +1,8 @@
-import { createContext, useState } from 'react';
-
+import { createContext, useState, useContext, useLayoutEffect, useEffect } from 'react';
+import { UserContext } from '~/components/Context/UserContext';
+import { useDebounce } from '~/hooks';
+import axios from 'axios';
+import host from '~/ulties/serverHost';
 const SettingContext = createContext();
 
 const themeList = [
@@ -22,12 +25,44 @@ const themeList = [
 
 function SettingProvider({ children }) {
     // console.log('setting context');
+    const { currentUser } = useContext(UserContext);
     const [blockStatus, setBlockStatus] = useState('');
     const [darkLightMode, setDarkLightMode] = useState();
     const [displayTheme, setDisplayTheme] = useState();
     const [theme, setTheme] = useState(new Map());
     const [backgroundImage, setBackgroundImage] = useState([]);
     const [displayRemoveMessageModal, setDisplayRemoveMessageModal] = useState(false);
+
+    const debounce = useDebounce(darkLightMode, 2500);
+
+    useLayoutEffect(() => {
+        if (currentUser) {
+            // console.log(currentUser);
+            axios
+                .get(`${host}/api/get/general-settings/?userId=${currentUser._id}`)
+                .then(({ data }) => {
+                    // console.log(data);
+                    const darkMode = data.setting.darkMode;
+                    handleChangeDarkLightMode(true, darkMode);
+                })
+                .catch(() => console.log('lay cài đặt chung bị lỗi'));
+        }
+        // eslint-disable-next-line
+    }, [currentUser]);
+
+    useEffect(() => {
+        // console.log(debounce);
+        if (debounce !== undefined && currentUser) {
+            axios
+                .post(`${host}/api/change/general-settings`, {
+                    type: 'dark mode',
+                    value: darkLightMode,
+                    userId: currentUser._id,
+                })
+                .catch(() => console.log('loi thay doi dark mode to data base'));
+        }
+        // eslint-disable-next-line
+    }, [debounce]);
 
     // hiện modal xóa tin nhắn
     const handleSetDisplayRemoveMessageModal = (data) => {
@@ -63,9 +98,14 @@ function SettingProvider({ children }) {
 
     // chuyển đổi giao diện sáng tối
     const handleChangeDarkLightMode = (data = false, value) => {
+        const html = document.querySelector('html');
         if (data) {
+            if (value) {
+                html.classList.add('darkmode');
+            } else html.classList.remove('darkmode');
             setDarkLightMode(value);
         } else {
+            darkLightMode === false ? html.classList.add('darkmode') : html.classList.remove('darkmode');
             setDarkLightMode((pre) => {
                 return !pre;
             });

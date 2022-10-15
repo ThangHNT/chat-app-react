@@ -8,7 +8,6 @@ import Search from '~/components/Search';
 import MessageItem from '~/components/MessageItem';
 import host from '~/ulties/serverHost';
 import { SettingContext } from '~/components/Context/SettingContext';
-import { useDebounce } from '~/hooks';
 import { UserContext } from '~/components/Context/UserContext';
 
 const cx = classNames.bind(styles);
@@ -19,27 +18,10 @@ function Sidebar() {
     const { handleChangeDarkLightMode, darkLightMode } = useContext(SettingContext);
     const [listUser, setListUser] = useState([]);
 
-    const debounce = useDebounce(darkLightMode, 2500);
-
     const checkboxRef = useRef();
     const sidebarContentRef = useRef();
 
-    useEffect(() => {
-        // console.log(debounce);
-        if (debounce !== undefined) {
-            axios
-                .post(`${host}/api/change/general-settings`, {
-                    type: 'dark mode',
-                    value: darkLightMode,
-                    userId: currentUser._id,
-                })
-                .catch(() => console.log('loi thay doi dark mode to data base'));
-        }
-        // eslint-disable-next-line
-    }, [debounce]);
-
     useLayoutEffect(() => {
-        handleChangeDarkLightModeHtml();
         checkboxRef.current.checked = darkLightMode;
         // eslint-disable-next-line
     }, [darkLightMode]);
@@ -60,14 +42,7 @@ function Sidebar() {
 
     const handleChangeMode = () => {
         handleChangeDarkLightMode();
-        handleChangeDarkLightModeHtml();
     };
-
-    const handleChangeDarkLightModeHtml = () => {
-        const html = document.querySelector('html');
-        darkLightMode === false ? html.classList.remove('darkmode') : html.classList.add('darkmode');
-    };
-
     return (
         <div className={cx('wrapper')}>
             <div className={cx('header', { darkmode: darkLightMode })}>

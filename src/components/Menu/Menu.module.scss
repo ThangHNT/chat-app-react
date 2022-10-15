@@ -16,6 +16,7 @@
     padding: 10px 0;
     cursor: pointer;
     border-bottom: 1px solid #ccc;
+    background-color: #fff;
 
     .arrow-left {
         font-size: 18px;
@@ -28,5 +29,13 @@
 
     &:hover {
         background-color: #ccc;
+    }
+}
+
+.darkmode {
+    background-color: var(--dark-mode);
+    color: #fff;
+    &:hover {
+        background-color: #444;
     }
 }

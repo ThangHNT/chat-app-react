@@ -17,15 +17,12 @@
 
 .title {
     margin: 0;
-    padding-left: 10px;
     font-size: 15px;
     min-width: 70px;
 }
 
 .icon {
     min-width: 18px;
-    position: absolute;
-    left: 42px;
 }
 
 .icon + .title,
@@ -150,6 +147,15 @@
     }
 }
 
+.tickBtn + .title {
+    margin: 0;
+}
+
+.tickBtn {
+    position: absolute;
+    left: 42px;
+}
+
 // ========================== dark mode =================================
 .darkmodeBtn {
     transition: 0.25s;
@@ -157,7 +163,7 @@
     color: #fff;
 
     &:hover {
-        background-color: #9999;
+        background-color: #444;
     }
 }
 
@@ -167,6 +173,6 @@
     color: #fff;
 
     &:hover {
-        background-color: #aaa;
+        background-color: #444;
     }
 }
