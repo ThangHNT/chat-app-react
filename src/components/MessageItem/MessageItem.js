@@ -185,9 +185,9 @@ function MessageItem({ receiver, darkmode = false, avatar, username, searchResul
             {!searchResult && (
                 <div className={cx('action-btns')}>
                     <div className={cx('wrapper-btn')} ref={btnRef} onClick={handleDisplayMenu}>
-                        <Button circle darkmodeOptionBtn={darkmode}>
+                        <div className={cx('btn')}>
                             <FontAwesomeIcon icon={faEllipsis} />
-                        </Button>
+                        </div>
                     </div>
                     {menuMessageItem && (
                         <div className={cx('message-item-action-menu')}>

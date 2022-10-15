@@ -6,13 +6,14 @@ import { ChatContentContext } from '~/components/Context/ChatContentContext';
 import { SettingContext } from '~/components/Context/SettingContext';
 import Theme from '~/components/Theme';
 import DeleteMessage from '~/components/DeleteMessage';
+import Setting from '~/layouts/Setting';
 
 const cx = classNames.bind(styles);
 
 function Modal() {
     const ChatContentMsg = useContext(ChatContentContext);
 
-    const { displayTheme, displayRemoveMessageModal } = useContext(SettingContext);
+    const { displayTheme, displayRemoveMessageModal, displayGeneralSetting } = useContext(SettingContext);
 
     const [zoomImg, setZoomImg] = useState(false);
     const [imgSrc, setImgSrc] = useState('');
@@ -53,13 +54,14 @@ function Modal() {
 
     return (
         <div className={cx('wrapper')}>
-            {(zoomImg || displayTheme || displayRemoveMessageModal) && (
+            {(zoomImg || displayTheme || displayRemoveMessageModal || displayGeneralSetting) && (
                 <div className={cx('modal')}>
                     <div className={cx('modal-overlay')}></div>
                     <div className={cx('modal-content')}>
                         {displayTheme && <Theme receiver={ChatContentMsg.receiver} />}
                         {zoomImg && <img ref={imgRef} className={cx('img')} src={imgSrc} alt="anh dep" />}
                         {displayRemoveMessageModal && <DeleteMessage />}
+                        {displayGeneralSetting && <Setting />}
                     </div>
                 </div>
             )}

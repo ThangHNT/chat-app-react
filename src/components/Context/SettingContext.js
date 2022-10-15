@@ -32,6 +32,8 @@ function SettingProvider({ children }) {
     const [theme, setTheme] = useState(new Map());
     const [backgroundImage, setBackgroundImage] = useState([]);
     const [displayRemoveMessageModal, setDisplayRemoveMessageModal] = useState(false);
+    const [displayGeneralSetting, setDisplayGeneralSetting] = useState(false);
+    const [soundSetting, setSoundSetting] = useState({});
 
     const debounce = useDebounce(darkLightMode, 2500);
 
@@ -41,7 +43,13 @@ function SettingProvider({ children }) {
             axios
                 .get(`${host}/api/get/general-settings/?userId=${currentUser._id}`)
                 .then(({ data }) => {
-                    // console.log(data);
+                    // console.log(data.setting);
+                    const sound = data.setting;
+                    handleSetSoundSetting({
+                        notify: sound.notificationSound,
+                        send: sound.sendMessageSound,
+                        textting: sound.texttingSound,
+                    });
                     const darkMode = data.setting.darkMode;
                     handleChangeDarkLightMode(true, darkMode);
                 })
@@ -63,6 +71,14 @@ function SettingProvider({ children }) {
         }
         // eslint-disable-next-line
     }, [debounce]);
+
+    const handleSetSoundSetting = (setting) => {
+        setSoundSetting(setting);
+    };
+
+    const handleSetDisplayGeneralSetting = () => {
+        setDisplayGeneralSetting((pre) => !pre);
+    };
 
     // hiện modal xóa tin nhắn
     const handleSetDisplayRemoveMessageModal = (data) => {
@@ -120,12 +136,16 @@ function SettingProvider({ children }) {
         darkLightMode,
         backgroundImage,
         displayRemoveMessageModal,
+        displayGeneralSetting,
+        soundSetting,
         handlSetBlockStatus,
         handleChangeDarkLightMode,
         handleDisplayThemeList,
         handleSetTheme,
         handleSetBackgroundImage,
         handleSetDisplayRemoveMessageModal,
+        handleSetDisplayGeneralSetting,
+        handleSetSoundSetting,
     };
     return <SettingContext.Provider value={values}>{children}</SettingContext.Provider>;
 }

@@ -30,7 +30,7 @@ function Header() {
     // console.log('Header');
     const { currentUser } = useContext(UserContext);
     const { messages } = useContext(MessageContext);
-    const { darkLightMode, handleChangeDarkLightMode } = useContext(SettingContext);
+    const { darkLightMode, handleChangeDarkLightMode, handleSetDisplayGeneralSetting } = useContext(SettingContext);
     const { handleInitSocket, socket } = useContext(SocketContext);
     const { handleDisplayChatContent, handleAddMessage } = useContext(ChatContentContext);
 
@@ -66,7 +66,7 @@ function Header() {
         {
             icon: <FontAwesomeIcon icon={faGear} />,
             text: 'Cài đặt',
-            to: '/setting',
+            onClick: handleSetDisplayGeneralSetting,
         },
         {
             icon: <FontAwesomeIcon icon={faMoon} />,

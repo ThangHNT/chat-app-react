@@ -1,6 +1,4 @@
-import { useContext, useState, memo } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faXmark } from '@fortawesome/free-solid-svg-icons';
+import { useContext, useState, memo, useCallback } from 'react';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import classNames from 'classnames/bind';
@@ -9,6 +7,8 @@ import host from '~/ulties/serverHost';
 import { SettingContext } from '~/components/Context/SettingContext';
 import { SocketContext } from '~/components/Context/SocketContext';
 import { UserContext } from '~/components/Context/UserContext';
+import ModalHeader from '~/layouts/ModalHeader';
+import ModalFooter from '~/layouts/ModalFooter';
 
 const cx = classNames.bind(styles);
 
@@ -20,10 +20,11 @@ function Theme({ receiver }) {
     const { handleDisplayThemeList, themeList, handleSetTheme, darkLightMode } = useContext(SettingContext);
     const Setting = useContext(SettingContext);
 
-    const handleSetDisplayThemeList = () => {
+    const handleSetDisplayThemeList = useCallback(() => {
         handleDisplayThemeList();
         setTheme(false);
-    };
+        // eslint-disable-next-line
+    }, []);
 
     // thay đổi background color theme-item khi click vào
     const handleGetTheme = (e) => {
@@ -65,8 +66,7 @@ function Theme({ receiver }) {
     return (
         <div className={cx('wrapper', { darkmode: darkLightMode })}>
             <div className={cx('theme-header', { darkmode: darkLightMode })}>
-                <span>Chủ Đề</span>
-                <FontAwesomeIcon icon={faXmark} className={cx('close-icon')} onClick={handleSetDisplayThemeList} />
+                <ModalHeader title="Chủ đề" onClick={handleDisplayThemeList} />
             </div>
             <div className={cx('theme-list')}>
                 {themeList.map((item, index) => {
@@ -85,12 +85,11 @@ function Theme({ receiver }) {
                 })}
             </div>
             <div className={cx('theme-footer')}>
-                <span className={cx('cancel-btn')} onClick={handleSetDisplayThemeList}>
-                    Hủy
-                </span>
-                <span className={cx('store-btn', { canChange: theme })} onClick={handleChangeTheme}>
-                    Lưu
-                </span>
+                <ModalFooter
+                    clickToClose={handleSetDisplayThemeList}
+                    clickToStore={handleChangeTheme}
+                    canStore={theme}
+                />
             </div>
             <ToastContainer
                 position="bottom-center"

@@ -19,6 +19,7 @@
     margin: 0;
     font-size: 15px;
     min-width: 70px;
+    text-align: left;
 }
 
 .icon {
@@ -28,6 +29,15 @@
 .icon + .title,
 .title + .icon {
     margin-left: 10px;
+}
+
+.tickBtn + .title {
+    margin: 0;
+}
+
+.tickBtn {
+    position: absolute;
+    left: 42px;
 }
 
 .text {
@@ -145,15 +155,6 @@
     &:hover {
         background-color: rgb(50, 49, 49);
     }
-}
-
-.tickBtn + .title {
-    margin: 0;
-}
-
-.tickBtn {
-    position: absolute;
-    left: 42px;
 }
 
 // ========================== dark mode =================================

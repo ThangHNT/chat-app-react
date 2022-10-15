@@ -3,7 +3,6 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from '~/pages/Home';
 import Login from '~/pages/Login';
 import Account from '~/pages/Account';
-import Setting from '~/pages/Setting';
 
 function App() {
     // console.log('App');
@@ -13,7 +12,6 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/account" element={<Account />} />
-                <Route path="/setting" element={<Setting />} />
             </Routes>
         </BrowserRouter>
     );
