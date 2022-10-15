@@ -27,6 +27,30 @@ import Menu from '~/components/Menu';
 const cx = classNames.bind(styles);
 
 function Header() {
+    // console.log('Header');
+    const { currentUser } = useContext(UserContext);
+    const { messages } = useContext(MessageContext);
+    const { darkLightMode, handleChangeDarkLightMode } = useContext(SettingContext);
+    const { handleInitSocket, socket } = useContext(SocketContext);
+    const { handleDisplayChatContent, handleAddMessage } = useContext(ChatContentContext);
+
+    useEffect(() => {
+        if (currentUser) {
+            const socket = io(host);
+            socket.auth = { userId: currentUser._id };
+            handleInitSocket(socket);
+        }
+        // eslint-disable-next-line
+    }, [currentUser]);
+
+    const handleLogout = useCallback(() => {
+        localStorage.removeItem('chat-app-hnt');
+        socket.close();
+        messages.clear();
+        handleDisplayChatContent('');
+        handleAddMessage('');
+    }, []);
+
     const menuHeader = [
         {
             icon: <FontAwesomeIcon icon={faHouse} />,
@@ -49,8 +73,18 @@ function Header() {
             children: {
                 text: 'Chế độ tối',
                 data: [
-                    { text: 'Bật', icon: <FontAwesomeIcon icon={faCheck} /> },
-                    { text: 'Tắt', icon: <FontAwesomeIcon icon={faCheck} /> },
+                    {
+                        text: 'Bật',
+                        icon: <FontAwesomeIcon icon={faCheck} />,
+                        onClick: handleChangeDarkLightMode,
+                        type: 'turn-on',
+                    },
+                    {
+                        text: 'Tắt',
+                        icon: <FontAwesomeIcon icon={faCheck} />,
+                        onClick: handleChangeDarkLightMode,
+                        type: 'turn-off',
+                    },
                 ],
             },
         },
@@ -58,32 +92,9 @@ function Header() {
             icon: <FontAwesomeIcon icon={faArrowRightFromBracket} />,
             text: 'Đăng xuất',
             href: '/login',
-            click: true,
+            onClick: handleLogout,
         },
     ];
-    // console.log('Header');
-    const { currentUser } = useContext(UserContext);
-    const { messages } = useContext(MessageContext);
-    const { darkLightMode } = useContext(SettingContext);
-    const { handleInitSocket, socket } = useContext(SocketContext);
-    const { handleDisplayChatContent, handleAddMessage } = useContext(ChatContentContext);
-
-    useEffect(() => {
-        if (currentUser) {
-            const socket = io(host);
-            socket.auth = { userId: currentUser._id };
-            handleInitSocket(socket);
-        }
-        // eslint-disable-next-line
-    }, [currentUser]);
-
-    const handleLogout = useCallback(() => {
-        localStorage.removeItem('chat-app-hnt');
-        socket.close();
-        messages.clear();
-        handleDisplayChatContent('');
-        handleAddMessage('');
-    }, []);
 
     return (
         <header className={cx('header', { darkmode: darkLightMode, darkmodeBorder: darkLightMode })}>
@@ -100,11 +111,11 @@ function Header() {
                     <Tippy
                         interactive
                         delay={[100, 200]}
-                        visible
+                        // visible
                         placement="bottom-end"
                         render={(attrs) => (
                             <div className={cx('user-menu', { darkmode: darkLightMode })} tabIndex="-1" {...attrs}>
-                                <Menu menu={menuHeader} onClick={handleLogout} />
+                                <Menu menu={menuHeader} />
                             </div>
                         )}
                     >

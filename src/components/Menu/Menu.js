@@ -9,14 +9,15 @@ import { SettingContext } from '~/components/Context/SettingContext';
 
 const cx = classNames.bind(styles);
 
-function Menu({ sender, receiver, menu = [], click = false }) {
-    const { darkLightMode } = useContext(SettingContext);
+function Menu({ sender, receiver, menu = [] }) {
+    const { darkLightMode, handleChangeDarkLightMode } = useContext(SettingContext);
 
     const [catalog, setCatalog] = useState([{ data: menu }]);
     const currentCatalog = catalog[catalog.length - 1];
 
     const renderItems = () => {
         return currentCatalog.data.map((item, index) => {
+            let setIcon;
             return (
                 <Button
                     key={index}
@@ -31,8 +32,15 @@ function Menu({ sender, receiver, menu = [], click = false }) {
                         const isParent = !!item.children;
                         if (isParent) {
                             setCatalog((pre) => [...pre, item.children]);
+                            return;
                         } else {
-                            return item.onClick ? click : undefined;
+                            if (item.onClick) {
+                                if (item.type === 'turn-on') {
+                                    item.onClick(true, true);
+                                } else if (item.type === 'turn-off') {
+                                    item.onClick(true, false);
+                                } else item.onClick();
+                            } else return () => {};
                         }
                     }}
                 />

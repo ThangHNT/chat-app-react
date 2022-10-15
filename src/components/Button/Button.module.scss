@@ -12,17 +12,20 @@
     cursor: pointer;
     line-height: 1.5;
     background-color: #fff;
+    position: relative;
 }
 
 .title {
     margin: 0;
-    padding: 0;
+    padding-left: 10px;
     font-size: 15px;
     min-width: 70px;
 }
 
 .icon {
     min-width: 18px;
+    position: absolute;
+    left: 42px;
 }
 
 .icon + .title,
