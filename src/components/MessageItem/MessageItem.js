@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, memo, useContext, useCallback } from 'react';
+import { useEffect, useState, useRef, memo, useContext } from 'react';
 import classNames from 'classnames/bind';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -36,9 +36,8 @@ function MessageItem({ receiver, darkmode = false, avatar, username, searchResul
     const [menuMessageItem, setmenuMessageItem] = useState(false);
     const [messageNotify, setMessageNotify] = useState(false);
 
-    const messageSound = new Audio('messenger-sound.mp3');
-
     const btnRef = useRef();
+    const messageSound = new Audio('messenger-sound.mp3');
 
     useEffect(() => {
         if (lastestMsg) {

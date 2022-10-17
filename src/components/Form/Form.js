@@ -53,7 +53,6 @@ function Form({ login, signup }) {
                 try {
                     const { data } = await axios.post('/register', values);
                     if (data.status === true) {
-                        toast('Đăng ký thành công');
                         handleSeCurrenttUser(data.newUser);
                         localStorage.setItem('chat-app-hnt', JSON.stringify(data.newUser));
                         setTimeout(function () {
@@ -75,7 +74,7 @@ function Form({ login, signup }) {
                         // console.log(data.user);
                         localStorage.setItem('chat-app-hnt', JSON.stringify(data.user));
                         handleSeCurrenttUser(data.user);
-                        toast('Chuyển hướng đến trang chủ');
+                        // toast('Chuyển hướng đến trang chủ');
                         setTimeout(function () {
                             navigate('/', { replace: true });
                         }, 1500);

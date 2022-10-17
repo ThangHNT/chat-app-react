@@ -1,4 +1,4 @@
-import { useContext, useLayoutEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '~/layouts/Header';
 import HomeContent from '~/layouts/HomeContent';
@@ -8,7 +8,7 @@ function Home() {
     const { currentUser } = useContext(UserContext);
     const navigate = useNavigate();
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         if (!currentUser) {
             document.querySelector('html').classList.remove('darkmode');
             navigate('/login');

@@ -55,6 +55,7 @@ function SettingProvider({ children }) {
                 })
                 .catch(() => console.log('lay cài đặt chung bị lỗi'));
         }
+
         // eslint-disable-next-line
     }, [currentUser]);
 

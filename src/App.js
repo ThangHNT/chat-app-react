@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from '~/pages/Home';
 import Login from '~/pages/Login';
 import Account from '~/pages/Account';
+import NotFound from '~/pages/NotFound';
 
 function App() {
     // console.log('App');
@@ -12,6 +13,7 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/account" element={<Account />} />
+                <Route path="*" element={<NotFound />} />
             </Routes>
         </BrowserRouter>
     );
