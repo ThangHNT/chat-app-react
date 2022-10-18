@@ -61,3 +61,10 @@
 .switch-btn:checked:after {
     left: 27px;
 }
+
+// ========================== dark mode =========================
+
+.darkmode {
+    background-color: var(--dark-mode);
+    color: #fff;
+}

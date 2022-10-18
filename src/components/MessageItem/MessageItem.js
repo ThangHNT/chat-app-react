@@ -1,12 +1,11 @@
-import { useEffect, useState, useRef, memo, useContext } from 'react';
+import { useEffect, useState, useRef, memo, useContext, useCallback } from 'react';
 import classNames from 'classnames/bind';
 import axios from 'axios';
+import host from '~/ulties/serverHost';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEllipsis, faTrashCan } from '@fortawesome/free-solid-svg-icons';
+import { faEllipsis, faFloppyDisk, faTrashCan } from '@fortawesome/free-solid-svg-icons';
 import styles from './MessageItem.module.scss';
 import Image from '~/components/Image';
-import host from '~/ulties/serverHost';
-// import Button from '~/components/Button';
 import Menu from '~/components/Menu';
 import PositiveStatus from '~/components/PositiveStatus';
 import { SocketContext } from '~/components/Context/SocketContext';
@@ -16,13 +15,6 @@ import { UserContext } from '~/components/Context/UserContext';
 import { SettingContext } from '~/components/Context/SettingContext';
 
 const cx = classNames.bind(styles);
-
-const actionsMessageItem = [
-    {
-        text: 'Xoa doan chat',
-        icon: <FontAwesomeIcon icon={faTrashCan} />,
-    },
-];
 
 function MessageItem({ receiver, darkmode = false, avatar, username, searchResult = false }) {
     // console.log('message-item');
@@ -97,13 +89,13 @@ function MessageItem({ receiver, darkmode = false, avatar, username, searchResul
                 .then((data) => {
                     const data2 = data.data;
                     // console.log(data2);
-                    if (data2.status) {
-                        let typeMsg = data2.message.message.type;
+                    if (data2.message) {
+                        let typeMsg = data2.message.type;
                         setlastestMessage(
                             handleSetLastestMessage(
-                                data2.message.message.sender === currentUser._id,
+                                data2.message.sender === currentUser._id,
                                 typeMsg,
-                                data2.message.message.text,
+                                data2.message.text,
                             ),
                         );
                     }
@@ -130,6 +122,7 @@ function MessageItem({ receiver, darkmode = false, avatar, username, searchResul
             document.removeEventListener('click', (e) => {});
             messageSound.remove();
         };
+        // eslint-disable-next-line
     }, []);
 
     const handleSetLastestMessage = (sender, type, text) => {
@@ -170,6 +163,29 @@ function MessageItem({ receiver, darkmode = false, avatar, username, searchResul
             }
         }
     };
+
+    const handleDeleteChat = useCallback(async () => {
+        // const { data } = await axios.post(`${host}/api/delete/chat`, { sender: currentUser._id, receiver });
+        // console.log(data);
+        // eslint-disable-next-line
+    }, []);
+
+    const handleDeleteAllMessageFromDB = useCallback(() => {
+        axios.post(`${host}/api/delete-all-messages`);
+    }, []);
+
+    const actionsMessageItem = [
+        {
+            text: 'Xóa đoạn chat',
+            icon: <FontAwesomeIcon icon={faTrashCan} />,
+            onClick: handleDeleteChat,
+        },
+        {
+            text: 'Lưu trữ đoạn chat',
+            icon: <FontAwesomeIcon icon={faFloppyDisk} />,
+            onClick: handleDeleteAllMessageFromDB,
+        },
+    ];
 
     return (
         <div className={cx('wrapper', { searchResult, darkBackground: darkmode })} onClick={handleClick}>

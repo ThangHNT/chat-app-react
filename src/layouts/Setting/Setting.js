@@ -13,7 +13,8 @@ const cx = classNames.bind(styles);
 
 function Setting() {
     const { currentUser } = useContext(UserContext);
-    const { handleSetDisplayGeneralSetting, soundSetting, handleSetSoundSetting } = useContext(SettingContext);
+    const { darkLightMode, handleSetDisplayGeneralSetting, soundSetting, handleSetSoundSetting } =
+        useContext(SettingContext);
 
     const [sound, setSound] = useState({ ...soundSetting }); // pre setting sound
     const [currentSound, setCurrentSound] = useState({ ...soundSetting }); // current setting sound
@@ -72,7 +73,7 @@ function Setting() {
     };
 
     return (
-        <div className={cx('wrapper')}>
+        <div className={cx('wrapper', { darkmode: darkLightMode })}>
             <div className={cx('header')}>
                 <ModalHeader title="Cài đặt" onClick={handleSetDisplayGeneralSetting} />
             </div>

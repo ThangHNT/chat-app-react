@@ -1,5 +1,4 @@
 
-chuyển trang
 button in messageItem
 
 

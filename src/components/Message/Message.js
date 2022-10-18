@@ -84,7 +84,7 @@ function Message({
     useEffect(() => {
         if (newReaction) {
             if (currentUser._id === newReaction.receiver && newReaction.messageId === messageId) {
-                console.log(newReaction);
+                // console.log(newReaction);
                 setReactionIcon(getReactionIcon(newReaction.icon));
                 handleSetNewReaction(undefined);
             }

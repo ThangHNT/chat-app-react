@@ -38,3 +38,14 @@
         }
     }
 }
+
+// =============================== dark mode       ==========================================
+
+.darkmode {
+    background-color: var(--dark-mode);
+    color: #fff;
+}
+
+.darkmodeCloseBtn {
+    background-color: #555;
+}

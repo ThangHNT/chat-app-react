@@ -23,6 +23,16 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+
+    .setting-btn {
+        font-size: 24px;
+        cursor: pointer;
+        color: var(--primary);
+
+        &:hover {
+            color: var(--primary-hover);
+        }
+    }
 }
 
 .checkbox {

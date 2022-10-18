@@ -27,12 +27,12 @@ function SettingProvider({ children }) {
     // console.log('setting context');
     const { currentUser } = useContext(UserContext);
     const [blockStatus, setBlockStatus] = useState('');
-    const [darkLightMode, setDarkLightMode] = useState();
     const [displayTheme, setDisplayTheme] = useState();
     const [theme, setTheme] = useState(new Map());
     const [backgroundImage, setBackgroundImage] = useState([]);
     const [displayRemoveMessageModal, setDisplayRemoveMessageModal] = useState(false);
     const [displayGeneralSetting, setDisplayGeneralSetting] = useState(false);
+    const [darkLightMode, setDarkLightMode] = useState();
     const [soundSetting, setSoundSetting] = useState({});
 
     const debounce = useDebounce(darkLightMode, 2500);
