@@ -4,6 +4,7 @@ import Home from '~/pages/Home';
 import Login from '~/pages/Login';
 import Account from '~/pages/Account';
 import NotFound from '~/pages/NotFound';
+import Admin from '~/pages/Admin';
 
 function App() {
     // console.log('App');
@@ -13,6 +14,7 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/account" element={<Account />} />
+                <Route path="/admin" element={<Admin />} />
                 <Route path="*" element={<NotFound />} />
             </Routes>
         </BrowserRouter>

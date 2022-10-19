@@ -74,13 +74,12 @@ function Form({ login, signup }) {
                         // console.log(data.user);
                         localStorage.setItem('chat-app-hnt', JSON.stringify(data.user));
                         handleSeCurrenttUser(data.user);
-                        // toast('Chuyển hướng đến trang chủ');
                         setTimeout(function () {
                             navigate('/', { replace: true });
                         }, 1500);
                     }
                 } catch (e) {
-                    alert('login req failed, start server');
+                    console.log('loi log in');
                 }
             }
         }
