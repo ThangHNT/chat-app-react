@@ -159,7 +159,8 @@ function Messages({ receiver, darkmodeMsg = false }) {
                             message.type === 'pdf-file' ||
                             message.type === 'excel-file' ||
                             message.type === 'video' ||
-                            message.type === 'audio'
+                            message.type === 'audio' ||
+                            message.type === 'powerpoint-file'
                                 ? {
                                       content: message.file.content,
                                       filename: message.file.filename,

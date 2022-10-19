@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react';
+import { useContext, useLayoutEffect } from 'react';
 import classNames from 'classnames/bind';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -12,18 +12,29 @@ function Admin() {
     const { currentUser } = useContext(UserContext);
     const navigate = useNavigate();
 
-    useEffect(() => {
+    useLayoutEffect(() => {
+        // console.log(currentUser);
         if (!currentUser) {
             navigate('/login');
+        } else {
+            axios
+                .post(`${host}/api/check-admin`, { userId: currentUser._id })
+                .then(({ data }) => {
+                    // console.log(data);
+                    if (!data.admin) {
+                        navigate('/');
+                    }
+                })
+                .catch((err) => console.log('loi kiem tra quyen admin'));
         }
         // eslint-disable-next-line
-    }, []);
+    }, [currentUser]);
 
     const handleDelete = async (e) => {
         const target = e.target;
         const type = target.getAttribute('deletetype');
         // console.log(type);
-        const { data } = await axios.post(`${host}/api/check-admin`, { type });
+        const { data } = await axios.post(`${host}/api/delete/force`, { type });
         console.log(data);
     };
 

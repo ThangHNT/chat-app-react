@@ -39,19 +39,23 @@ function SettingProvider({ children }) {
 
     useLayoutEffect(() => {
         if (currentUser) {
-            // console.log(currentUser);
+            // console.log(currentUser.setting);
             axios
                 .get(`${host}/api/get/general-settings/?userId=${currentUser._id}`)
                 .then(({ data }) => {
-                    // console.log(data.setting);
-                    const sound = data.setting;
-                    handleSetSoundSetting({
-                        notify: sound.notificationSound,
-                        send: sound.sendMessageSound,
-                        textting: sound.texttingSound,
-                    });
-                    const darkMode = data.setting.darkMode;
-                    handleChangeDarkLightMode(true, darkMode);
+                    if (data.status) {
+                        // console.log(data.setting);
+                        const sound = data.setting;
+                        handleSetSoundSetting({
+                            notify: sound.notificationSound,
+                            send: sound.sendMessageSound,
+                            textting: sound.texttingSound,
+                        });
+                        const darkMode = data.setting.darkMode;
+                        handleChangeDarkLightMode(true, darkMode);
+                    } else {
+                        alert('lay cai dat that bai');
+                    }
                 })
                 .catch(() => console.log('lay cài đặt chung bị lỗi'));
         }

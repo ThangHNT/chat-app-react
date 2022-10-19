@@ -1,6 +1,10 @@
 .wrapper {
     margin-top: 80px;
     padding: 0 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
 }
 
 .item {

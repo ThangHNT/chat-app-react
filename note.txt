@@ -1,9 +1,7 @@
 
-bcrypt
 
-
-fix bug : Uncaught (in promise) DOMException: play() failed because the user didn't interact with the document first
-
+send powerpoint file
+send reaction icon socket
 
 
 lưu ý: khi lưu tin nhắn vào db cần set lại hàm handleSetMessages ở messageContext, chỗ fromDB

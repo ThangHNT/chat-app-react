@@ -4,7 +4,13 @@ import axios from 'axios';
 import Picker from 'emoji-picker-react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilePdf, faFileVideo, faFileWord, faPhotoFilm, faXmarkCircle } from '@fortawesome/free-solid-svg-icons';
-import { faFaceGrin, faFileLines, faFileAudio, faFileExcel } from '@fortawesome/free-regular-svg-icons';
+import {
+    faFaceGrin,
+    faFileLines,
+    faFileAudio,
+    faFileExcel,
+    faFilePowerpoint,
+} from '@fortawesome/free-regular-svg-icons';
 import { faMicrophone } from '@fortawesome/free-solid-svg-icons';
 import Image from '~/components/Image';
 import Button from '~/components/Button';
@@ -15,6 +21,7 @@ import { ChatContentContext } from '~/components/Context/ChatContentContext';
 import { SocketContext } from '~/components/Context/SocketContext';
 import { SettingContext } from '~/components/Context/SettingContext';
 import { UserContext } from '~/components/Context/UserContext';
+import { ToastContainer, toast } from 'react-toastify';
 
 const cx = classNames.bind(styles);
 
@@ -150,6 +157,15 @@ function SendMessage({ receiver, darkmode = false }) {
                     size: newFile.size,
                     type: 'excel-file',
                 });
+            } else if (newFile.type === 'application/vnd.openxmlformats-officedocument.presentationml.presentation') {
+                setFile({
+                    filename: newFile.filename,
+                    text: base64String,
+                    size: newFile.size,
+                    type: 'powerpoint-file',
+                });
+            } else {
+                toast.warning('File không được hỗ trợ');
             }
 
             inputRef.current.focus();
@@ -358,7 +374,9 @@ function SendMessage({ receiver, darkmode = false }) {
                                                             ? faFilePdf
                                                             : file.type === 'audio'
                                                             ? faFileAudio
-                                                            : faFileExcel
+                                                            : file.type === 'excel-file'
+                                                            ? faFileExcel
+                                                            : faFilePowerpoint
                                                     }
                                                 />
 
@@ -428,6 +446,16 @@ function SendMessage({ receiver, darkmode = false }) {
                     )}
                 </div>
             )}
+            <ToastContainer
+                position="bottom-center"
+                autoClose={2000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover={false}
+            />
         </div>
     );
 }

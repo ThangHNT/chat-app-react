@@ -39,8 +39,9 @@ function SocketContextProvider({ children }) {
                 handleSetMessages(data.sender, data.content);
             });
             socket.on('private reaction message', (data) => {
-                // console.log(data);
+                console.log(data);
                 setNewReaction(data);
+                handleSetMessages(data.sender, data.icon, data.messageId, true);
             });
             socket.on('user is blocked', ({ receiver, sender }) => {
                 // console.log(sender);
@@ -51,7 +52,7 @@ function SocketContextProvider({ children }) {
                 setPreventation({ receiver, sender, unblock: true });
             });
             socket.on('remove reaction icon private', ({ receiver, messageId, sender }) => {
-                console.log(sender);
+                // console.log(sender);
                 setReactionRemoved({ messageId, sender, receiver });
             });
             socket.on('change theme private', (data) => {

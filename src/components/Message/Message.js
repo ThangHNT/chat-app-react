@@ -6,6 +6,7 @@ import {
     faFileLines,
     faFileExcel,
     faFilePdf,
+    faFilePowerpoint,
     // faEllipsisVertical,
 } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from '@fortawesome/free-regular-svg-icons';
@@ -278,6 +279,21 @@ function Message({
                         download={children.filename}
                     >
                         <FontAwesomeIcon className={cx('file-icon')} icon={faFileExcel} />
+                        <div className={cx('properties')}>
+                            <p>{children.filename}</p>
+                            <span>{children.size}B</span>
+                        </div>
+                    </a>
+                )}
+                {type === 'powerpoint-file' && (
+                    <a
+                        className={cx('wrapper-file-message')}
+                        href={`data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,${encodeURIComponent(
+                            children.content,
+                        )}`}
+                        download={children.filename}
+                    >
+                        <FontAwesomeIcon className={cx('file-icon')} icon={faFilePowerpoint} />
                         <div className={cx('properties')}>
                             <p>{children.filename}</p>
                             <span>{children.size}B</span>
