@@ -67,7 +67,6 @@ function SocketContextProvider({ children }) {
                 // console.log(data);
                 handleRevokeMessage(data.sender, data.messageId, true);
             });
-
             socket.on('user disconnected', (socketId) => {
                 setUserDisconnect(socketId);
             });

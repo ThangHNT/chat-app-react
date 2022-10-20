@@ -7,6 +7,7 @@ import { ChatContentProvider } from '~/components/Context/ChatContentContext';
 import { SocketContextProvider } from '~/components/Context/SocketContext';
 import { SettingProvider } from '~/components/Context/SettingContext';
 import { MessageProvider } from '~/components/Context/MessageContext';
+import { CallProvider } from '~/components/Context/CallContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -15,11 +16,13 @@ root.render(
         <SettingProvider>
             <MessageProvider>
                 <SocketContextProvider>
-                    <ChatContentProvider>
-                        <GlobalStyles>
-                            <App />
-                        </GlobalStyles>
-                    </ChatContentProvider>
+                    <CallProvider>
+                        <ChatContentProvider>
+                            <GlobalStyles>
+                                <App />
+                            </GlobalStyles>
+                        </ChatContentProvider>
+                    </CallProvider>
                 </SocketContextProvider>
             </MessageProvider>
         </SettingProvider>
