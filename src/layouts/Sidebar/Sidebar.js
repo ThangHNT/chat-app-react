@@ -14,7 +14,7 @@ const cx = classNames.bind(styles);
 
 function Sidebar() {
     // console.log('sidebar');
-    const { currentUser } = useContext(UserContext);
+    const { currentUser, handleGetListFriend } = useContext(UserContext);
     const { handleChangeDarkLightMode, darkLightMode } = useContext(SettingContext);
     const [listUser, setListUser] = useState([]);
 
@@ -31,6 +31,7 @@ function Sidebar() {
             axios.post(`${host}/api/message-item`, { sender: currentUser._id }).then((data) => {
                 const data2 = data.data;
                 if (data2.status) {
+                    handleGetListFriend(data2.userList);
                     const arr = data2.userList.slice(0, 7);
                     setListUser(arr);
                 } else {
@@ -38,6 +39,7 @@ function Sidebar() {
                 }
             });
         }
+        // eslint-disable-next-line
     }, [currentUser]);
 
     const handleChangeMode = () => {

@@ -165,8 +165,8 @@ function MessageItem({ receiver, darkmode = false, avatar, username, searchResul
     };
 
     const handleDeleteChat = useCallback(async () => {
-        // const { data } = await axios.post(`${host}/api/delete/chat`, { sender: currentUser._id, receiver });
-        // console.log(data);
+        const { data } = await axios.post(`${host}/api/delete/chat`, { sender: currentUser._id, receiver });
+        console.log(data);
         // eslint-disable-next-line
     }, []);
 

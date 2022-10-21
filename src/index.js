@@ -15,15 +15,15 @@ root.render(
     <UserProvider>
         <SettingProvider>
             <MessageProvider>
-                <SocketContextProvider>
-                    <CallProvider>
+                <CallProvider>
+                    <SocketContextProvider>
                         <ChatContentProvider>
                             <GlobalStyles>
                                 <App />
                             </GlobalStyles>
                         </ChatContentProvider>
-                    </CallProvider>
-                </SocketContextProvider>
+                    </SocketContextProvider>
+                </CallProvider>
             </MessageProvider>
         </SettingProvider>
     </UserProvider>,

@@ -1,11 +1,13 @@
 import { createContext, useEffect, useState, useContext } from 'react';
 import { MessageContext } from './MessageContext';
+import { CallContext } from './CallContext';
 
 const SocketContext = createContext();
 
 function SocketContextProvider({ children }) {
     // console.log('socket-context');
     const { handleSetMessages } = useContext(MessageContext);
+    const { handleSetNewCall, handleDisplayCallVideo } = useContext(CallContext);
     const [userList, setUserList] = useState([]);
     const [socket, setSocket] = useState();
     const [newMessage, setNewMessage] = useState();
@@ -19,6 +21,8 @@ function SocketContextProvider({ children }) {
     const [newBackgroundImage, setNewBackgroundImage] = useState();
     const [getSetting, setGetSetting] = useState(new Map());
     const [revokeMessage, SetRevokeMessage] = useState();
+
+    const [callerSignal, setCallerSignal] = useState();
 
     // lắng nghe event từ socket
     useEffect(() => {
@@ -70,9 +74,21 @@ function SocketContextProvider({ children }) {
             socket.on('user disconnected', (socketId) => {
                 setUserDisconnect(socketId);
             });
+
+            socket.on('callUser', (data) => {
+                console.log('new call', data);
+                setCallerSignal(data.signal);
+                handleSetNewCall(data.sender);
+                handleDisplayCallVideo();
+            });
         }
         // eslint-disable-next-line
     }, [socket]);
+
+    const handleCallToUser = ({ sender, receiver, signal }) => {
+        const to = getSocketIdFromReceiverId(userList, receiver);
+        socket.emit('callUser', { sender, from: socket.id, to, signal });
+    };
 
     // khoi tao socket
     const handleInitSocket = (socket) => {
@@ -233,6 +249,7 @@ function SocketContextProvider({ children }) {
         newBackgroundImage,
         getSetting,
         revokeMessage,
+        callerSignal,
         handleSendMessage,
         handleSetNewMessage,
         handleInitSocket,
@@ -248,6 +265,7 @@ function SocketContextProvider({ children }) {
         handleRemoveSocketEvent,
         handleRevokeMessage,
         handleEmitRevokeMsgEvent,
+        handleCallToUser,
     };
 
     return <SocketContext.Provider value={values}>{children}</SocketContext.Provider>;

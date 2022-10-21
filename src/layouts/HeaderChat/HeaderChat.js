@@ -8,21 +8,28 @@ import styles from './HeaderChat.module.scss';
 import PositiveStatus from '~/components/PositiveStatus';
 import { SettingContext } from '~/components/Context/SettingContext';
 import { CallContext } from '~/components/Context/CallContext';
+import { UserContext } from '~/components/Context/UserContext';
+import { ChatContentContext } from '~/components/Context/ChatContentContext';
 
 const cx = classNames.bind(styles);
 
 function HeaderChat({ receiver, onClick, hideSetting }) {
     // console.log('header-chat');
+    const { friends } = useContext(UserContext);
+    const ChatContent = useContext(ChatContentContext);
     const { darkLightMode } = useContext(SettingContext);
-    const { handleDisplayCallVideo } = useContext(CallContext);
+    const { handleDisplayCallVideo, handleSetWaitUserAnswer, handleInitCall } = useContext(CallContext);
 
     useEffect(() => {
         hideSetting();
         // eslint-disable-next-line
     }, []);
 
+    //ấn vào nút gọi video
     const handleDisplayCallVideoModal = () => {
         handleDisplayCallVideo();
+        handleInitCall(true);
+        handleSetWaitUserAnswer(friends.get(ChatContent.receiver));
     };
 
     return (
