@@ -21,8 +21,8 @@ function SocketContextProvider({ children }) {
     const [newBackgroundImage, setNewBackgroundImage] = useState();
     const [getSetting, setGetSetting] = useState(new Map());
     const [revokeMessage, SetRevokeMessage] = useState();
-
     const [callerSignal, setCallerSignal] = useState();
+    const [receiverSignal, setReceiverSignal] = useState();
 
     // lắng nghe event từ socket
     useEffect(() => {
@@ -76,14 +76,23 @@ function SocketContextProvider({ children }) {
             });
 
             socket.on('callUser', (data) => {
-                console.log('new call', data);
                 setCallerSignal(data.signal);
                 handleSetNewCall(data.sender);
                 handleDisplayCallVideo();
             });
+
+            socket.on('callAccepted', (signal) => {
+                // console.log('ng nhan bat may');
+                setReceiverSignal(signal);
+            });
         }
         // eslint-disable-next-line
     }, [socket]);
+
+    const handleAnswer = ({ sender, receiver, signal }) => {
+        const to = getSocketIdFromReceiverId(userList, receiver);
+        socket.emit('answerCall', { sender, from: socket.id, to, signal });
+    };
 
     const handleCallToUser = ({ sender, receiver, signal }) => {
         const to = getSocketIdFromReceiverId(userList, receiver);
@@ -250,6 +259,7 @@ function SocketContextProvider({ children }) {
         getSetting,
         revokeMessage,
         callerSignal,
+        receiverSignal,
         handleSendMessage,
         handleSetNewMessage,
         handleInitSocket,
@@ -266,6 +276,7 @@ function SocketContextProvider({ children }) {
         handleRevokeMessage,
         handleEmitRevokeMsgEvent,
         handleCallToUser,
+        handleAnswer,
     };
 
     return <SocketContext.Provider value={values}>{children}</SocketContext.Provider>;

@@ -20,8 +20,12 @@ function CallProvider({ children }) {
         setWaitUserAnswer(user);
     };
 
-    const handleDisplayCallVideo = () => {
-        setDisplayCallVideo((pre) => !pre);
+    const handleDisplayCallVideo = (data = false, value) => {
+        if (data) {
+            setDisplayCallVideo(value);
+        } else {
+            setDisplayCallVideo((pre) => !pre);
+        }
     };
 
     const values = {

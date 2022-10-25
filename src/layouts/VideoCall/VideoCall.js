@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState, useRef, memo } from 'react';
+import { useContext, useEffect, useState, useRef, memo, useCallback } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMicrophone, faMicrophoneSlash, faPhone, faVideo, faVideoSlash } from '@fortawesome/free-solid-svg-icons';
 import Peer from 'simple-peer';
@@ -11,32 +11,52 @@ import { ChatContentContext } from '~/components/Context/ChatContentContext';
 
 const cx = classNames.bind(styles);
 
+// var peer1, peer2;
+
 function VideoCall() {
+    // console.log('video call');
     const { friends, currentUser } = useContext(UserContext);
     const ChatContent = useContext(ChatContentContext);
     const { waitUserAnswer, handleDisplayCallVideo, newCall, initCall, handleInitCall } = useContext(CallContext);
-    const { socket, callerSignal, handleCallToUser } = useContext(SocketContext);
+    const { receiverSignal, callerSignal, handleCallToUser, handleAnswer } = useContext(SocketContext);
     const [caller, setCaller] = useState({ username: '', avatar: '', notify: '' });
-    // const [callerSignal, setCallerSignal] = useState();
-    const [stream, setStream] = useState();
+    const [answerCall, setAnswerCall] = useState(false);
     const myVideo = useRef();
     const userVideo = useRef();
+    const peer = useRef();
 
     useEffect(() => {
-        // console.log(newCall);
-        if (!newCall || initCall) {
+        if (initCall) {
+            console.log('init call');
             navigator.mediaDevices.getUserMedia({ video: true, audio: false }).then((stream) => {
-                setStream(stream);
                 myVideo.current.srcObject = stream;
+                peer.current = new Peer({
+                    initiator: true,
+                    trickle: false,
+                    stream: stream,
+                });
+                peer.current.on('signal', (data) => {
+                    const data2 = {
+                        sender: currentUser._id,
+                        receiver: ChatContent.receiver,
+                        signal: data,
+                    };
+                    handleCallToUser(data2);
+                });
+                peer.current.on('stream', (stream) => {
+                    userVideo.current.srcObject = stream;
+                });
             });
         }
-
-        if (initCall) {
-            handleCall();
-        }
-
         // eslint-disable-next-line
-    }, []);
+    }, [initCall]);
+
+    useEffect(() => {
+        if (receiverSignal) {
+            console.log('ng nhan bat may');
+            peer.current.signal(receiverSignal);
+        }
+    }, [receiverSignal]);
 
     useEffect(() => {
         if (newCall) {
@@ -50,43 +70,32 @@ function VideoCall() {
         // eslint-disable-next-line
     }, [newCall, waitUserAnswer]);
 
-    const handleCall = () => {
-        const peer = new Peer({
-            initiator: true,
-            trickle: false,
-            stream: stream,
-        });
-        peer.on('signal', (data) => {
-            // socket.emit('callUser', data);
-            const data2 = {
-                sender: currentUser._id,
-                receiver: ChatContent.receiver,
-                signal: data,
-            };
-            handleCallToUser(data2);
-        });
-        peer.on('stream', (stream) => {
-            userVideo.current.srcObject = stream;
-        });
-        socket.on('callAccepted', (signal) => {
-            peer.signal(signal);
-        });
-    };
+    useEffect(() => {
+        if (answerCall) {
+            navigator.mediaDevices.getUserMedia({ video: true, audio: false }).then((stream) => {
+                myVideo.current.srcObject = stream;
+                peer.current = new Peer({
+                    initiator: false,
+                    trickle: false,
+                    stream: stream,
+                });
+                peer.current.on('signal', (data) => {
+                    handleAnswer({ sender: currentUser._id, receiver: newCall, signal: data });
+                });
+                peer.current.on('stream', (stream) => {
+                    console.log('hien thi video');
+                    userVideo.current.srcObject = stream;
+                });
+                peer.current.signal(callerSignal);
+            });
+        }
+        // eslint-disable-next-line
+    }, [answerCall]);
 
-    const handleAcceptCall = () => {
-        const peer = new Peer({
-            initiator: false,
-            trickle: false,
-            stream: stream,
-        });
-        peer.on('signal', (data) => {
-            socket.emit('answerCall', data);
-        });
-        peer.on('stream', (stream) => {
-            userVideo.current.srcObject = stream;
-        });
-        peer.signal(callerSignal);
-    };
+    const handleAcceptCall = useCallback(() => {
+        console.log('answer');
+        setAnswerCall(true);
+    }, []);
 
     const handleEndCall = () => {
         handleDisplayCallVideo();
@@ -97,21 +106,20 @@ function VideoCall() {
         <div className={cx('wrapper', { boderRadius10: true })}>
             <div className={cx('content')}>
                 <div className={cx('main-screen', { boderRadius10: true })}>
-                    {(waitUserAnswer || newCall) && (
+                    {!receiverSignal && !answerCall && (
                         <div className={cx('connecting-user')}>
                             <img className={cx('receiver-avatar')} src={caller.avatar} alt="avatar" />
                             <p className={cx('receiver-name')}>{caller.username}</p>
                             <span className={cx('status')}>{caller.notify}</span>
                         </div>
                     )}
-                    {!waitUserAnswer && !newCall && (
+                    {(receiverSignal || answerCall) && (
                         <video
                             ref={userVideo}
                             className={cx('video', { boderRadius10: true })}
                             playsInline
                             muted
                             autoPlay
-                            // src="meo.mp4"
                         ></video>
                     )}
                 </div>
