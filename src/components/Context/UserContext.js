@@ -1,5 +1,6 @@
 import { useState, createContext, useEffect } from 'react';
-
+import axios from 'axios';
+import host from '~/ulties/serverHost';
 const UserContext = createContext();
 
 function UserProvider({ children }) {
@@ -9,7 +10,14 @@ function UserProvider({ children }) {
     useEffect(() => {
         const user = JSON.parse(localStorage.getItem('chat-app-hnt'));
         if (user) {
-            setCurrentUser(user);
+            axios
+                .post(`${host}/api/check-account`, { userId: user._id })
+                .then(({ data }) => {
+                    if (data.exist) {
+                        setCurrentUser(user);
+                    }
+                })
+                .catch((err) => console.log('loi kiem tra tai khoan'));
         }
     }, []);
 
