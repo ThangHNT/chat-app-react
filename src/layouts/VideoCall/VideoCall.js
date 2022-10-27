@@ -17,19 +17,35 @@ function VideoCall() {
     // console.log('video call');
     const { friends, currentUser } = useContext(UserContext);
     const ChatContent = useContext(ChatContentContext);
-    const { waitUserAnswer, handleDisplayCallVideo, newCall, initCall, handleInitCall } = useContext(CallContext);
-    const { receiverSignal, callerSignal, handleCallToUser, handleAnswer } = useContext(SocketContext);
+    const {
+        handleDisplayCallVideo,
+        newCall,
+        recipient,
+        handleSetRecipient,
+        refuseCall,
+        handleSetRefuseCall,
+        handleSetNewCall,
+    } = useContext(CallContext);
+    const { receiverSignal, callerSignal, handleCallToUser, handleAnswer, handleRefuseCall } =
+        useContext(SocketContext);
     const [caller, setCaller] = useState({ username: '', avatar: '', notify: '' });
     const [answerCall, setAnswerCall] = useState(false);
+
     const myVideo = useRef();
     const userVideo = useRef();
     const peer = useRef();
+    // const streamRef = useRef();
 
+    // khởi tạo cuộc gọi video
     useEffect(() => {
-        if (initCall) {
+        if (recipient) {
             console.log('init call');
-            navigator.mediaDevices.getUserMedia({ video: true, audio: false }).then((stream) => {
+            setCaller((pre) => {
+                return { avatar: recipient.avatar, username: recipient.username, notify: 'Đang gọi ....' };
+            });
+            navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((stream) => {
                 myVideo.current.srcObject = stream;
+                window.localStream = stream;
                 peer.current = new Peer({
                     initiator: true,
                     trickle: false,
@@ -49,8 +65,18 @@ function VideoCall() {
             });
         }
         // eslint-disable-next-line
-    }, [initCall]);
+    }, [recipient]);
 
+    // khi có cuộc gọi mới
+    useEffect(() => {
+        if (newCall) {
+            const caller = friends.get(newCall);
+            setCaller({ username: caller.username, avatar: caller.avatar, notify: 'Cuộc gọi đến' });
+        }
+        // eslint-disable-next-line
+    }, [newCall]);
+
+    // lấy tín hiệu khi user bắt máy
     useEffect(() => {
         if (receiverSignal) {
             console.log('ng nhan bat may');
@@ -59,21 +85,10 @@ function VideoCall() {
     }, [receiverSignal]);
 
     useEffect(() => {
-        if (newCall) {
-            const caller = friends.get(newCall);
-            setCaller({ username: caller.username, avatar: caller.avatar, notify: 'Cuộc gọi đến' });
-        } else {
-            setCaller((pre) => {
-                return { avatar: waitUserAnswer.avatar, username: waitUserAnswer.username, notify: 'Đang gọi ....' };
-            });
-        }
-        // eslint-disable-next-line
-    }, [newCall, waitUserAnswer]);
-
-    useEffect(() => {
         if (answerCall) {
-            navigator.mediaDevices.getUserMedia({ video: true, audio: false }).then((stream) => {
+            navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((stream) => {
                 myVideo.current.srcObject = stream;
+                window.localStream = stream;
                 peer.current = new Peer({
                     initiator: false,
                     trickle: false,
@@ -92,14 +107,54 @@ function VideoCall() {
         // eslint-disable-next-line
     }, [answerCall]);
 
+    useEffect(() => {
+        let timerId;
+        if (refuseCall) {
+            console.log('ng nhan tu choi cuoc goi');
+            setCaller((pre) => {
+                return {
+                    username: pre.username,
+                    avatar: pre.avatar,
+                    notify: 'Người nhận từ chối cuộc gọi.',
+                };
+            });
+            timerId = setTimeout(() => {
+                handleEndCall();
+            }, 2000);
+        }
+
+        return () => {
+            clearTimeout(timerId);
+        };
+        // eslint-disable-next-line
+    }, [refuseCall]);
+
     const handleAcceptCall = useCallback(() => {
         console.log('answer');
         setAnswerCall(true);
     }, []);
 
-    const handleEndCall = () => {
+    const handleEndCall = useCallback(() => {
+        console.log('end call');
         handleDisplayCallVideo();
-        handleInitCall(false);
+        handleSetRefuseCall(false);
+        if (recipient) handleSetRecipient(false);
+        if (answerCall || recipient) {
+            console.log('tat cam');
+            peer.current = false;
+            window.localStream.getTracks().forEach((track) => {
+                track.stop();
+            });
+        }
+        // eslint-disable-next-line
+    }, [answerCall]);
+
+    const handleRefuseNewCall = () => {
+        if (newCall) {
+            handleDisplayCallVideo();
+            handleRefuseCall({ sender: currentUser._id, receiver: newCall ? newCall : ChatContent.receiver });
+            handleSetNewCall(false);
+        }
     };
 
     return (
@@ -139,14 +194,22 @@ function VideoCall() {
                     <div className={cx('item-btn')}>
                         <FontAwesomeIcon className={cx('icon')} icon={faMicrophoneSlash} />
                     </div>
-                    {(!initCall || newCall) && (
-                        <div className={cx('item-btn', { accept: true })}>
-                            <FontAwesomeIcon className={cx('icon')} icon={faPhone} onClick={handleAcceptCall} />
+                    {!answerCall && !recipient && (
+                        <div className={cx('item-btn', { accept: true })} onClick={handleAcceptCall}>
+                            <FontAwesomeIcon className={cx('icon')} icon={faPhone} />
                         </div>
                     )}
-                    {(initCall || newCall) && (
-                        <div className={cx('item-btn', { reject: true })}>
-                            <FontAwesomeIcon className={cx('icon')} icon={faPhone} onClick={handleEndCall} />
+                    {(recipient || newCall) && (
+                        <div>
+                            {answerCall || recipient ? (
+                                <div className={cx('item-btn', { reject: true })} onClick={handleEndCall}>
+                                    <FontAwesomeIcon className={cx('icon')} icon={faPhone} />
+                                </div>
+                            ) : (
+                                <div className={cx('item-btn', { reject: true })} onClick={handleRefuseNewCall}>
+                                    <FontAwesomeIcon className={cx('icon')} icon={faPhone} />
+                                </div>
+                            )}
                         </div>
                     )}
                     <div className={cx('item-btn')}>

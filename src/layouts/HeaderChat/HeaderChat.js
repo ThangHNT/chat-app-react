@@ -18,7 +18,7 @@ function HeaderChat({ receiver, onClick, hideSetting }) {
     const { friends } = useContext(UserContext);
     const ChatContent = useContext(ChatContentContext);
     const { darkLightMode } = useContext(SettingContext);
-    const { handleDisplayCallVideo, handleSetWaitUserAnswer, handleInitCall } = useContext(CallContext);
+    const { handleDisplayCallVideo, handleSetRecipient } = useContext(CallContext);
 
     useEffect(() => {
         hideSetting();
@@ -28,8 +28,7 @@ function HeaderChat({ receiver, onClick, hideSetting }) {
     //ấn vào nút gọi video
     const handleDisplayCallVideoModal = () => {
         handleDisplayCallVideo();
-        handleInitCall(true);
-        handleSetWaitUserAnswer(friends.get(ChatContent.receiver));
+        handleSetRecipient(friends.get(ChatContent.receiver));
     };
 
     return (

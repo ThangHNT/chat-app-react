@@ -15,6 +15,8 @@ function UserProvider({ children }) {
                 .then(({ data }) => {
                     if (data.exist) {
                         setCurrentUser(user);
+                    } else {
+                        localStorage.removeItem('chat-app-hnt');
                     }
                 })
                 .catch((err) => console.log('loi kiem tra tai khoan'));

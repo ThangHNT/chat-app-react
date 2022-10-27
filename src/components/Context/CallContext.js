@@ -4,20 +4,20 @@ const CallContext = createContext();
 
 function CallProvider({ children }) {
     const [displayCallVideo, setDisplayCallVideo] = useState();
-    const [initCall, setInitCall] = useState(false);
-    const [waitUserAnswer, setWaitUserAnswer] = useState();
+    const [recipient, setRecipient] = useState(false);
     const [newCall, setNewCall] = useState(false);
+    const [refuseCall, setRefuseCall] = useState(false);
 
-    const handleInitCall = (value) => {
-        setInitCall(value);
+    const handleSetRefuseCall = (value) => {
+        setRefuseCall(value);
+    };
+
+    const handleSetRecipient = (value) => {
+        setRecipient(value);
     };
 
     const handleSetNewCall = (user) => {
         setNewCall(user);
-    };
-
-    const handleSetWaitUserAnswer = (user) => {
-        setWaitUserAnswer(user);
     };
 
     const handleDisplayCallVideo = (data = false, value) => {
@@ -30,13 +30,13 @@ function CallProvider({ children }) {
 
     const values = {
         displayCallVideo,
-        initCall,
-        waitUserAnswer,
+        recipient,
         newCall,
+        refuseCall,
         handleDisplayCallVideo,
-        handleInitCall,
-        handleSetWaitUserAnswer,
+        handleSetRecipient,
         handleSetNewCall,
+        handleSetRefuseCall,
     };
 
     return <CallContext.Provider value={values}>{children}</CallContext.Provider>;

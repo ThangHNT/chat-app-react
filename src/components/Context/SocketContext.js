@@ -7,7 +7,7 @@ const SocketContext = createContext();
 function SocketContextProvider({ children }) {
     // console.log('socket-context');
     const { handleSetMessages } = useContext(MessageContext);
-    const { handleSetNewCall, handleDisplayCallVideo } = useContext(CallContext);
+    const { handleSetNewCall, handleDisplayCallVideo, handleSetRefuseCall, newCall } = useContext(CallContext);
     const [userList, setUserList] = useState([]);
     const [socket, setSocket] = useState();
     const [newMessage, setNewMessage] = useState();
@@ -82,8 +82,12 @@ function SocketContextProvider({ children }) {
             });
 
             socket.on('callAccepted', (signal) => {
-                // console.log('ng nhan bat may');
                 setReceiverSignal(signal);
+            });
+
+            socket.on('refuse call', ({ sender }) => {
+                // console.log('refuse call');
+                handleSetRefuseCall(true);
             });
         }
         // eslint-disable-next-line
@@ -97,6 +101,11 @@ function SocketContextProvider({ children }) {
     const handleCallToUser = ({ sender, receiver, signal }) => {
         const to = getSocketIdFromReceiverId(userList, receiver);
         socket.emit('callUser', { sender, from: socket.id, to, signal });
+    };
+
+    const handleRefuseCall = ({ sender, receiver }) => {
+        const to = getSocketIdFromReceiverId(userList, receiver);
+        socket.emit('user refuse call', { sender, from: socket.id, to });
     };
 
     // khoi tao socket
@@ -277,6 +286,7 @@ function SocketContextProvider({ children }) {
         handleEmitRevokeMsgEvent,
         handleCallToUser,
         handleAnswer,
+        handleRefuseCall,
     };
 
     return <SocketContext.Provider value={values}>{children}</SocketContext.Provider>;
