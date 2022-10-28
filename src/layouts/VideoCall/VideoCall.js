@@ -22,14 +22,16 @@ function VideoCall() {
         newCall,
         recipient,
         handleSetRecipient,
-        refuseCall,
-        handleSetRefuseCall,
+        endCall,
+        handleSetEndCall,
         handleSetNewCall,
     } = useContext(CallContext);
-    const { receiverSignal, callerSignal, handleCallToUser, handleAnswer, handleRefuseCall } =
+    const { receiverSignal, callerSignal, handleCallToUser, handleAnswer, handleEndCallSocket } =
         useContext(SocketContext);
     const [caller, setCaller] = useState({ username: '', avatar: '', notify: '' });
     const [answerCall, setAnswerCall] = useState(false);
+    const [mute, setMute] = useState(false);
+    const [camera, setCamera] = useState(true);
 
     const myVideo = useRef();
     const userVideo = useRef();
@@ -42,32 +44,29 @@ function VideoCall() {
             setCaller((pre) => {
                 return { avatar: recipient.avatar, username: recipient.username, notify: 'Đang gọi ....' };
             });
-            navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((stream) => {
-                myVideo.current.srcObject = stream;
-                console.log('get stream init');
-                window.localStream = stream;
-                peer.current = new Peer({
-                    initiator: true,
-                    trickle: false,
-                    stream: stream,
-                });
-                peer.current.on('signal', (data) => {
-                    console.log('get signal init');
-                    const data2 = {
-                        sender: currentUser._id,
-                        receiver: ChatContent.receiver,
-                        signal: data,
-                    };
-                    handleCallToUser(data2);
-                });
-                peer.current.on('stream', (stream) => {
-                    console.log('get stream from peer init');
-                    userVideo.current.srcObject = stream;
-                });
-                peer.current.on('error', (err) => {
-                    console.log('co loi');
-                });
-            });
+            navigator.mediaDevices
+                .getUserMedia({ video: true, audio: true })
+                .then((stream) => {
+                    myVideo.current.srcObject = stream;
+                    window.localStream = stream;
+                    peer.current = new Peer({
+                        initiator: true,
+                        trickle: false,
+                        stream: stream,
+                    });
+                    peer.current.on('signal', (data) => {
+                        const data2 = {
+                            sender: currentUser._id,
+                            receiver: ChatContent.receiver,
+                            signal: data,
+                        };
+                        // handleCallToUser(data2);
+                    });
+                    peer.current.on('stream', (stream) => {
+                        userVideo.current.srcObject = stream;
+                    });
+                })
+                .catch((err) => console.log('loi set peer'));
         }
         // eslint-disable-next-line
     }, [recipient]);
@@ -83,8 +82,7 @@ function VideoCall() {
 
     // lấy tín hiệu khi user bắt máy
     useEffect(() => {
-        if (receiverSignal) {
-            console.log('ng nhan bat may');
+        if (receiverSignal && peer.current) {
             peer.current.signal(receiverSignal);
         }
     }, [receiverSignal]);
@@ -92,42 +90,42 @@ function VideoCall() {
     // mở cam khi ấn trl cuộc gọi
     useEffect(() => {
         if (answerCall) {
-            navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((stream) => {
-                myVideo.current.srcObject = stream;
-                window.localStream = stream;
-                console.log('get stream answer');
-                peer.current = new Peer({
-                    initiator: false,
-                    trickle: false,
-                    stream: stream,
-                });
-                peer.current.on('signal', (data) => {
-                    console.log('get signal answer');
-                    handleAnswer({ sender: currentUser._id, receiver: newCall, signal: data });
-                });
-                peer.current.on('stream', (stream) => {
-                    console.log('get stream from peer answer');
-                    userVideo.current.srcObject = stream;
-                });
-                peer.current.signal(callerSignal);
-            });
+            navigator.mediaDevices
+                .getUserMedia({ video: true, audio: true })
+                .then((stream) => {
+                    window.localStream = stream;
+                    myVideo.current.srcObject = stream;
+                    peer.current = new Peer({
+                        initiator: false,
+                        trickle: false,
+                        stream: stream,
+                    });
+                    peer.current.on('signal', (data) => {
+                        handleAnswer({ sender: currentUser._id, receiver: newCall, signal: data });
+                    });
+                    peer.current.on('stream', (stream) => {
+                        userVideo.current.srcObject = stream;
+                    });
+                    peer.current.signal(callerSignal);
+                })
+                .catch((err) => console.log('loi set peer'));
         }
         // eslint-disable-next-line
     }, [answerCall]);
 
     useEffect(() => {
         let timerId;
-        if (refuseCall) {
+        if (endCall) {
             setCaller((pre) => {
                 return {
                     username: pre.username,
                     avatar: pre.avatar,
-                    notify: refuseCall.msg,
+                    notify: endCall.msg,
                 };
             });
             timerId = setTimeout(() => {
-                handleEndCall();
-                handleSetRefuseCall(false);
+                handleCloseVideoCall();
+                handleSetEndCall(false);
             }, 2000);
         }
 
@@ -135,40 +133,54 @@ function VideoCall() {
             clearTimeout(timerId);
         };
         // eslint-disable-next-line
-    }, [refuseCall]);
+    }, [endCall]);
 
     const handleAcceptCall = useCallback(() => {
         console.log('answer');
         setAnswerCall(true);
     }, []);
 
-    const handleEndCall = () => {
-        console.log('end call');
-        peer.current = false;
-        if (answerCall || recipient) {
-            console.log('tat cam');
+    const handleClickEndCall = () => {
+        console.log('click end call');
+        let msg, receiver;
+        if (recipient) {
+            msg = 'Cuộc gọi kết thúc';
+            receiver = ChatContent.receiver;
+        } else if (newCall && !answerCall) {
+            msg = 'Người nhận không bắt máy';
+            receiver = newCall;
+        } else if (newCall && answerCall) {
+            msg = 'Cuộc gọi kết thúc';
+            receiver = newCall;
+        }
+        handleCloseVideoCall();
+        handleEndCallSocket({ sender: currentUser._id, receiver, msg });
+    };
+
+    const handleCloseVideoCall = useCallback(() => {
+        if (answerCall) setAnswerCall(false);
+        if (recipient) handleSetRecipient(false);
+        if (newCall) handleSetNewCall(false);
+        console.log('tat cam');
+        if (window.localStream) {
             window.localStream.getTracks().forEach((track) => {
                 track.stop();
             });
         }
-        if (answerCall || receiverSignal) {
-            handleRefuseCall({
-                sender: currentUser._id,
-                receiver: newCall ? newCall : ChatContent.receiver,
-                msg: 'Kết thúc cuộc gọi',
-            });
-        }
-        setAnswerCall(false);
-        if (recipient) handleSetRecipient(false);
         handleDisplayCallVideo();
+        // eslint-disable-next-line
+    }, []);
+
+    const handleSetMute = () => {
+        setMute((pre) => {
+            return !pre;
+        });
+        window.localStream.getAudioTracks()[0].stop();
     };
 
-    const handleRefuseNewCall = () => {
-        if (newCall) {
-            handleDisplayCallVideo();
-            handleRefuseCall({ sender: currentUser._id, receiver: newCall, msg: 'Người nhận không bắt máy' });
-            handleSetNewCall(false);
-        }
+    const handleSetCamera = () => {
+        setCamera((pre) => !pre);
+        window.localStream.getVideoTracks()[0].stop();
     };
 
     return (
@@ -202,11 +214,12 @@ function VideoCall() {
                     ></video>
                 </div>
                 <div className={cx('action-btns')}>
-                    <div className={cx('item-btn')}>
-                        <FontAwesomeIcon className={cx('icon')} icon={faMicrophone} />
-                    </div>
-                    <div className={cx('item-btn')}>
-                        <FontAwesomeIcon className={cx('icon')} icon={faMicrophoneSlash} />
+                    <div className={cx('item-btn')} onClick={handleSetMute}>
+                        {!mute ? (
+                            <FontAwesomeIcon className={cx('icon')} icon={faMicrophone} />
+                        ) : (
+                            <FontAwesomeIcon className={cx('icon')} icon={faMicrophoneSlash} />
+                        )}
                     </div>
                     {!answerCall && !recipient && (
                         <div className={cx('item-btn', { accept: true })} onClick={handleAcceptCall}>
@@ -215,22 +228,17 @@ function VideoCall() {
                     )}
                     {(recipient || newCall) && (
                         <div>
-                            {answerCall || recipient ? (
-                                <div className={cx('item-btn', { reject: true })} onClick={handleEndCall}>
-                                    <FontAwesomeIcon className={cx('icon')} icon={faPhone} />
-                                </div>
-                            ) : (
-                                <div className={cx('item-btn', { reject: true })} onClick={handleRefuseNewCall}>
-                                    <FontAwesomeIcon className={cx('icon')} icon={faPhone} />
-                                </div>
-                            )}
+                            <div className={cx('item-btn', { reject: true })} onClick={handleClickEndCall}>
+                                <FontAwesomeIcon className={cx('icon')} icon={faPhone} />
+                            </div>
                         </div>
                     )}
-                    <div className={cx('item-btn')}>
-                        <FontAwesomeIcon className={cx('icon')} icon={faVideo} />
-                    </div>
-                    <div className={cx('item-btn')}>
-                        <FontAwesomeIcon className={cx('icon')} icon={faVideoSlash} />
+                    <div className={cx('item-btn')} onClick={handleSetCamera}>
+                        {camera ? (
+                            <FontAwesomeIcon className={cx('icon')} icon={faVideo} />
+                        ) : (
+                            <FontAwesomeIcon className={cx('icon')} icon={faVideoSlash} />
+                        )}
                     </div>
                 </div>
             </div>

@@ -6,10 +6,10 @@ function CallProvider({ children }) {
     const [displayCallVideo, setDisplayCallVideo] = useState();
     const [recipient, setRecipient] = useState(false);
     const [newCall, setNewCall] = useState(false);
-    const [refuseCall, setRefuseCall] = useState(false);
+    const [endCall, setEndCall] = useState(false);
 
-    const handleSetRefuseCall = (value) => {
-        setRefuseCall(value);
+    const handleSetEndCall = (value) => {
+        setEndCall(value);
     };
 
     const handleSetRecipient = (value) => {
@@ -32,11 +32,11 @@ function CallProvider({ children }) {
         displayCallVideo,
         recipient,
         newCall,
-        refuseCall,
+        endCall,
         handleDisplayCallVideo,
         handleSetRecipient,
         handleSetNewCall,
-        handleSetRefuseCall,
+        handleSetEndCall,
     };
 
     return <CallContext.Provider value={values}>{children}</CallContext.Provider>;

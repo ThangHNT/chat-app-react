@@ -7,7 +7,7 @@ const SocketContext = createContext();
 function SocketContextProvider({ children }) {
     // console.log('socket-context');
     const { handleSetMessages } = useContext(MessageContext);
-    const { handleSetNewCall, handleDisplayCallVideo, handleSetRefuseCall } = useContext(CallContext);
+    const { handleSetNewCall, handleDisplayCallVideo, handleSetEndCall } = useContext(CallContext);
     const [userList, setUserList] = useState([]);
     const [socket, setSocket] = useState();
     const [newMessage, setNewMessage] = useState();
@@ -79,21 +79,24 @@ function SocketContextProvider({ children }) {
                 setCallerSignal(data.signal);
                 handleSetNewCall(data.sender);
                 handleDisplayCallVideo();
-                console.log('new call');
             });
 
             socket.on('callAccepted', (signal) => {
                 setReceiverSignal(signal);
             });
 
-            socket.on('refuse call', ({ sender, msg }) => {
-                // console.log('refuse call');
-                handleSetRefuseCall({ sender, msg });
+            socket.on('end call', ({ sender, msg }) => {
+                handleSetEndCall({ sender, msg });
                 setReceiverSignal(false);
             });
         }
         // eslint-disable-next-line
     }, [socket]);
+
+    const handleEndCallSocket = ({ sender, receiver, msg }) => {
+        const to = getSocketIdFromReceiverId(userList, receiver);
+        socket.emit('end call', { sender, from: socket.id, to, msg });
+    };
 
     const handleAnswer = ({ sender, receiver, signal }) => {
         const to = getSocketIdFromReceiverId(userList, receiver);
@@ -103,11 +106,6 @@ function SocketContextProvider({ children }) {
     const handleCallToUser = ({ sender, receiver, signal }) => {
         const to = getSocketIdFromReceiverId(userList, receiver);
         socket.emit('callUser', { sender, from: socket.id, to, signal });
-    };
-
-    const handleRefuseCall = ({ sender, receiver, msg }) => {
-        const to = getSocketIdFromReceiverId(userList, receiver);
-        socket.emit('user refuse call', { sender, from: socket.id, to, msg });
     };
 
     // khoi tao socket
@@ -288,7 +286,7 @@ function SocketContextProvider({ children }) {
         handleEmitRevokeMsgEvent,
         handleCallToUser,
         handleAnswer,
-        handleRefuseCall,
+        handleEndCallSocket,
     };
 
     return <SocketContext.Provider value={values}>{children}</SocketContext.Provider>;
