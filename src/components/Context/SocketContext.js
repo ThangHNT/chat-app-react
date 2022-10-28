@@ -7,7 +7,7 @@ const SocketContext = createContext();
 function SocketContextProvider({ children }) {
     // console.log('socket-context');
     const { handleSetMessages } = useContext(MessageContext);
-    const { handleSetNewCall, handleDisplayCallVideo, handleSetRefuseCall, newCall } = useContext(CallContext);
+    const { handleSetNewCall, handleDisplayCallVideo, handleSetRefuseCall } = useContext(CallContext);
     const [userList, setUserList] = useState([]);
     const [socket, setSocket] = useState();
     const [newMessage, setNewMessage] = useState();
@@ -79,15 +79,17 @@ function SocketContextProvider({ children }) {
                 setCallerSignal(data.signal);
                 handleSetNewCall(data.sender);
                 handleDisplayCallVideo();
+                console.log('new call');
             });
 
             socket.on('callAccepted', (signal) => {
                 setReceiverSignal(signal);
             });
 
-            socket.on('refuse call', ({ sender }) => {
+            socket.on('refuse call', ({ sender, msg }) => {
                 // console.log('refuse call');
-                handleSetRefuseCall(true);
+                handleSetRefuseCall({ sender, msg });
+                setReceiverSignal(false);
             });
         }
         // eslint-disable-next-line
@@ -103,9 +105,9 @@ function SocketContextProvider({ children }) {
         socket.emit('callUser', { sender, from: socket.id, to, signal });
     };
 
-    const handleRefuseCall = ({ sender, receiver }) => {
+    const handleRefuseCall = ({ sender, receiver, msg }) => {
         const to = getSocketIdFromReceiverId(userList, receiver);
-        socket.emit('user refuse call', { sender, from: socket.id, to });
+        socket.emit('user refuse call', { sender, from: socket.id, to, msg });
     };
 
     // khoi tao socket

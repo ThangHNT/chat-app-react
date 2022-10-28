@@ -34,7 +34,6 @@ function VideoCall() {
     const myVideo = useRef();
     const userVideo = useRef();
     const peer = useRef();
-    // const streamRef = useRef();
 
     // khởi tạo cuộc gọi video
     useEffect(() => {
@@ -45,6 +44,7 @@ function VideoCall() {
             });
             navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((stream) => {
                 myVideo.current.srcObject = stream;
+                console.log('get stream init');
                 window.localStream = stream;
                 peer.current = new Peer({
                     initiator: true,
@@ -52,6 +52,7 @@ function VideoCall() {
                     stream: stream,
                 });
                 peer.current.on('signal', (data) => {
+                    console.log('get signal init');
                     const data2 = {
                         sender: currentUser._id,
                         receiver: ChatContent.receiver,
@@ -60,7 +61,11 @@ function VideoCall() {
                     handleCallToUser(data2);
                 });
                 peer.current.on('stream', (stream) => {
+                    console.log('get stream from peer init');
                     userVideo.current.srcObject = stream;
+                });
+                peer.current.on('error', (err) => {
+                    console.log('co loi');
                 });
             });
         }
@@ -84,21 +89,24 @@ function VideoCall() {
         }
     }, [receiverSignal]);
 
+    // mở cam khi ấn trl cuộc gọi
     useEffect(() => {
         if (answerCall) {
             navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((stream) => {
                 myVideo.current.srcObject = stream;
                 window.localStream = stream;
+                console.log('get stream answer');
                 peer.current = new Peer({
                     initiator: false,
                     trickle: false,
                     stream: stream,
                 });
                 peer.current.on('signal', (data) => {
+                    console.log('get signal answer');
                     handleAnswer({ sender: currentUser._id, receiver: newCall, signal: data });
                 });
                 peer.current.on('stream', (stream) => {
-                    console.log('hien thi video');
+                    console.log('get stream from peer answer');
                     userVideo.current.srcObject = stream;
                 });
                 peer.current.signal(callerSignal);
@@ -110,16 +118,16 @@ function VideoCall() {
     useEffect(() => {
         let timerId;
         if (refuseCall) {
-            console.log('ng nhan tu choi cuoc goi');
             setCaller((pre) => {
                 return {
                     username: pre.username,
                     avatar: pre.avatar,
-                    notify: 'Người nhận từ chối cuộc gọi.',
+                    notify: refuseCall.msg,
                 };
             });
             timerId = setTimeout(() => {
                 handleEndCall();
+                handleSetRefuseCall(false);
             }, 2000);
         }
 
@@ -134,25 +142,31 @@ function VideoCall() {
         setAnswerCall(true);
     }, []);
 
-    const handleEndCall = useCallback(() => {
+    const handleEndCall = () => {
         console.log('end call');
-        handleDisplayCallVideo();
-        handleSetRefuseCall(false);
-        if (recipient) handleSetRecipient(false);
+        peer.current = false;
         if (answerCall || recipient) {
             console.log('tat cam');
-            peer.current = false;
             window.localStream.getTracks().forEach((track) => {
                 track.stop();
             });
         }
-        // eslint-disable-next-line
-    }, [answerCall]);
+        if (answerCall || receiverSignal) {
+            handleRefuseCall({
+                sender: currentUser._id,
+                receiver: newCall ? newCall : ChatContent.receiver,
+                msg: 'Kết thúc cuộc gọi',
+            });
+        }
+        setAnswerCall(false);
+        if (recipient) handleSetRecipient(false);
+        handleDisplayCallVideo();
+    };
 
     const handleRefuseNewCall = () => {
         if (newCall) {
             handleDisplayCallVideo();
-            handleRefuseCall({ sender: currentUser._id, receiver: newCall ? newCall : ChatContent.receiver });
+            handleRefuseCall({ sender: currentUser._id, receiver: newCall, msg: 'Người nhận không bắt máy' });
             handleSetNewCall(false);
         }
     };
