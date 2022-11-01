@@ -30,7 +30,7 @@ function VideoCall() {
         useContext(SocketContext);
     const [caller, setCaller] = useState({ username: '', avatar: '', notify: '' });
     const [answerCall, setAnswerCall] = useState(false);
-    const [mute, setMute] = useState(false);
+    const [micro, setMicro] = useState(true);
     const [camera, setCamera] = useState(true);
 
     const myVideo = useRef();
@@ -47,8 +47,13 @@ function VideoCall() {
             navigator.mediaDevices
                 .getUserMedia({ video: true, audio: true })
                 .then((stream) => {
-                    myVideo.current.srcObject = stream;
                     window.localStream = stream;
+                    // myVideo.current.srcObject = window.localStream;
+                    if ('srcObject' in myVideo.current) {
+                        myVideo.current.srcObject = window.localStream;
+                    } else {
+                        myVideo.current.src = URL.createObjectURL(window.localStream);
+                    }
                     peer.current = new Peer({
                         initiator: true,
                         trickle: false,
@@ -60,10 +65,15 @@ function VideoCall() {
                             receiver: ChatContent.receiver,
                             signal: data,
                         };
-                        // handleCallToUser(data2);
+                        handleCallToUser(data2);
                     });
                     peer.current.on('stream', (stream) => {
-                        userVideo.current.srcObject = stream;
+                        console.log(stream);
+                        if ('srcObject' in userVideo.current) {
+                            userVideo.current.srcObject = stream;
+                        } else {
+                            userVideo.current.src = URL.createObjectURL(stream);
+                        }
                     });
                 })
                 .catch((err) => console.log('loi set peer'));
@@ -94,7 +104,7 @@ function VideoCall() {
                 .getUserMedia({ video: true, audio: true })
                 .then((stream) => {
                     window.localStream = stream;
-                    myVideo.current.srcObject = stream;
+                    myVideo.current.srcObject = window.localStream;
                     peer.current = new Peer({
                         initiator: false,
                         trickle: false,
@@ -104,7 +114,13 @@ function VideoCall() {
                         handleAnswer({ sender: currentUser._id, receiver: newCall, signal: data });
                     });
                     peer.current.on('stream', (stream) => {
-                        userVideo.current.srcObject = stream;
+                        console.log(stream);
+                        // userVideo.current.srcObject = stream;
+                        if ('srcObject' in userVideo.current) {
+                            userVideo.current.srcObject = stream;
+                        } else {
+                            userVideo.current.src = URL.createObjectURL(stream);
+                        }
                     });
                     peer.current.signal(callerSignal);
                 })
@@ -172,15 +188,25 @@ function VideoCall() {
     }, []);
 
     const handleSetMute = () => {
-        setMute((pre) => {
+        setMicro((pre) => {
+            if (pre) {
+                window.localStream.getAudioTracks()[0].enabled = false;
+            } else {
+                window.localStream.getAudioTracks()[0].enabled = true;
+            }
             return !pre;
         });
-        window.localStream.getAudioTracks()[0].stop();
     };
 
     const handleSetCamera = () => {
-        setCamera((pre) => !pre);
-        window.localStream.getVideoTracks()[0].stop();
+        setCamera((pre) => {
+            if (pre) {
+                window.localStream.getVideoTracks()[0].enabled = false;
+            } else {
+                window.localStream.getVideoTracks()[0].enabled = true;
+            }
+            return !pre;
+        });
     };
 
     return (
@@ -215,7 +241,7 @@ function VideoCall() {
                 </div>
                 <div className={cx('action-btns')}>
                     <div className={cx('item-btn')} onClick={handleSetMute}>
-                        {!mute ? (
+                        {micro ? (
                             <FontAwesomeIcon className={cx('icon')} icon={faMicrophone} />
                         ) : (
                             <FontAwesomeIcon className={cx('icon')} icon={faMicrophoneSlash} />
