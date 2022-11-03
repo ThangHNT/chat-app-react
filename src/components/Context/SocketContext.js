@@ -7,7 +7,7 @@ const SocketContext = createContext();
 function SocketContextProvider({ children }) {
     // console.log('socket-context');
     const { handleSetMessages } = useContext(MessageContext);
-    const { handleSetNewCall, handleDisplayCallVideo, handleSetEndCall } = useContext(CallContext);
+    const { handleSetNewCall, handleDisplayCallVideo, handleSetEndCall, handleSetUserMedia } = useContext(CallContext);
     const [userList, setUserList] = useState([]);
     const [socket, setSocket] = useState();
     const [newMessage, setNewMessage] = useState();
@@ -89,9 +89,22 @@ function SocketContextProvider({ children }) {
                 handleSetEndCall({ sender, msg });
                 setReceiverSignal(false);
             });
+
+            socket.on('change media', (data) => {
+                // console.log(data);
+                handleSetUserMedia((pre) => {
+                    pre[data.kind] = data.status;
+                    return { ...pre };
+                });
+            });
         }
         // eslint-disable-next-line
     }, [socket]);
+
+    const handlEnableMicroOrCamera = ({ receiver, sender, kind, status }) => {
+        const to = getSocketIdFromReceiverId(userList, receiver);
+        socket.emit('change media', { sender, from: socket.id, to, kind, status });
+    };
 
     const handleEndCallSocket = ({ sender, receiver, msg }) => {
         const to = getSocketIdFromReceiverId(userList, receiver);
@@ -287,6 +300,7 @@ function SocketContextProvider({ children }) {
         handleCallToUser,
         handleAnswer,
         handleEndCallSocket,
+        handlEnableMicroOrCamera,
     };
 
     return <SocketContext.Provider value={values}>{children}</SocketContext.Provider>;

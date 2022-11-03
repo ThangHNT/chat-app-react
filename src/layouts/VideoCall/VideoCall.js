@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState, useRef, memo, useCallback } from 'react';
+import { useContext, useEffect, useState, useRef, memo, useCallback, useLayoutEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMicrophone, faMicrophoneSlash, faPhone, faVideo, faVideoSlash } from '@fortawesome/free-solid-svg-icons';
 import Peer from 'simple-peer';
@@ -25,9 +25,16 @@ function VideoCall() {
         endCall,
         handleSetEndCall,
         handleSetNewCall,
+        userMedia,
     } = useContext(CallContext);
-    const { receiverSignal, callerSignal, handleCallToUser, handleAnswer, handleEndCallSocket } =
-        useContext(SocketContext);
+    const {
+        receiverSignal,
+        callerSignal,
+        handleCallToUser,
+        handleAnswer,
+        handleEndCallSocket,
+        handlEnableMicroOrCamera,
+    } = useContext(SocketContext);
     const [caller, setCaller] = useState({ username: '', avatar: '', notify: '' });
     const [answerCall, setAnswerCall] = useState(false);
     const [micro, setMicro] = useState(true);
@@ -48,7 +55,6 @@ function VideoCall() {
                 .getUserMedia({ video: true, audio: true })
                 .then((stream) => {
                     window.localStream = stream;
-                    // myVideo.current.srcObject = window.localStream;
                     if ('srcObject' in myVideo.current) {
                         myVideo.current.srcObject = window.localStream;
                     } else {
@@ -68,18 +74,27 @@ function VideoCall() {
                         handleCallToUser(data2);
                     });
                     peer.current.on('stream', (stream) => {
-                        console.log(stream);
                         if ('srcObject' in userVideo.current) {
                             userVideo.current.srcObject = stream;
                         } else {
                             userVideo.current.src = URL.createObjectURL(stream);
                         }
                     });
+                    peer.current.on('track', (track, stream) => {
+                        // console.log(stream);
+                    });
                 })
                 .catch((err) => console.log('loi set peer'));
         }
         // eslint-disable-next-line
     }, [recipient]);
+
+    // lấy tín hiệu khi user bắt máy
+    useEffect(() => {
+        if (receiverSignal && peer.current) {
+            peer.current.signal(receiverSignal);
+        }
+    }, [receiverSignal]);
 
     // khi có cuộc gọi mới
     useEffect(() => {
@@ -89,13 +104,6 @@ function VideoCall() {
         }
         // eslint-disable-next-line
     }, [newCall]);
-
-    // lấy tín hiệu khi user bắt máy
-    useEffect(() => {
-        if (receiverSignal && peer.current) {
-            peer.current.signal(receiverSignal);
-        }
-    }, [receiverSignal]);
 
     // mở cam khi ấn trl cuộc gọi
     useEffect(() => {
@@ -114,8 +122,6 @@ function VideoCall() {
                         handleAnswer({ sender: currentUser._id, receiver: newCall, signal: data });
                     });
                     peer.current.on('stream', (stream) => {
-                        console.log(stream);
-                        // userVideo.current.srcObject = stream;
                         if ('srcObject' in userVideo.current) {
                             userVideo.current.srcObject = stream;
                         } else {
@@ -188,22 +194,40 @@ function VideoCall() {
     }, []);
 
     const handleSetMute = () => {
+        const data = {
+            sender: currentUser._id,
+            receiver: newCall || ChatContent.receiver,
+            kind: 'micro',
+        };
         setMicro((pre) => {
             if (pre) {
                 window.localStream.getAudioTracks()[0].enabled = false;
+                data.status = false;
+                handlEnableMicroOrCamera(data);
             } else {
                 window.localStream.getAudioTracks()[0].enabled = true;
+                data.status = true;
+                handlEnableMicroOrCamera(data);
             }
             return !pre;
         });
     };
 
     const handleSetCamera = () => {
+        const data = {
+            sender: currentUser._id,
+            receiver: newCall || ChatContent.receiver,
+            kind: 'video',
+        };
         setCamera((pre) => {
             if (pre) {
                 window.localStream.getVideoTracks()[0].enabled = false;
+                data.status = false;
+                handlEnableMicroOrCamera(data);
             } else {
                 window.localStream.getVideoTracks()[0].enabled = true;
+                data.status = true;
+                handlEnableMicroOrCamera(data);
             }
             return !pre;
         });
@@ -213,21 +237,28 @@ function VideoCall() {
         <div className={cx('wrapper', { boderRadius10: true })}>
             <div className={cx('content')}>
                 <div className={cx('main-screen', { boderRadius10: true })}>
-                    {!receiverSignal && !answerCall && (
-                        <div className={cx('connecting-user')}>
+                    {((!receiverSignal && !answerCall) || !userMedia.video) && (
+                        <div className={cx('user-info', { boderRadius10: true })}>
                             <img className={cx('receiver-avatar')} src={caller.avatar} alt="avatar" />
                             <p className={cx('receiver-name')}>{caller.username}</p>
-                            <span className={cx('status')}>{caller.notify}</span>
+                            <span className={cx('status')}>
+                                {userMedia.video === false ? 'Người dùng tắt camera' : caller.notify}
+                            </span>
                         </div>
                     )}
                     {(receiverSignal || answerCall) && (
-                        <video
-                            ref={userVideo}
-                            className={cx('video', { boderRadius10: true })}
-                            playsInline
-                            muted
-                            autoPlay
-                        ></video>
+                        <div className={cx('user-video', { boderRadius10: true })}>
+                            <video
+                                ref={userVideo}
+                                className={cx('video', { boderRadius10: true })}
+                                playsInline
+                                muted
+                                autoPlay
+                            ></video>
+                            <div className={cx('muted')}>
+                                {!userMedia.micro && <FontAwesomeIcon icon={faMicrophoneSlash} />}
+                            </div>
+                        </div>
                     )}
                 </div>
                 <div className={cx('sub-screen', { boderRadius10: true })}>
