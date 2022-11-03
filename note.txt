@@ -1,10 +1,4 @@
 "proxy": "https://chat-app-nodejs-hnt.herokuapp.com",
 
-package.json
-,
-    "devDependencies": {
-        "babel-plugin-module-resolver": "^4.1.0"
-    }
-
 
 lưu ý: khi lưu tin nhắn vào db cần set lại hàm handleSetMessages ở messageContext, chỗ fromDB
