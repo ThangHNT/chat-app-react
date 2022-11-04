@@ -1,6 +1,7 @@
 import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import host from '~/ulties/serverHost';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import classNames from 'classnames/bind';
@@ -51,7 +52,7 @@ function Form({ login, signup }) {
             if (values.confirmPassword.length > 0) {
                 console.log('register');
                 try {
-                    const { data } = await axios.post('/register', values);
+                    const { data } = await axios.post(`${host}/register`, values);
                     if (data.status === true) {
                         handleSeCurrenttUser(data.newUser);
                         localStorage.setItem('chat-app-hnt', JSON.stringify(data.newUser));
@@ -66,7 +67,7 @@ function Form({ login, signup }) {
                 }
             } else {
                 try {
-                    const { data } = await axios.post('/login', values);
+                    const { data } = await axios.post(`${host}/login`, values);
                     if (data.status === false) {
                         toast(data.msg);
                     } else {
