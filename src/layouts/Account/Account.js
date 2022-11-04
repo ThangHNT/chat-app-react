@@ -6,6 +6,7 @@ import classNames from 'classnames/bind';
 import styles from './Account.module.scss';
 import Input from '~/components/Input';
 import { UserContext } from '~/components/Context/UserContext';
+import Modal from '~/layouts/Modal';
 
 const cx = classNames.bind(styles);
 
@@ -179,6 +180,7 @@ function Account() {
                     <span>Lưu</span>
                 </div>
             </div>
+            <Modal />
             <ToastContainer
                 position="bottom-center"
                 autoClose={1500}

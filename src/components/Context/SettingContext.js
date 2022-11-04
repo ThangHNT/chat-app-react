@@ -82,6 +82,7 @@ function SettingProvider({ children }) {
     };
 
     const handleSetDisplayGeneralSetting = () => {
+        console.log('setting');
         setDisplayGeneralSetting((pre) => !pre);
     };
 
