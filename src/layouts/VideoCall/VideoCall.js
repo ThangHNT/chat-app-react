@@ -60,6 +60,7 @@ function VideoCall() {
                     } else {
                         myVideo.current.src = URL.createObjectURL(window.localStream);
                     }
+                    myVideo.current.muted = false;
                     peer.current = new Peer({
                         initiator: true,
                         trickle: false,
@@ -79,9 +80,7 @@ function VideoCall() {
                         } else {
                             userVideo.current.src = URL.createObjectURL(stream);
                         }
-                    });
-                    peer.current.on('track', (track, stream) => {
-                        // console.log(stream);
+                        userVideo.current.muted = false;
                     });
                 })
                 .catch((err) => console.log('loi set peer'));
@@ -127,6 +126,7 @@ function VideoCall() {
                         } else {
                             userVideo.current.src = URL.createObjectURL(stream);
                         }
+                        myVideo.current.muted = false;
                     });
                     peer.current.signal(callerSignal);
                 })
@@ -180,6 +180,7 @@ function VideoCall() {
     };
 
     const handleCloseVideoCall = useCallback(() => {
+        peer.current.destroy();
         if (answerCall) setAnswerCall(false);
         if (recipient) handleSetRecipient(false);
         if (newCall) handleSetNewCall(false);
