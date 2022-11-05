@@ -7,15 +7,8 @@ const SocketContext = createContext();
 function SocketContextProvider({ children }) {
     // console.log('socket-context');
     const { handleSetMessages } = useContext(MessageContext);
-    const {
-        newCall,
-        handleSetNewCall,
-        handleDisplayCallVideo,
-        handleSetEndCall,
-        handleSetUserMedia,
-        recipient,
-        handleSetBusyUser,
-    } = useContext(CallContext);
+    const { handleSetNewCall, handleDisplayCallVideo, handleSetEndCall, handleSetUserMedia, handleSetBusyUser } =
+        useContext(CallContext);
     const [userList, setUserList] = useState([]);
     const [socket, setSocket] = useState();
     const [newMessage, setNewMessage] = useState();
@@ -84,13 +77,9 @@ function SocketContextProvider({ children }) {
             });
 
             socket.on('callUser', (data) => {
-                if (!newCall || !recipient) {
-                    setCallerSignal(data.signal);
-                    handleSetNewCall(data.sender);
-                    handleDisplayCallVideo();
-                } else {
-                    handleBusyUser({ receiver: data.sender });
-                }
+                setCallerSignal(data.signal);
+                handleSetNewCall(data.sender);
+                handleDisplayCallVideo();
             });
 
             socket.on('callAccepted', (signal) => {
@@ -111,17 +100,12 @@ function SocketContextProvider({ children }) {
             });
 
             socket.on('user busy', (data) => {
-                console.log('user ban');
+                // console.log('user ban');
                 handleSetBusyUser(data.value);
             });
         }
         // eslint-disable-next-line
     }, [socket]);
-
-    const handleBusyUser = ({ receiver }) => {
-        // const to = getSocketIdFromReceiverId(userList, receiver);
-        // socket.emit('user busy', { from: socket.id, to });
-    };
 
     const handlEnableMicroOrCamera = ({ receiver, sender, kind, status }) => {
         const to = getSocketIdFromReceiverId(userList, receiver);

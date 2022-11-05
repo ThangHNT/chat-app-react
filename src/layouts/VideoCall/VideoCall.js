@@ -205,7 +205,6 @@ function VideoCall() {
         if (answerCall) setAnswerCall(false);
         if (recipient) handleSetRecipient(false);
         if (newCall) handleSetNewCall(false);
-        console.log('tat cam');
         if (window.localStream) {
             window.localStream.getTracks().forEach((track) => {
                 track.stop();
