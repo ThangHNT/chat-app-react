@@ -8,6 +8,11 @@ function CallProvider({ children }) {
     const [newCall, setNewCall] = useState(false);
     const [endCall, setEndCall] = useState(false);
     const [userMedia, setUserMedia] = useState({ video: true, micro: true });
+    const [busyUser, setBusyUser] = useState();
+
+    const handleSetBusyUser = (value) => {
+        setBusyUser(value);
+    };
 
     const handleSetUserMedia = (value) => {
         setUserMedia(value);
@@ -39,11 +44,13 @@ function CallProvider({ children }) {
         newCall,
         endCall,
         userMedia,
+        busyUser,
         handleDisplayCallVideo,
         handleSetRecipient,
         handleSetNewCall,
         handleSetEndCall,
         handleSetUserMedia,
+        handleSetBusyUser,
     };
 
     return <CallContext.Provider value={values}>{children}</CallContext.Provider>;

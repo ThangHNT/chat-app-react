@@ -7,7 +7,15 @@ const SocketContext = createContext();
 function SocketContextProvider({ children }) {
     // console.log('socket-context');
     const { handleSetMessages } = useContext(MessageContext);
-    const { handleSetNewCall, handleDisplayCallVideo, handleSetEndCall, handleSetUserMedia } = useContext(CallContext);
+    const {
+        newCall,
+        handleSetNewCall,
+        handleDisplayCallVideo,
+        handleSetEndCall,
+        handleSetUserMedia,
+        recipient,
+        handleSetBusyUser,
+    } = useContext(CallContext);
     const [userList, setUserList] = useState([]);
     const [socket, setSocket] = useState();
     const [newMessage, setNewMessage] = useState();
@@ -76,9 +84,13 @@ function SocketContextProvider({ children }) {
             });
 
             socket.on('callUser', (data) => {
-                setCallerSignal(data.signal);
-                handleSetNewCall(data.sender);
-                handleDisplayCallVideo();
+                if (!newCall || !recipient) {
+                    setCallerSignal(data.signal);
+                    handleSetNewCall(data.sender);
+                    handleDisplayCallVideo();
+                } else {
+                    handleBusyUser({ receiver: data.sender });
+                }
             });
 
             socket.on('callAccepted', (signal) => {
@@ -97,9 +109,19 @@ function SocketContextProvider({ children }) {
                     return { ...pre };
                 });
             });
+
+            socket.on('user busy', (data) => {
+                console.log('user ban');
+                handleSetBusyUser(data.value);
+            });
         }
         // eslint-disable-next-line
     }, [socket]);
+
+    const handleBusyUser = ({ receiver }) => {
+        // const to = getSocketIdFromReceiverId(userList, receiver);
+        // socket.emit('user busy', { from: socket.id, to });
+    };
 
     const handlEnableMicroOrCamera = ({ receiver, sender, kind, status }) => {
         const to = getSocketIdFromReceiverId(userList, receiver);
@@ -108,7 +130,7 @@ function SocketContextProvider({ children }) {
 
     const handleEndCallSocket = ({ sender, receiver, msg }) => {
         const to = getSocketIdFromReceiverId(userList, receiver);
-        socket.emit('end call', { sender, from: socket.id, to, msg });
+        socket.emit('end call', { sender, receiver, from: socket.id, to, msg });
     };
 
     const handleAnswer = ({ sender, receiver, signal }) => {
@@ -118,7 +140,7 @@ function SocketContextProvider({ children }) {
 
     const handleCallToUser = ({ sender, receiver, signal }) => {
         const to = getSocketIdFromReceiverId(userList, receiver);
-        socket.emit('callUser', { sender, from: socket.id, to, signal });
+        socket.emit('callUser', { sender, receiver, from: socket.id, to, signal });
     };
 
     // khoi tao socket

@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState, useRef, memo, useCallback, useLayoutEffect } from 'react';
+import { useContext, useEffect, useState, useRef, memo, useCallback } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMicrophone, faMicrophoneSlash, faPhone, faVideo, faVideoSlash } from '@fortawesome/free-solid-svg-icons';
 import Peer from 'simple-peer';
@@ -26,6 +26,8 @@ function VideoCall() {
         handleSetEndCall,
         handleSetNewCall,
         userMedia,
+        busyUser,
+        handleSetBusyUser,
     } = useContext(CallContext);
     const {
         receiverSignal,
@@ -138,17 +140,19 @@ function VideoCall() {
     useEffect(() => {
         let timerId;
         if (endCall) {
-            setCaller((pre) => {
-                return {
-                    username: pre.username,
-                    avatar: pre.avatar,
-                    notify: endCall.msg,
-                };
-            });
-            timerId = setTimeout(() => {
-                handleCloseVideoCall();
-                handleSetEndCall(false);
-            }, 2000);
+            if (endCall.sender === newCall || endCall.sender === ChatContent.receiver) {
+                setCaller((pre) => {
+                    return {
+                        username: pre.username,
+                        avatar: pre.avatar,
+                        notify: endCall.msg,
+                    };
+                });
+                timerId = setTimeout(() => {
+                    handleCloseVideoCall();
+                    handleSetEndCall(false);
+                }, 2000);
+            }
         }
 
         return () => {
@@ -156,6 +160,24 @@ function VideoCall() {
         };
         // eslint-disable-next-line
     }, [endCall]);
+
+    useEffect(() => {
+        let timerId;
+        if (busyUser) {
+            setCaller((pre) => {
+                pre.notify = 'Người dùng bận';
+                return { ...pre };
+            });
+            timerId = setTimeout(() => {
+                handleCloseVideoCall();
+                handleSetBusyUser(false);
+            }, 2000);
+        }
+        return () => {
+            clearTimeout(timerId);
+        };
+        // eslint-disable-next-line
+    }, [busyUser]);
 
     const handleAcceptCall = useCallback(() => {
         console.log('answer');
@@ -180,7 +202,6 @@ function VideoCall() {
     };
 
     const handleCloseVideoCall = useCallback(() => {
-        peer.current.destroy();
         if (answerCall) setAnswerCall(false);
         if (recipient) handleSetRecipient(false);
         if (newCall) handleSetNewCall(false);

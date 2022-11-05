@@ -42,7 +42,6 @@ function HeaderChat({ receiver, onClick, hideSetting }) {
                 </div>
                 <div className={cx('info')}>
                     <span>{receiver.username}</span>
-                    {/* <p>Dang hoat dong</p> */}
                 </div>
             </div>
             <div className={cx('action-btns')}>
