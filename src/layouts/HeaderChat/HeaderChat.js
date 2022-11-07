@@ -45,12 +45,16 @@ function HeaderChat({ receiver, onClick, hideSetting }) {
                 </div>
             </div>
             <div className={cx('action-btns')}>
-                <Button noTitle leftIcon={<FontAwesomeIcon icon={faPhone} />}></Button>
-                <Button
-                    noTitle
-                    leftIcon={<FontAwesomeIcon icon={faVideo} onClick={handleDisplayCallVideoModal} />}
-                ></Button>
-                <Button noTitle leftIcon={<FontAwesomeIcon icon={faCircleInfo} onClick={onClick} />}></Button>
+                {/* <Button noTitle leftIcon={<FontAwesomeIcon icon={faPhone} />}></Button> */}
+                <div className={cx('btn-item')}>
+                    <Button
+                        noTitle
+                        leftIcon={<FontAwesomeIcon icon={faVideo} onClick={handleDisplayCallVideoModal} />}
+                    ></Button>
+                </div>
+                <div className={cx('btn-item')}>
+                    <Button noTitle leftIcon={<FontAwesomeIcon icon={faCircleInfo} onClick={onClick} />}></Button>
+                </div>
             </div>
         </div>
     );

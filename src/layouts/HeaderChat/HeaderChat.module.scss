@@ -5,11 +5,11 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background-color: #ccc;
+    background-color: #ddd;
     padding: 0 10px;
     top: 70px;
     // z-index: 5;
-    box-shadow: 0 1px 4px 0px #aaa;
+    box-shadow: 0 1px 4px 0px #ccc;
 }
 
 .receiver {
@@ -46,5 +46,8 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    min-width: 18%;
+}
+
+.btn-item {
+    margin: 0 5px;
 }
