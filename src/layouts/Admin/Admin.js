@@ -13,14 +13,13 @@ function Admin() {
     const navigate = useNavigate();
 
     useLayoutEffect(() => {
-        // console.log(currentUser);
         if (!currentUser) {
             navigate('/login');
         } else {
             axios
                 .post(`${host}/api/check-admin`, { userId: currentUser._id })
                 .then(({ data }) => {
-                    // console.log(data);
+                    console.log(data);
                     if (!data.admin) {
                         navigate('/');
                     }

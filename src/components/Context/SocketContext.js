@@ -87,6 +87,7 @@ function SocketContextProvider({ children }) {
             });
 
             socket.on('end call', ({ sender, msg }) => {
+                console.log('end call');
                 handleSetEndCall({ sender, msg });
                 setReceiverSignal(false);
             });
@@ -100,7 +101,7 @@ function SocketContextProvider({ children }) {
             });
 
             socket.on('user busy', (data) => {
-                // console.log('user ban');
+                console.log('user ban');
                 handleSetBusyUser(data.value);
             });
         }

@@ -1,4 +1,4 @@
-notify user busy
+
 
 
 lưu ý: khi lưu tin nhắn vào db cần set lại hàm handleSetMessages ở messageContext, chỗ fromDB

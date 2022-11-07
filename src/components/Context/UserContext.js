@@ -11,7 +11,7 @@ function UserProvider({ children }) {
         const user = JSON.parse(localStorage.getItem('chat-app-hnt'));
         if (user) {
             axios
-                .post(`${host}/api/check-account`, { userId: user._id })
+                .post(`${host}/api/check-account`, { userId: user._id, token: user.token })
                 .then(({ data }) => {
                     if (data.exist) {
                         setCurrentUser(user);
