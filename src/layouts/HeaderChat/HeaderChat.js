@@ -1,6 +1,6 @@
 import { useEffect, useContext } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleInfo, faPhone, faVideo } from '@fortawesome/free-solid-svg-icons';
+import { faCircleInfo, faVideo } from '@fortawesome/free-solid-svg-icons';
 import Image from '~/components/Image';
 import Button from '~/components/Button';
 import classNames from 'classnames/bind';
@@ -45,7 +45,6 @@ function HeaderChat({ receiver, onClick, hideSetting }) {
                 </div>
             </div>
             <div className={cx('action-btns')}>
-                {/* <Button noTitle leftIcon={<FontAwesomeIcon icon={faPhone} />}></Button> */}
                 <div className={cx('btn-item')}>
                     <Button
                         noTitle

@@ -62,7 +62,6 @@ function VideoCall() {
                     } else {
                         myVideo.current.src = URL.createObjectURL(window.localStream);
                     }
-                    myVideo.current.muted = false;
                     peer.current = new Peer({
                         initiator: true,
                         trickle: false,
@@ -128,7 +127,7 @@ function VideoCall() {
                         } else {
                             userVideo.current.src = URL.createObjectURL(stream);
                         }
-                        myVideo.current.muted = false;
+                        userVideo.current.muted = false;
                     });
                     peer.current.signal(callerSignal);
                 })

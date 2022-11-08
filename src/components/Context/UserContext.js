@@ -10,16 +10,17 @@ function UserProvider({ children }) {
     useEffect(() => {
         const user = JSON.parse(localStorage.getItem('chat-app-hnt'));
         if (user) {
-            axios
-                .post(`${host}/api/check-account`, { userId: user._id, token: user.token })
-                .then(({ data }) => {
-                    if (data.exist) {
-                        setCurrentUser(user);
-                    } else {
-                        localStorage.removeItem('chat-app-hnt');
-                    }
-                })
-                .catch((err) => console.log('loi kiem tra tai khoan'));
+            setCurrentUser(user);
+            // axios
+            //     .post(`${host}/api/check-account`, { userId: user._id, token: user.token })
+            //     .then(({ data }) => {
+            //         if (data.exist) {
+            //             setCurrentUser(user);
+            //         } else {
+            //             localStorage.removeItem('chat-app-hnt');
+            //         }
+            //     })
+            //     .catch((err) => console.log('loi kiem tra tai khoan'));
         }
     }, []);
 
