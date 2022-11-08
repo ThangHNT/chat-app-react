@@ -278,15 +278,14 @@ function SendMessage({ receiver, darkmode = false }) {
                     receiver: receiver.id,
                     messages,
                 });
-                if (data.status) {
-                    const newMessages = data.data.messages;
-                    handleSendMessage(newMessages);
-                    ChatContent.handleAddMessage(newMessages);
-                    setInputValue('');
-                    setBlobUrlImg('');
-                    setImgBase64('');
-                    setFile('');
-                } else {
+                const newMessages = messages;
+                handleSendMessage(newMessages);
+                ChatContent.handleAddMessage(newMessages);
+                setInputValue('');
+                setBlobUrlImg('');
+                setImgBase64('');
+                setFile('');
+                if (!data.status) {
                     alert('Lỗi gửi tin nhắn');
                 }
             }

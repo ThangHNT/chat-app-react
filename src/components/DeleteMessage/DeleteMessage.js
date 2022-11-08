@@ -33,19 +33,18 @@ function DeleteMessage() {
     const handleSelectRemoveType = (e) => {
         const removeType = e.currentTarget.getAttribute('removetype');
         setSlected(removeType);
-        // console.log(displayRemoveMessageModal);
     };
 
     const handleStoreRemoveMessage = () => {
         if (messageInfo && selected) {
             // console.log(messageInfo);
-            const { receiver, messageId, senderId } = displayRemoveMessageModal;
+            const { receiver, time, senderId } = displayRemoveMessageModal;
             let sender = senderId;
             if (selected === 'revoke') {
-                handleSetMessages(receiver, '', messageId, false, true);
-                handleEmitRevokeMsgEvent(sender, receiver, messageId);
+                handleSetMessages(receiver, '', time, false, true);
+                handleEmitRevokeMsgEvent(sender, receiver, time);
             } else {
-                handleSetMessages(receiver, '', messageId, false, false, true);
+                handleSetMessages(receiver, '', time, false, false, true);
             }
             handleSetDisplayRemoveMessageModal('');
             axios

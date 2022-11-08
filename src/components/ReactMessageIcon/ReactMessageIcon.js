@@ -17,7 +17,7 @@ import { UserContext } from '~/components/Context/UserContext';
 
 const cx = classNames.bind(styles);
 
-function ReactMessageIcon({ messageId, messageBody }) {
+function ReactMessageIcon({ time, messageBody }) {
     // console.log('reaction-icon');
     const { currentUser } = useContext(UserContext);
     const { handleSetReactionIcon, receiver } = useContext(ChatContentContext);
@@ -53,9 +53,9 @@ function ReactMessageIcon({ messageId, messageBody }) {
     const handleClickIcon = (e) => {
         // console.log(e.target.alt);
         const icon = e.target.alt;
-        handleSetReactionIcon({ icon, messageId });
-        handleSendMessage({ icon, messageId, sender: currentUser._id, receiver }, true);
-        axios.post(`${host}/api/send/reaction-icon`, { messageId, reaction: icon }).then((data) => {
+        handleSetReactionIcon({ icon, time });
+        handleSendMessage({ icon, time, sender: currentUser._id, receiver }, true);
+        axios.post(`${host}/api/send/reaction-icon`, { time, reaction: icon }).then((data) => {
             const data2 = data.data;
             if (data2.status) {
                 // console.log('send reaction successcully');

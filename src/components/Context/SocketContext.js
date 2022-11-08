@@ -44,9 +44,9 @@ function SocketContextProvider({ children }) {
                 handleSetMessages(data.sender, data.content);
             });
             socket.on('private reaction message', (data) => {
-                console.log(data);
+                console.log('new icon');
                 setNewReaction(data);
-                handleSetMessages(data.sender, data.icon, data.messageId, true);
+                handleSetMessages(data.sender, data.icon, data.time, true);
             });
             socket.on('user is blocked', ({ receiver, sender }) => {
                 // console.log(sender);
@@ -56,9 +56,9 @@ function SocketContextProvider({ children }) {
                 // console.log(sender);
                 setPreventation({ receiver, sender, unblock: true });
             });
-            socket.on('remove reaction icon private', ({ receiver, messageId, sender }) => {
-                // console.log(sender);
-                setReactionRemoved({ messageId, sender, receiver });
+            socket.on('remove reaction icon private', ({ receiver, time, sender }) => {
+                console.log('remove raction icon');
+                setReactionRemoved({ time, sender, receiver });
             });
             socket.on('change theme private', (data) => {
                 // console.log(data);
@@ -143,9 +143,9 @@ function SocketContextProvider({ children }) {
     };
 
     // emit event revoke or remove message
-    const handleEmitRevokeMsgEvent = (sender, receiver, messageId) => {
+    const handleEmitRevokeMsgEvent = (sender, receiver, time) => {
         const to = getSocketIdFromReceiverId(userList, receiver);
-        socket.emit('revoke message', { to, from: socket.id, sender, messageId });
+        socket.emit('revoke message', { to, from: socket.id, sender, time });
     };
 
     const handleSetNewMessage = (sender, content, remove = false) => {
@@ -199,10 +199,10 @@ function SocketContextProvider({ children }) {
         }
     };
     // phát sự kiện xóa bỏ reaction icon
-    const handleRemoveReactionIcon = ({ receiver, messageId, sender }) => {
+    const handleRemoveReactionIcon = ({ receiver, time, sender }) => {
         // console.log(sender);
         let to = getSocketIdFromReceiverId(userList, receiver);
-        socket.emit('remove reaction icon', { from: socket.id, to, sender, receiver, messageId });
+        socket.emit('remove reaction icon', { from: socket.id, to, sender, receiver, time });
     };
 
     // thay đổi ds người online
@@ -242,8 +242,9 @@ function SocketContextProvider({ children }) {
 
     // gửi tin nhắn
     const handleSendMessage = (data, reactionIcon = false) => {
+        console.log(data, reactionIcon);
         if (userList.length > 0) {
-            const { receiver, content, icon, messageId, sender } = data;
+            const { receiver, content, icon, time, sender } = data;
             let to = getSocketIdFromReceiverId(userList, receiver);
             let message;
             if (reactionIcon) {
@@ -254,7 +255,7 @@ function SocketContextProvider({ children }) {
                     from: socket.id,
                     icon,
                     receiver,
-                    messageId,
+                    time,
                 };
                 socket.emit('send reaction icon', message);
                 return;

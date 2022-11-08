@@ -38,6 +38,7 @@ function Message({
     sender = false,
     receiver,
     time,
+    sendat,
     type,
     children,
     onClick,
@@ -84,7 +85,7 @@ function Message({
     // listen send reaction icon on socket
     useEffect(() => {
         if (newReaction) {
-            if (currentUser._id === newReaction.receiver && newReaction.messageId === messageId) {
+            if (currentUser._id === newReaction.receiver && newReaction.time === time) {
                 // console.log(newReaction);
                 setReactionIcon(getReactionIcon(newReaction.icon));
                 handleSetNewReaction(undefined);
@@ -95,8 +96,8 @@ function Message({
 
     // loại bỏ icon từ socket
     useEffect(() => {
-        if (reactionRemoved.messageId) {
-            if (reactionRemoved.messageId === messageId) {
+        if (reactionRemoved.time) {
+            if (reactionRemoved.time === time) {
                 setReactionIcon(false);
             }
         }
@@ -106,7 +107,7 @@ function Message({
     // hiện reaction ngay sau khi chọn
     useEffect(() => {
         if (ChatContent.reactionIcon.icon) {
-            if (messageId === ChatContent.reactionIcon.messageId) {
+            if (time === ChatContent.reactionIcon.time) {
                 setReactionIcon(getReactionIcon(ChatContent.reactionIcon.icon));
                 // console.log(receiver);
                 handleSetMessages(receiver, ChatContent.reactionIcon.icon, ChatContent.reactionIcon.messageId, true);
@@ -149,10 +150,10 @@ function Message({
         // console.log(reactionIcon);
         if (!sender) {
             setReactionIcon(false);
-            handleRemoveReactionIcon({ receiver, messageId, sender: currentUser._id });
-            handleSetMessages(receiver, '', ChatContent.reactionIcon.messageId, true);
+            handleRemoveReactionIcon({ receiver, time, sender: currentUser._id });
+            handleSetMessages(receiver, '', ChatContent.reactionIcon.time, true);
         }
-        const data = await axios.post(`${host}/api/remove/reaction-icon`, { messageId });
+        const data = await axios.post(`${host}/api/remove/reaction-icon`, { time });
         if (!data.status) {
             console.log('xoa icon that bai');
         }
@@ -173,7 +174,7 @@ function Message({
 
     const handleDisplayRemoveMessageModal = () => {
         // console.log(messageId);
-        handleSetDisplayRemoveMessageModal({ receiver, messageId, type, sender, senderId: currentUser._id });
+        handleSetDisplayRemoveMessageModal({ receiver, time, type, sender, senderId: currentUser._id });
     };
 
     return (
@@ -307,7 +308,7 @@ function Message({
                 )}
             </div>
             <div ref={btnRef} className={cx('message-sended-actions')}>
-                {!sender && <ReactMessageIcon messageId={messageId} messageBody={messageBody} />}
+                {!sender && <ReactMessageIcon time={time} messageBody={messageBody} />}
                 <div className={cx('wapper-tippy')}>
                     <Tippy
                         interactive
@@ -340,7 +341,7 @@ function Message({
                 </div>
             </div>
             <span ref={spanRef} className={cx('time-message')}>
-                {time}
+                {sendat}
             </span>
         </div>
     );

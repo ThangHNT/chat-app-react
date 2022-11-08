@@ -190,7 +190,7 @@ function Messages({ receiver, darkmodeMsg = false }) {
 
     // chuyển đổi thời gian về dạng giờ phút cho mỗi tin nhắn
     const getTime = (millisecond) => {
-        const date = new Date(millisecond);
+        const date = new Date(Number(millisecond));
         let hours = String(date.getHours());
         let minutes = String(date.getMinutes());
         hours = hours.length < 2 ? `0${hours}` : hours;
@@ -223,11 +223,11 @@ function Messages({ receiver, darkmodeMsg = false }) {
                 {messages.length > 0 &&
                     messages.map((message, index) => (
                         <div key={index} className={cx('message-item')}>
-                            {/* {console.log(message)} */}
                             <Message
                                 type={message.type}
                                 receiver={receiver.id}
-                                time={getTime(messages[index].time)}
+                                sendat={getTime(messages[index].time)}
+                                time={messages[index].time}
                                 sender={currentUser._id === message.sender}
                                 messageId={message.id}
                                 messageBody={contentRef}

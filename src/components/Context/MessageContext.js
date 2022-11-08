@@ -21,21 +21,12 @@ function MessageProvider({ children }) {
         setRemoveMessage(messageId);
     };
 
-    const handleSetMessages = (
-        key,
-        value,
-        messageId,
-        reaction = false,
-        revoke = false,
-        remove = false,
-        fromDB = false,
-    ) => {
+    const handleSetMessages = (key, value, time, reaction = false, revoke = false, remove = false, fromDB = false) => {
         const allMessage = messages.get(key);
-        // console.log(key, value);
         if (allMessage) {
             if (revoke) {
                 allMessage.forEach((item) => {
-                    if (item.id === messageId) {
+                    if (item.time === time) {
                         item.reactionIcon = value;
                         item.type = 'revoked';
                         item.text = 'Tin nhắn đã bị thu hồi';
@@ -49,10 +40,10 @@ function MessageProvider({ children }) {
                 });
                 return;
             } else if (remove) {
-                handleSetRemoveMessage({ messageId, receiver: key });
+                handleSetRemoveMessage({ time, receiver: key });
                 let index = '';
                 allMessage.forEach((item, thisIndex) => {
-                    if (item.id === messageId) {
+                    if (item.time === time) {
                         index = thisIndex;
                     }
                 });
@@ -61,7 +52,7 @@ function MessageProvider({ children }) {
             }
             if (reaction) {
                 allMessage.forEach((item) => {
-                    if (item.id === messageId) {
+                    if (item.time === time) {
                         item.reactionIcon = value;
                     }
                 });

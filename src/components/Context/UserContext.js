@@ -1,6 +1,6 @@
 import { useState, createContext, useEffect } from 'react';
-import axios from 'axios';
-import host from '~/ulties/serverHost';
+// import axios from 'axios';
+// import host from '~/ulties/serverHost';
 const UserContext = createContext();
 
 function UserProvider({ children }) {
@@ -12,7 +12,7 @@ function UserProvider({ children }) {
         if (user) {
             setCurrentUser(user);
             // axios
-            //     .post(`${host}/api/check-account`, { userId: user._id, token: user.token })
+            //     .post(`${host}/api/check-account`, { userId: user._id })
             //     .then(({ data }) => {
             //         if (data.exist) {
             //             setCurrentUser(user);
