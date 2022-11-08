@@ -70,7 +70,7 @@ function SocketContextProvider({ children }) {
             });
             socket.on('revoke message private', (data) => {
                 // console.log(data);
-                handleRevokeMessage(data.sender, data.messageId, true);
+                handleRevokeMessage(data.sender, data.time, true);
             });
             socket.on('user disconnected', (socketId) => {
                 setUserDisconnect(socketId);
@@ -134,9 +134,9 @@ function SocketContextProvider({ children }) {
     };
 
     // listen event revoke or remove msg from socket
-    const handleRevokeMessage = (sender, messageId, revoke = false) => {
+    const handleRevokeMessage = (sender, time, revoke = false) => {
         if (revoke) {
-            SetRevokeMessage({ sender, messageId });
+            SetRevokeMessage({ sender, time });
         } else {
             SetRevokeMessage(undefined);
         }

@@ -61,9 +61,9 @@ function Messages({ receiver, darkmodeMsg = false }) {
     useEffect(() => {
         if (revokeMessage) {
             // console.log(revokeOrRemoveMessage);
-            let { sender, messageId } = revokeMessage;
+            let { sender, time } = revokeMessage;
             messages.forEach((item) => {
-                if (item.id === messageId) {
+                if (item.time === time) {
                     item.reactionIcon = '';
                     item.type = 'revoked';
                     item.text = 'Tin nhắn đã bị thu hồi';
@@ -73,7 +73,7 @@ function Messages({ receiver, darkmodeMsg = false }) {
                 }
             });
             setMessages(messages);
-            Messages.handleSetMessages(sender, '', messageId, false, true);
+            Messages.handleSetMessages(sender, '', time, false, true);
         }
         handleRevokeMessage();
         // eslint-disable-next-line
