@@ -6,6 +6,7 @@ function MessageProvider({ children }) {
     const [removeMessage, setRemoveMessage] = useState();
     const [lastestMsg, setLastMsg] = useState();
     const [checkGetMessagesFromDB, setCheckGetMessagesFromDB] = useState([]);
+    const [deleteChat, setDeleteChat] = useState();
 
     const handleSetCheckGetMessagesFromDB = (userId) => {
         setCheckGetMessagesFromDB((pre) => {
@@ -19,6 +20,13 @@ function MessageProvider({ children }) {
 
     const handleSetRemoveMessage = (messageId) => {
         setRemoveMessage(messageId);
+    };
+
+    const handleDeleteMessagesChat = (key) => {
+        setDeleteChat(key);
+        setMessages((pre) => {
+            return pre.set(key, []);
+        });
     };
 
     const handleSetMessages = (key, value, time, reaction = false, revoke = false, remove = false, fromDB = false) => {
@@ -87,10 +95,12 @@ function MessageProvider({ children }) {
         removeMessage,
         lastestMsg,
         checkGetMessagesFromDB,
+        deleteChat,
         handleSetMessages,
         handleSetRemoveMessage,
         handleSetLastestMsg,
         handleSetCheckGetMessagesFromDB,
+        handleDeleteMessagesChat,
     };
 
     return <MessageContext.Provider value={values}>{children}</MessageContext.Provider>;

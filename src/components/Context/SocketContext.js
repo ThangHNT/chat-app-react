@@ -242,7 +242,6 @@ function SocketContextProvider({ children }) {
 
     // gửi tin nhắn
     const handleSendMessage = (data, reactionIcon = false) => {
-        console.log(data, reactionIcon);
         if (userList.length > 0) {
             const { receiver, content, icon, time, sender } = data;
             let to = getSocketIdFromReceiverId(userList, receiver);

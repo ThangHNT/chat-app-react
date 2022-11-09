@@ -110,8 +110,8 @@ function Message({
             if (time === ChatContent.reactionIcon.time) {
                 setReactionIcon(getReactionIcon(ChatContent.reactionIcon.icon));
                 // console.log(receiver);
-                handleSetMessages(receiver, ChatContent.reactionIcon.icon, ChatContent.reactionIcon.messageId, true);
-                ChatContent.handleSetReactionIcon({ icon: undefined, messageId: ChatContent.reactionIcon.messageId });
+                handleSetMessages(receiver, ChatContent.reactionIcon.icon, ChatContent.reactionIcon.time, true);
+                ChatContent.handleSetReactionIcon({ icon: undefined, time: ChatContent.reactionIcon.time });
             }
         }
         // eslint-disable-next-line

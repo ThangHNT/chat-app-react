@@ -140,7 +140,7 @@ function Messages({ receiver, darkmodeMsg = false }) {
             setMessages(allMsg);
         }
         // eslint-disable-next-line
-    }, [Messages.messages.get(receiver.id)]);
+    }, [Messages.messages.get(receiver.id), Messages.deleteChat]);
 
     // hiện tin nhắn trên đoạn chat khi vừa ấn enter
     useEffect(() => {

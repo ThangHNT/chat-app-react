@@ -20,7 +20,7 @@ function MessageItem({ receiver, darkmode = false, avatar, username, searchResul
     // console.log('message-item');
     const { currentUser } = useContext(UserContext);
     const { soundSetting } = useContext(SettingContext);
-    const { lastestMsg } = useContext(MessageContext);
+    const { lastestMsg, handleDeleteMessagesChat } = useContext(MessageContext);
     const { messages, handleDisplayChatContent } = useContext(ChatContentContext);
     const ChatContent = useContext(ChatContentContext);
     const { newMessage } = useContext(SocketContext);
@@ -164,14 +164,16 @@ function MessageItem({ receiver, darkmode = false, avatar, username, searchResul
         }
     };
 
-    const handleDeleteChat = useCallback(async () => {
+    const handleDeleteChat = async () => {
         const { data } = await axios.post(`${host}/api/delete/chat`, { sender: currentUser._id, receiver });
-        console.log(data);
+        // console.log(data);
+        handleDeleteMessagesChat(receiver);
+        setlastestMessage('');
         // eslint-disable-next-line
-    }, []);
+    };
 
     const handleDeleteAllMessageFromDB = useCallback(() => {
-        axios.post(`${host}/api/delete-all-messages`);
+        alert('Chuc nang dag phat trien');
     }, []);
 
     const actionsMessageItem = [
