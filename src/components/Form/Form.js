@@ -42,24 +42,44 @@ function Form({ login, signup }) {
             toast.warning('Độ dài tối thiểu là 3 ký tự');
             return false;
         }
-        // if (password.length < 8 || password.includes(' ')) {
-        //     toast.warning('Mật khẩu ít nhất 8 ký tự và không có dấu cách');
-        //     return false;
-        // }
         if (password !== confirmPassword && confirmPassword.length > 0) {
             toast.error('Mật khẩu không trùng khớp');
+            return false;
+        }
+        if (!handleCheckPassword(password)) {
+            toast.error('Mật khẩu tối thiểu 8 ký tự, bao gồm chữ cái viết hoa, viết thường, ký tự đặc biệt và số');
             return false;
         }
         return true;
     };
 
+    function handleCheckPassword(password) {
+        var strength = 0;
+        if (password.match(/[a-z]+/)) {
+            strength += 1;
+        }
+        if (password.match(/[A-Z]+/)) {
+            strength += 1;
+        }
+        if (password.match(/[0-9]+/)) {
+            strength += 1;
+        }
+        if (password.match(/[$@#&!]+/)) {
+            strength += 1;
+        }
+        if (password.length < 8 || strength < 3) {
+            return false;
+        }
+        return true;
+    }
+
     // ấn enter để đăng nhập
     const handlSubmit = async (e) => {
         e.preventDefault();
-        if (checkValues()) {
-            if (values.confirmPassword.length > 0) {
-                console.log('register');
-                try {
+        if (values.confirmPassword.length > 0) {
+            try {
+                if (checkValues()) {
+                    console.log('register');
                     const { data } = await axios.post(`${host}/register`, values);
                     if (data.status === true) {
                         handleSeCurrenttUser(data.newUser);
@@ -68,24 +88,24 @@ function Form({ login, signup }) {
                     } else {
                         toast(data.msg);
                     }
-                } catch (e) {
-                    alert('register request failed, start server');
                 }
-            } else {
-                try {
-                    const { data } = await axios.post(`${host}/login`, values);
-                    if (data.status === false) {
-                        toast(data.msg);
-                    } else {
-                        console.log('login');
-                        // console.log(data.user);
-                        handleSeCurrenttUser(data.user);
-                        toast.success('Chuyển hướng đến trang chủ.');
-                        localStorage.setItem('chat-app-hnt', JSON.stringify(data.user));
-                    }
-                } catch (e) {
-                    console.log('loi log in');
+            } catch (e) {
+                alert('register request failed, start server');
+            }
+        } else {
+            try {
+                const { data } = await axios.post(`${host}/login`, values);
+                if (data.status === false) {
+                    toast(data.msg);
+                } else {
+                    console.log('login');
+                    // console.log(data.user);
+                    handleSeCurrenttUser(data.user);
+                    toast.success('Chuyển hướng đến trang chủ.');
+                    localStorage.setItem('chat-app-hnt', JSON.stringify(data.user));
                 }
+            } catch (e) {
+                console.log('loi log in');
             }
         }
     };
