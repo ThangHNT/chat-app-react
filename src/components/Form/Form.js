@@ -9,6 +9,8 @@ import styles from './Form.module.scss';
 import Input from '~/components/Input';
 import Button from '~/components/Button';
 import { UserContext } from '../Context/UserContext';
+// import { authentication } from '~/firebase/config';
+// import { signInWithPopup, FacebookAuthProvider } from 'firebase/auth';
 
 const cx = classNames.bind(styles);
 
@@ -24,6 +26,12 @@ function Form({ login, signup }) {
         confirmPassword: '',
         email: '',
     });
+
+    // const handleLoginWithFB = async () => {
+    //     const provider = new FacebookAuthProvider();
+    //     const data = await signInWithPopup(authentication, provider);
+    //     console.log(data.user);
+    // };
 
     const checkValues = () => {
         let account = values.account;
@@ -164,6 +172,10 @@ function Form({ login, signup }) {
                     />
                 </div>
             )}
+
+            {/* <Button type="button" primary large onClick={handleLoginWithFB}>
+                login with fb
+            </Button> */}
 
             <div className={cx('login-btn')}>
                 {login && <Button large primary children="Đăng nhập" />}
