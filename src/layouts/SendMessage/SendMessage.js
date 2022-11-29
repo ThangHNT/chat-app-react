@@ -273,11 +273,6 @@ function SendMessage({ receiver, darkmode = false }) {
                 if (soundSetting.send) {
                     messageSound.play();
                 }
-                const data = await axios.post(`${host}/api/send/message`, {
-                    sender: currentUser._id,
-                    receiver: receiver.id,
-                    messages,
-                });
                 const newMessages = messages;
                 handleSendMessage(newMessages);
                 ChatContent.handleAddMessage(newMessages);
@@ -285,6 +280,11 @@ function SendMessage({ receiver, darkmode = false }) {
                 setBlobUrlImg('');
                 setImgBase64('');
                 setFile('');
+                const data = await axios.post(`${host}/api/send/message`, {
+                    sender: currentUser._id,
+                    receiver: receiver.id,
+                    messages,
+                });
                 if (!data.status) {
                     alert('Lỗi gửi tin nhắn');
                 }
