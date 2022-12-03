@@ -92,7 +92,7 @@ function Header() {
         {
             icon: <FontAwesomeIcon icon={faArrowRightFromBracket} />,
             text: 'Đăng xuất',
-            href: '/login',
+            to: '/login',
             onClick: handleLogout,
         },
     ];
