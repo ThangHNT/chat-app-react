@@ -3,7 +3,16 @@ import classNames from 'classnames/bind';
 import axios from 'axios';
 import Picker from 'emoji-picker-react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFilePdf, faFileVideo, faFileWord, faPhotoFilm, faXmarkCircle } from '@fortawesome/free-solid-svg-icons';
+import {
+    faFilePdf,
+    faFileVideo,
+    faFileWord,
+    faPhotoFilm,
+    faXmarkCircle,
+    faPlay,
+    faStop,
+    faPause,
+} from '@fortawesome/free-solid-svg-icons';
 import {
     faFaceGrin,
     faFileLines,
@@ -39,12 +48,15 @@ function SendMessage({ receiver, darkmode = false }) {
     const [file, setFile] = useState();
     const [displayEmojiList, setDisplayEmojiList] = useState(false);
     const [block, setBlock] = useState({});
+    const [audioRecord, setAudioRecord] = useState(false);
+    const [count, setCount] = useState('0');
 
     let messageSound = new Audio();
 
     const inputRef = useRef();
     const emojiListBtnRef = useRef();
     const emojiRef = useRef();
+    const audioRecordRef = useRef();
 
     useEffect(() => {
         if (inputRef.current) {
@@ -180,9 +192,30 @@ function SendMessage({ receiver, darkmode = false }) {
         // eslint-disable-next-line
     }, [blobUrlImg]);
 
-    const handleRemoveImg = () => {
+    useEffect(() => {
+        let timerId;
+        if (file === '') {
+            return;
+        } else if (file) {
+            timerId = setInterval(() => {
+                setCount((pre) => {
+                    let number = Number(pre) + 1;
+                    return String(number);
+                });
+            }, 1000);
+        } else {
+            setCount(0);
+        }
+
+        return () => {
+            clearInterval(timerId);
+        };
+    }, [file]);
+
+    const handleRemoveAttachment = () => {
         setImgBase64('');
         setFile('');
+        setAudioRecord(false);
     };
 
     // chọn emoji
@@ -308,6 +341,39 @@ function SendMessage({ receiver, darkmode = false }) {
         }
     };
 
+    const handleDisplayAudioRecord = (e) => {
+        console.log('record');
+        setAudioRecord(true);
+    };
+
+    const handleStartRecord = async (e) => {
+        let stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        window.localStream = stream;
+        audioRecordRef.current = new MediaRecorder(stream);
+        let data = [];
+        audioRecordRef.current.ondataavailable = (event) => data.push(event.data);
+        audioRecordRef.current.start();
+        console.log(audioRecordRef.current.state);
+        setFile({
+            type: 'audio-record',
+        });
+    };
+
+    const handleStopRecord = (e) => {
+        setFile(false);
+        window.localStream.getTracks().forEach((track) => {
+            track.stop();
+        });
+    };
+
+    const handlePauseRecord = () => {
+        audioRecordRef.current.stop();
+        setFile('');
+        window.localStream.getTracks().forEach((track) => {
+            track.stop();
+        });
+    };
+
     return (
         <div className={cx('wrapper')}>
             {block && (
@@ -324,7 +390,7 @@ function SendMessage({ receiver, darkmode = false }) {
                                         <Input noLabel file type="file" input name="file" autoComplete="off" />
                                     </Button>
                                 </div>
-                                <div className={cx('chat-btn-item')}>
+                                <div className={cx('chat-btn-item')} onClick={handleDisplayAudioRecord}>
                                     <Button
                                         darkmodeBtn={darkmode}
                                         nestInput
@@ -336,7 +402,10 @@ function SendMessage({ receiver, darkmode = false }) {
                                 {imgBase64.length > 0 && (
                                     <div className={cx('attachment-list')}>
                                         <div className={cx('attachment-item')}>
-                                            <div className={cx('remove-attachment-item')} onClick={handleRemoveImg}>
+                                            <div
+                                                className={cx('remove-attachment-item')}
+                                                onClick={handleRemoveAttachment}
+                                            >
                                                 <FontAwesomeIcon
                                                     className={cx('remove-attachment-icon', {
                                                         removeIconDarkmode: darkmode,
@@ -350,10 +419,13 @@ function SendMessage({ receiver, darkmode = false }) {
                                         </div>
                                     </div>
                                 )}
-                                {file && (
+                                {file && !audioRecord && (
                                     <div className={cx('attachment-list')}>
                                         <div className={cx('attachment-item')}>
-                                            <div className={cx('remove-attachment-item')} onClick={handleRemoveImg}>
+                                            <div
+                                                className={cx('remove-attachment-item')}
+                                                onClick={handleRemoveAttachment}
+                                            >
                                                 <FontAwesomeIcon
                                                     className={cx('remove-attachment-icon')}
                                                     icon={faXmarkCircle}
@@ -380,6 +452,48 @@ function SendMessage({ receiver, darkmode = false }) {
                                                 />
 
                                                 <span>{file.filename}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                                {audioRecord && (
+                                    <div className={cx('attachment-list')}>
+                                        <div className={cx('attachment-item')}>
+                                            <div
+                                                className={cx('remove-attachment-item')}
+                                                onClick={handleRemoveAttachment}
+                                            >
+                                                <FontAwesomeIcon
+                                                    className={cx('remove-attachment-icon', {
+                                                        removeIconDarkmode: darkmode,
+                                                    })}
+                                                    icon={faXmarkCircle}
+                                                />
+                                            </div>
+                                            <div className={cx('audio-record')}>
+                                                <div className={cx('audio-record-icon')}>
+                                                    {count > 0 ? (
+                                                        <div>
+                                                            <FontAwesomeIcon
+                                                                className={cx('audio-record-icon-item')}
+                                                                icon={faStop}
+                                                                onClick={handleStopRecord}
+                                                            />
+                                                            <FontAwesomeIcon
+                                                                className={cx('audio-record-icon-item')}
+                                                                icon={faPause}
+                                                                onClick={handlePauseRecord}
+                                                            />
+                                                        </div>
+                                                    ) : (
+                                                        <FontAwesomeIcon
+                                                            className={cx('audio-record-icon-item')}
+                                                            icon={faPlay}
+                                                            onClick={handleStartRecord}
+                                                        />
+                                                    )}
+                                                </div>
+                                                <span className={cx('record-length')}>{count}</span>
                                             </div>
                                         </div>
                                     </div>

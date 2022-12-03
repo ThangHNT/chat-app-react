@@ -78,6 +78,8 @@
 }
 
 .wrapper-name-icon-file {
+    display: flex;
+    align-items: center;
     padding-right: 12px;
     padding-top: 4px;
     width: 100%;
@@ -89,6 +91,27 @@
         text-overflow: ellipsis;
         white-space: nowrap;
     }
+}
+
+.audio-record {
+    padding: 15px 15px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.record-length {
+    min-width: 30px;
+    color: yellow;
+    margin-bottom: 2px;
+    font-size: 18px;
+    line-height: 1.5;
+}
+
+.audio-record-icon-item {
+    font-size: 20px;
+    margin-right: 20px;
+    cursor: pointer;
 }
 
 .wrapper-emoji-btn {
