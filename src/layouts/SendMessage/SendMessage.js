@@ -9,9 +9,7 @@ import {
     faFileWord,
     faPhotoFilm,
     faXmarkCircle,
-    faPlay,
-    faStop,
-    faPause,
+    // faPaperPlane,
 } from '@fortawesome/free-solid-svg-icons';
 import {
     faFaceGrin,
@@ -19,8 +17,8 @@ import {
     faFileAudio,
     faFileExcel,
     faFilePowerpoint,
+    faPaperPlane,
 } from '@fortawesome/free-regular-svg-icons';
-import { faMicrophone } from '@fortawesome/free-solid-svg-icons';
 import Image from '~/components/Image';
 import Button from '~/components/Button';
 import Input from '~/components/Input';
@@ -48,15 +46,12 @@ function SendMessage({ receiver, darkmode = false }) {
     const [file, setFile] = useState();
     const [displayEmojiList, setDisplayEmojiList] = useState(false);
     const [block, setBlock] = useState({});
-    const [audioRecord, setAudioRecord] = useState(false);
-    const [count, setCount] = useState('0');
 
     let messageSound = new Audio();
 
     const inputRef = useRef();
     const emojiListBtnRef = useRef();
     const emojiRef = useRef();
-    const audioRecordRef = useRef();
 
     useEffect(() => {
         if (inputRef.current) {
@@ -192,30 +187,9 @@ function SendMessage({ receiver, darkmode = false }) {
         // eslint-disable-next-line
     }, [blobUrlImg]);
 
-    useEffect(() => {
-        let timerId;
-        if (file === '') {
-            return;
-        } else if (file) {
-            timerId = setInterval(() => {
-                setCount((pre) => {
-                    let number = Number(pre) + 1;
-                    return String(number);
-                });
-            }, 1000);
-        } else {
-            setCount(0);
-        }
-
-        return () => {
-            clearInterval(timerId);
-        };
-    }, [file]);
-
     const handleRemoveAttachment = () => {
         setImgBase64('');
         setFile('');
-        setAudioRecord(false);
     };
 
     // chọn emoji
@@ -262,69 +236,6 @@ function SendMessage({ receiver, darkmode = false }) {
         }
     };
 
-    // ấn enter để gửi tin nhắn
-    const handleEnterSubmit = async (e) => {
-        let shiftKey = 0;
-        if (e.shiftKey) shiftKey = 16;
-        if (e.which === 13 && shiftKey !== 16) {
-            e.preventDefault();
-            let content = [];
-            let messages = {
-                receiver: receiver.id,
-                sender: currentUser._id,
-                content,
-            };
-            let textMsg = inputValue.length > 0 ? inputValue.trim() : '';
-            // let content;
-            if (imgBase64.length > 0) {
-                content.push({
-                    img: imgBase64,
-                    type: 'img',
-                    time: new Date().getTime(),
-                });
-            }
-            if (textMsg.length > 0) {
-                content.push({
-                    text: inputValue.trim(),
-                    type: 'text',
-                    time: new Date().getTime(),
-                });
-            }
-            if (file) {
-                if (file.text.length > 0) {
-                    content.push({
-                        file: { content: file.text, filename: file.filename, size: file.size },
-                        type: file.type,
-                        time: new Date().getTime(),
-                    });
-                }
-            }
-            // console.log(messages);
-            if (messages.content.length > 0) {
-                inputRef.current.setHeight(32);
-                messageSound.src = 'send-message-sound.mp3';
-                if (soundSetting.send) {
-                    messageSound.play();
-                }
-                const newMessages = messages;
-                handleSendMessage(newMessages);
-                ChatContent.handleAddMessage(newMessages);
-                setInputValue('');
-                setBlobUrlImg('');
-                setImgBase64('');
-                setFile('');
-                const data = await axios.post(`${host}/api/send/message`, {
-                    sender: currentUser._id,
-                    receiver: receiver.id,
-                    messages,
-                });
-                if (!data.status) {
-                    alert('Lỗi gửi tin nhắn');
-                }
-            }
-        }
-    };
-
     // kiểm tra tình trạng chặn
     const handleGetBlockStatus = async () => {
         const data = await axios.post(`${host}/api/check-block-status`, {
@@ -341,37 +252,71 @@ function SendMessage({ receiver, darkmode = false }) {
         }
     };
 
-    const handleDisplayAudioRecord = (e) => {
-        console.log('record');
-        setAudioRecord(true);
+    // ấn enter để gửi tin nhắn
+    const handleEnterSubmit = async (e) => {
+        let shiftKey = 0;
+        if (e.shiftKey) shiftKey = 16;
+        if (e.which === 13 && shiftKey !== 16) {
+            e.preventDefault();
+            handleSendMessageNow();
+        }
     };
 
-    const handleStartRecord = async (e) => {
-        let stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        window.localStream = stream;
-        audioRecordRef.current = new MediaRecorder(stream);
-        let data = [];
-        audioRecordRef.current.ondataavailable = (event) => data.push(event.data);
-        audioRecordRef.current.start();
-        console.log(audioRecordRef.current.state);
-        setFile({
-            type: 'audio-record',
-        });
-    };
-
-    const handleStopRecord = (e) => {
-        setFile(false);
-        window.localStream.getTracks().forEach((track) => {
-            track.stop();
-        });
-    };
-
-    const handlePauseRecord = () => {
-        audioRecordRef.current.stop();
-        setFile('');
-        window.localStream.getTracks().forEach((track) => {
-            track.stop();
-        });
+    const handleSendMessageNow = async () => {
+        let content = [];
+        let messages = {
+            receiver: receiver.id,
+            sender: currentUser._id,
+            content,
+        };
+        let textMsg = inputValue.length > 0 ? inputValue.trim() : '';
+        // let content;
+        if (imgBase64.length > 0) {
+            content.push({
+                img: imgBase64,
+                type: 'img',
+                time: new Date().getTime(),
+            });
+        }
+        if (textMsg.length > 0) {
+            content.push({
+                text: inputValue.trim(),
+                type: 'text',
+                time: new Date().getTime(),
+            });
+        }
+        if (file) {
+            if (file.text.length > 0) {
+                content.push({
+                    file: { content: file.text, filename: file.filename, size: file.size },
+                    type: file.type,
+                    time: new Date().getTime(),
+                });
+            }
+        }
+        // console.log(messages);
+        if (messages.content.length > 0) {
+            inputRef.current.setHeight(32);
+            messageSound.src = 'send-message-sound.mp3';
+            if (soundSetting.send) {
+                messageSound.play();
+            }
+            const newMessages = messages;
+            handleSendMessage(newMessages);
+            ChatContent.handleAddMessage(newMessages);
+            setInputValue('');
+            setBlobUrlImg('');
+            setImgBase64('');
+            setFile('');
+            const data = await axios.post(`${host}/api/send/message`, {
+                sender: currentUser._id,
+                receiver: receiver.id,
+                messages,
+            });
+            if (!data.status) {
+                alert('Lỗi gửi tin nhắn');
+            }
+        }
     };
 
     return (
@@ -389,13 +334,6 @@ function SendMessage({ receiver, darkmode = false }) {
                                     >
                                         <Input noLabel file type="file" input name="file" autoComplete="off" />
                                     </Button>
-                                </div>
-                                <div className={cx('chat-btn-item')} onClick={handleDisplayAudioRecord}>
-                                    <Button
-                                        darkmodeBtn={darkmode}
-                                        nestInput
-                                        leftIcon={<FontAwesomeIcon icon={faMicrophone} />}
-                                    ></Button>
                                 </div>
                             </div>
                             <div className={cx('chat-input')}>
@@ -419,7 +357,7 @@ function SendMessage({ receiver, darkmode = false }) {
                                         </div>
                                     </div>
                                 )}
-                                {file && !audioRecord && (
+                                {file && (
                                     <div className={cx('attachment-list')}>
                                         <div className={cx('attachment-item')}>
                                             <div
@@ -452,48 +390,6 @@ function SendMessage({ receiver, darkmode = false }) {
                                                 />
 
                                                 <span>{file.filename}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
-                                {audioRecord && (
-                                    <div className={cx('attachment-list')}>
-                                        <div className={cx('attachment-item')}>
-                                            <div
-                                                className={cx('remove-attachment-item')}
-                                                onClick={handleRemoveAttachment}
-                                            >
-                                                <FontAwesomeIcon
-                                                    className={cx('remove-attachment-icon', {
-                                                        removeIconDarkmode: darkmode,
-                                                    })}
-                                                    icon={faXmarkCircle}
-                                                />
-                                            </div>
-                                            <div className={cx('audio-record')}>
-                                                <div className={cx('audio-record-icon')}>
-                                                    {count > 0 ? (
-                                                        <div>
-                                                            <FontAwesomeIcon
-                                                                className={cx('audio-record-icon-item')}
-                                                                icon={faStop}
-                                                                onClick={handleStopRecord}
-                                                            />
-                                                            <FontAwesomeIcon
-                                                                className={cx('audio-record-icon-item')}
-                                                                icon={faPause}
-                                                                onClick={handlePauseRecord}
-                                                            />
-                                                        </div>
-                                                    ) : (
-                                                        <FontAwesomeIcon
-                                                            className={cx('audio-record-icon-item')}
-                                                            icon={faPlay}
-                                                            onClick={handleStartRecord}
-                                                        />
-                                                    )}
-                                                </div>
-                                                <span className={cx('record-length')}>{count}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -534,6 +430,13 @@ function SendMessage({ receiver, darkmode = false }) {
                                         </div>
                                     )}
                                 </div>
+                            </div>
+                            <div className={cx('chat-btn-item')} onClick={handleSendMessageNow}>
+                                <Button
+                                    darkmodeBtn={darkmode}
+                                    nestInput
+                                    leftIcon={<FontAwesomeIcon icon={faPaperPlane} />}
+                                ></Button>
                             </div>
                         </div>
                     )}
