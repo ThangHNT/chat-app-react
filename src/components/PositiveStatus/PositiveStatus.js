@@ -2,11 +2,14 @@ import { useEffect, useContext, useState, memo } from 'react';
 import { SocketContext } from '~/components/Context/SocketContext';
 import classNames from 'classnames/bind';
 import styles from './PositiveStatus.module.scss';
+import { MessageContext } from '~/components/Context/MessageContext';
+
 const cx = classNames.bind(styles);
 
 function PositiveStatus({ receiver }) {
     // console.log('online-status');
     const { userList, userDisconnect, newUser, handleSetUserList } = useContext(SocketContext);
+    const { handleSetNewMsg, newMsg } = useContext(MessageContext);
     const [positive, setPositive] = useState(false);
 
     // console.log(receiver);
@@ -17,6 +20,18 @@ function PositiveStatus({ receiver }) {
         }
         // eslint-disable-next-line
     }, [newUser]);
+
+    useEffect(() => {
+        if (newMsg) {
+            handleSetNewMsg(false);
+            setPositive(
+                userList.some((user) => {
+                    return receiver === user.userId;
+                }),
+            );
+        }
+        // eslint-disable-next-line
+    }, [newMsg]);
 
     useEffect(() => {
         if (userDisconnect) {

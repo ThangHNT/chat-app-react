@@ -9,6 +9,8 @@ import MessageItem from '~/components/MessageItem';
 import host from '~/ulties/serverHost';
 import { SettingContext } from '~/components/Context/SettingContext';
 import { UserContext } from '~/components/Context/UserContext';
+import { SocketContext } from '~/components/Context/SocketContext';
+import { MessageContext } from '~/components/Context/MessageContext';
 
 const cx = classNames.bind(styles);
 
@@ -16,6 +18,8 @@ function Sidebar() {
     // console.log('sidebar');
     const { currentUser, handleGetListFriend } = useContext(UserContext);
     const { handleChangeDarkLightMode, darkLightMode } = useContext(SettingContext);
+    const { newMessage } = useContext(SocketContext);
+    const { handleSetNewMsg, messages } = useContext(MessageContext);
     const [listUser, setListUser] = useState([]);
 
     const checkboxRef = useRef();
@@ -30,6 +34,7 @@ function Sidebar() {
         if (currentUser) {
             axios.post(`${host}/api/message-item`, { sender: currentUser._id }).then((data) => {
                 const data2 = data.data;
+                // console.log(data2.userList);
                 if (data2.status) {
                     handleGetListFriend(data2.userList);
                     const arr = data2.userList.slice(0, 7);
@@ -41,6 +46,33 @@ function Sidebar() {
         }
         // eslint-disable-next-line
     }, [currentUser]);
+
+    useEffect(() => {
+        if (newMessage) {
+            let chated = false;
+            console.log('new msg', listUser);
+            let arr = [];
+            listUser.forEach((item) => {
+                if (newMessage.sender === item.id) {
+                    arr.unshift(item);
+                    chated = true;
+                } else {
+                    arr.push(item);
+                }
+            });
+            if (!chated) {
+                axios.get(`${host}/api/get-message-item/?id=${newMessage.sender}`).then((response) => {
+                    let user = response.data.user;
+                    arr.unshift(user);
+                    setListUser([...arr]);
+                });
+            } else {
+                setListUser([...arr]);
+            }
+            handleSetNewMsg(true);
+        }
+        // eslint-disable-next-line
+    }, [newMessage]);
 
     const handleChangeMode = () => {
         handleChangeDarkLightMode();

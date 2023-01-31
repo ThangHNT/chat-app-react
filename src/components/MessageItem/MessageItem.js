@@ -20,7 +20,7 @@ function MessageItem({ receiver, darkmode = false, avatar, username, searchResul
     // console.log('message-item');
     const { currentUser } = useContext(UserContext);
     const { soundSetting } = useContext(SettingContext);
-    const { lastestMsg, handleDeleteMessagesChat } = useContext(MessageContext);
+    const { lastestMsg, handleDeleteMessagesChat, newMsg, handleSetNewMsg } = useContext(MessageContext);
     const { messages, handleDisplayChatContent } = useContext(ChatContentContext);
     const ChatContent = useContext(ChatContentContext);
     const { newMessage } = useContext(SocketContext);
@@ -43,10 +43,31 @@ function MessageItem({ receiver, darkmode = false, avatar, username, searchResul
     }, [lastestMsg]);
 
     // nhận tin nhắn mới nhất từ socket và hiển thị bên sidebar
+    // useEffect(() => {
+    //     if (newMessage) {
+    //         if (newMessage.sender === receiver) {
+    //             console.log(newMessage);
+    //             if (soundSetting.notify) {
+    //                 messageSound.play();
+    //             }
+    //             if (ChatContent.receiver !== receiver) {
+    //                 setMessageNotify(true);
+    //             }
+    //             const newestMessage = newMessage.content[newMessage.content.length - 1];
+    //             if (newestMessage.type === 'text') {
+    //                 setlastestMessage(newestMessage.text);
+    //             } else if (newestMessage.type === 'img') {
+    //                 setlastestMessage('Ban nhan dc 1 anh');
+    //             } else {
+    //                 setlastestMessage('Ban nhan dc 1 file');
+    //             }
+    //         }
+    //     }
+    //     // eslint-disable-next-line
+    // }, [newMessage]);
     useEffect(() => {
-        if (newMessage) {
+        if (newMsg) {
             if (newMessage.sender === receiver) {
-                // console.log(newMessage);
                 if (soundSetting.notify) {
                     messageSound.play();
                 }
@@ -64,7 +85,7 @@ function MessageItem({ receiver, darkmode = false, avatar, username, searchResul
             }
         }
         // eslint-disable-next-line
-    }, [newMessage]);
+    }, [newMsg]);
 
     //  hiển thị tin nhắn mới nhất khi vừa ấn enter
     useEffect(() => {
