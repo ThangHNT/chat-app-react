@@ -147,7 +147,6 @@ function Messages({ receiver, darkmodeMsg = false }) {
         const msg = ChatContent.messages;
         if (msg) {
             if (msg.receiver === receiver.id) {
-                // console.log('an enter');
                 const arr = msg.content.map((message) => {
                     return {
                         text: message.type === 'text' ? message.text : '',
@@ -168,7 +167,7 @@ function Messages({ receiver, darkmodeMsg = false }) {
                                   }
                                 : '',
                         sender: currentUser._id,
-                        time: new Date().getTime(),
+                        time: message.time,
                         type: message.type,
                     };
                 });

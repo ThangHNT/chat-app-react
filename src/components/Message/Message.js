@@ -85,10 +85,9 @@ function Message({
     // listen send reaction icon on socket
     useEffect(() => {
         if (newReaction) {
-            if (currentUser._id === newReaction.receiver && newReaction.time === time) {
-                // console.log(newReaction);
+            if (currentUser._id === newReaction.receiver && String(newReaction.time) === String(time)) {
                 setReactionIcon(getReactionIcon(newReaction.icon));
-                handleSetNewReaction(undefined);
+                handleSetNewReaction(false);
             }
         }
         // eslint-disable-next-line

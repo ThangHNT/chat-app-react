@@ -44,7 +44,7 @@ function SocketContextProvider({ children }) {
                 handleSetMessages(data.sender, data.content);
             });
             socket.on('private reaction message', (data) => {
-                console.log('new icon');
+                // console.log('new icon', data);
                 setNewReaction(data);
                 handleSetMessages(data.sender, data.icon, data.time, true);
             });
@@ -268,8 +268,6 @@ function SocketContextProvider({ children }) {
                 };
             }
             socket.emit('send message', message);
-            // console.log('from', socket.id);
-            // console.log('to', to);
         }
     };
 
