@@ -20,7 +20,7 @@ function MessageItem({ receiver, darkmode = false, avatar, username, searchResul
     // console.log('message-item');
     const { currentUser } = useContext(UserContext);
     const { soundSetting } = useContext(SettingContext);
-    const { lastestMsg, handleDeleteMessagesChat, newMsg, handleSetNewMsg } = useContext(MessageContext);
+    const { lastestMsg, handleDeleteMessagesChat, newMsg, sendMsg } = useContext(MessageContext);
     const { messages, handleDisplayChatContent } = useContext(ChatContentContext);
     const ChatContent = useContext(ChatContentContext);
     const { newMessage } = useContext(SocketContext);
@@ -89,15 +89,25 @@ function MessageItem({ receiver, darkmode = false, avatar, username, searchResul
 
     //  hiển thị tin nhắn mới nhất khi vừa ấn enter
     useEffect(() => {
-        if (messages) {
-            if (messages.receiver === receiver) {
-                // console.log(messages);
-                let lastestMessage = messages.content[messages.content.length - 1];
+        if (sendMsg) {
+            // console.log(messages.receiver, receiver);
+            if (sendMsg.receiver === receiver) {
+                let lastestMessage = sendMsg.content[sendMsg.content.length - 1];
                 setlastestMessage(handleSetLastestMessage(true, lastestMessage.type, lastestMessage.text));
             }
         }
         // eslint-disable-next-line
-    }, [messages]);
+    }, [sendMsg]);
+    // useEffect(() => {
+    //     if (messages) {
+    //         console.log(messages.receiver, receiver);
+    //         if (messages.receiver === receiver) {
+    //             let lastestMessage = messages.content[messages.content.length - 1];
+    //             setlastestMessage(handleSetLastestMessage(true, lastestMessage.type, lastestMessage.text));
+    //         }
+    //     }
+    //     // eslint-disable-next-line
+    // }, [messages]);
 
     // lấy tin nhắn mới nhất từ db
     useEffect(() => {

@@ -11,6 +11,7 @@ import { SettingContext } from '~/components/Context/SettingContext';
 import { UserContext } from '~/components/Context/UserContext';
 import { SocketContext } from '~/components/Context/SocketContext';
 import { MessageContext } from '~/components/Context/MessageContext';
+import { ChatContentContext } from '~/components/Context/ChatContentContext';
 
 const cx = classNames.bind(styles);
 
@@ -19,7 +20,8 @@ function Sidebar() {
     const { currentUser, handleGetListFriend } = useContext(UserContext);
     const { handleChangeDarkLightMode, darkLightMode } = useContext(SettingContext);
     const { newMessage } = useContext(SocketContext);
-    const { handleSetNewMsg, messages } = useContext(MessageContext);
+    const ChatContent = useContext(ChatContentContext);
+    const { handleSetNewMsg, handleSendMsg } = useContext(MessageContext);
     const [listUser, setListUser] = useState([]);
 
     const checkboxRef = useRef();
@@ -48,9 +50,36 @@ function Sidebar() {
     }, [currentUser]);
 
     useEffect(() => {
+        if (ChatContent.messages) {
+            let chated = false;
+            // console.log('new msg', listUser);
+            let arr = [];
+            listUser.forEach((item) => {
+                if (ChatContent.messages.receiver === item.id) {
+                    arr.unshift(item);
+                    chated = true;
+                } else {
+                    arr.push(item);
+                }
+            });
+            if (!chated && currentUser._id !== ChatContent.messages.receiver) {
+                axios.get(`${host}/api/get-message-item/?id=${ChatContent.messages.receiver}`).then((response) => {
+                    let user = response.data.user;
+                    arr.unshift(user);
+                    setListUser([...arr]);
+                    handleSendMsg(ChatContent.messages);
+                });
+            } else {
+                setListUser([...arr]);
+                handleSendMsg(ChatContent.messages);
+            }
+        }
+    }, [ChatContent.messages]);
+
+    useEffect(() => {
         if (newMessage) {
             let chated = false;
-            console.log('new msg', listUser);
+            // console.log('new msg', listUser);
             let arr = [];
             listUser.forEach((item) => {
                 if (newMessage.sender === item.id) {
@@ -60,16 +89,17 @@ function Sidebar() {
                     arr.push(item);
                 }
             });
-            if (!chated) {
+            if (!chated && currentUser._id !== newMessage.sender) {
                 axios.get(`${host}/api/get-message-item/?id=${newMessage.sender}`).then((response) => {
                     let user = response.data.user;
                     arr.unshift(user);
                     setListUser([...arr]);
+                    handleSetNewMsg(true);
                 });
             } else {
                 setListUser([...arr]);
+                handleSetNewMsg(true);
             }
-            handleSetNewMsg(true);
         }
         // eslint-disable-next-line
     }, [newMessage]);

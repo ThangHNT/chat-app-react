@@ -9,7 +9,7 @@ const cx = classNames.bind(styles);
 function PositiveStatus({ receiver }) {
     // console.log('online-status');
     const { userList, userDisconnect, newUser, handleSetUserList } = useContext(SocketContext);
-    const { handleSetNewMsg, newMsg } = useContext(MessageContext);
+    const { handleSetNewMsg, newMsg, sendMsg, handleSendMsg } = useContext(MessageContext);
     const [positive, setPositive] = useState(false);
 
     // console.log(receiver);
@@ -21,6 +21,7 @@ function PositiveStatus({ receiver }) {
         // eslint-disable-next-line
     }, [newUser]);
 
+    // hiện online status khi có tin nhắn mới
     useEffect(() => {
         if (newMsg) {
             handleSetNewMsg(false);
@@ -32,6 +33,19 @@ function PositiveStatus({ receiver }) {
         }
         // eslint-disable-next-line
     }, [newMsg]);
+
+    // hiện online khi vừa nhắn tin
+    useEffect(() => {
+        if (sendMsg) {
+            handleSendMsg(false);
+            setPositive(
+                userList.some((user) => {
+                    return receiver === user.userId;
+                }),
+            );
+        }
+        // eslint-disable-next-line
+    }, [sendMsg]);
 
     useEffect(() => {
         if (userDisconnect) {

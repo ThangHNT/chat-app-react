@@ -262,6 +262,7 @@ function SendMessage({ receiver, darkmode = false }) {
         }
     };
 
+    // gửi tin nhắn đi
     const handleSendMessageNow = async () => {
         let content = [];
         let messages = {

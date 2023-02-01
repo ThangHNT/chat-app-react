@@ -8,6 +8,11 @@ function MessageProvider({ children }) {
     const [checkGetMessagesFromDB, setCheckGetMessagesFromDB] = useState([]);
     const [deleteChat, setDeleteChat] = useState();
     const [newMsg, setNewMsg] = useState();
+    const [sendMsg, setSendMsg] = useState();
+
+    const handleSendMsg = (msg) => {
+        setSendMsg(msg);
+    };
 
     const handleSetNewMsg = (msg) => {
         setNewMsg(msg);
@@ -108,6 +113,8 @@ function MessageProvider({ children }) {
         handleDeleteMessagesChat,
         newMsg,
         handleSetNewMsg,
+        sendMsg,
+        handleSendMsg,
     };
 
     return <MessageContext.Provider value={values}>{children}</MessageContext.Provider>;
