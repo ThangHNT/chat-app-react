@@ -49,6 +49,7 @@ function Sidebar() {
         // eslint-disable-next-line
     }, [currentUser]);
 
+    // hiện tin nhắn vừa gửi lên đầu ds bên sidebar
     useEffect(() => {
         if (ChatContent.messages) {
             let chated = false;
@@ -66,6 +67,7 @@ function Sidebar() {
                 axios.get(`${host}/api/get-message-item/?id=${ChatContent.messages.receiver}`).then((response) => {
                     let user = response.data.user;
                     arr.unshift(user);
+                    handleGetListFriend([...arr]);
                     setListUser([...arr]);
                     handleSendMsg(ChatContent.messages);
                 });
@@ -76,6 +78,7 @@ function Sidebar() {
         }
     }, [ChatContent.messages]);
 
+    // hiện tin nhắn mới lên đầu danh sách bên sidebar
     useEffect(() => {
         if (newMessage) {
             let chated = false;
@@ -94,6 +97,7 @@ function Sidebar() {
                     let user = response.data.user;
                     arr.unshift(user);
                     setListUser([...arr]);
+                    handleGetListFriend([...arr]);
                     handleSetNewMsg(true);
                 });
             } else {
