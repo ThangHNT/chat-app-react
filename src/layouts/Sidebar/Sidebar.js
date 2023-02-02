@@ -76,6 +76,7 @@ function Sidebar() {
                 handleSendMsg(ChatContent.messages);
             }
         }
+        // eslint-disable-next-line
     }, [ChatContent.messages]);
 
     // hiện tin nhắn mới lên đầu danh sách bên sidebar
