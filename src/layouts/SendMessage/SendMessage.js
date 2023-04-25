@@ -29,6 +29,8 @@ import { SocketContext } from '~/components/Context/SocketContext';
 import { SettingContext } from '~/components/Context/SettingContext';
 import { UserContext } from '~/components/Context/UserContext';
 import { ToastContainer, toast } from 'react-toastify';
+import CryptoJS from 'crypto-js';
+import _ from 'lodash';
 
 const cx = classNames.bind(styles);
 
@@ -46,7 +48,6 @@ function SendMessage({ receiver, darkmode = false }) {
     const [file, setFile] = useState();
     const [displayEmojiList, setDisplayEmojiList] = useState(false);
     const [block, setBlock] = useState({});
-
     let messageSound = new Audio();
 
     const inputRef = useRef();
@@ -122,6 +123,8 @@ function SendMessage({ receiver, darkmode = false }) {
                     })
                     .join('');
                 let text = decodeURIComponent(percentEncodedStr);
+                console.log(text);
+                // hide content in file
                 setFile({
                     filename: newFile.filename,
                     text,
@@ -309,14 +312,14 @@ function SendMessage({ receiver, darkmode = false }) {
             setBlobUrlImg('');
             setImgBase64('');
             setFile('');
-            const data = await axios.post(`${host}/api/send/message`, {
-                sender: currentUser._id,
-                receiver: receiver.id,
-                messages,
-            });
-            if (!data.status) {
-                alert('Lỗi gửi tin nhắn');
-            }
+            // const data = await axios.post(`${host}/api/send/message`, {
+            //     sender: currentUser._id,
+            //     receiver: receiver.id,
+            //     messages,
+            // });
+            // if (!data.status) {
+            //     alert('Lỗi gửi tin nhắn');
+            // }
         }
     };
 
