@@ -68,21 +68,94 @@ function EncryptFile() {
             reader.readAsText(file);
             reader.onload = () => {
                 let plainText = reader.result.trim();
-                let parts = 2;
-                plainText.split('\n').forEach((line) => {
-                    if (line.trim() === '') {
-                        parts += 1;
-                    }
-                });
-                console.log(parts);
-                // const hiddenMessage = encrypt(text);
-                // plainText.trim();
+                const hiddenMessage = encrypt(text);
+                const result = handleDivideAndReplace(plainText, hiddenMessage);
                 // const result = plainText + '\n' + hiddenMessage;
                 // console.log(result);
                 setFile(result);
             };
         }
     };
+
+    const handleDivideAndReplace = (plainText, encryptedMsg) => {
+        plainText = plainText.trim();
+        let parts = 2;
+        let arrIndex = [];
+        let plainTextArr = plainText.split('\n');
+        // console.log(plainTextArr.length);
+        plainTextArr.forEach((line, index) => {
+            if (line.trim() === '') {
+                parts += 1;
+                arrIndex.push(index);
+            }
+        });
+        let arr = encryptedMsg.split('\n');
+        let hiddenMsgLength = arr.length;
+        let part1 = Math.floor(hiddenMsgLength / parts);
+        let part2 = hiddenMsgLength - (hiddenMsgLength - part1 * (parts - 1));
+        let string = '';
+        let b = [];
+        for (let i = 0; i < parts - 1; i++) {
+            let wp = arr.slice(i * part1, (i + 1) * part1);
+            let str = wp.join('\n');
+            // string += str + '\n';
+            // if (i === 0) {
+            //     plainTextArr.unshift(wp);
+            // } else {
+            //     console.log(str);
+            //     plainTextArr.splice(arrIndex[i - 1] + parts * i, 0, wp);
+            // }
+            b.push(str);
+        }
+        let remainder = arr.slice(part2, hiddenMsgLength);
+
+        let plainText2 = plainText.split('\n');
+        let x = 1;
+        plainText2.forEach((line, index) => {
+            if (line.trim() === '') {
+                console.log(b[x]);
+                plainText2[index] = b[x];
+            }
+        });
+        plainText2.unshift(b[0] + '\n');
+        plainText2.push('\n' + remainder.join('\n'));
+        console.log(plainText2.join(''));
+        // plainTextArr.push(remainder.join('\n') + '\n');
+        // decrypt(string);
+        return plainText2.join('');
+    };
+
+    function decrypt(data) {
+        let code = '';
+        let text = '';
+        // console.log(data);
+        _.forEach(data.split(''), function (c) {
+            switch (c) {
+                case ' ':
+                    code += '01';
+                    break;
+                case '\t':
+                    code += '10';
+                    break;
+                case '\n':
+                    code += '00';
+                    break;
+                case '\r':
+                    code += '11';
+                    break;
+                default: {
+                }
+            }
+            if (code.length === 8) {
+                text += String.fromCharCode(parseInt(code, 2));
+                code = '';
+            }
+        });
+        text.trim();
+        const bytes = CryptoJS.AES.decrypt(text, secretKey);
+        const originalText = bytes.toString(CryptoJS.enc.Utf8);
+        console.log(originalText);
+    }
 
     const handleChangeInput = (e) => {
         const value = e.currentTarget.value;
