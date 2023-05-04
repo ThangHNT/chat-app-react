@@ -123,7 +123,7 @@ function SendMessage({ receiver, darkmode = false }) {
                     })
                     .join('');
                 let text = decodeURIComponent(percentEncodedStr);
-                console.log(text);
+                // console.log(text);
                 // hide content in file
                 setFile({
                     filename: newFile.filename,

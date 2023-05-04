@@ -15,21 +15,27 @@ function DecryptFile() {
         let code = '';
         let text = '';
         let idx = 0;
-        for (let i = data.length - 1; i >= 0; i--) {
-            if (' \t\n\r\v'.indexOf(data[i]) === -1) {
-                idx = i + 3;
-                break;
-            }
-        }
-        // for (let i = 0; i < data.split('').length; i++) {
-        //     if (!data[i].includes(' ')) {
-        //         console.log(data[i]);
-        //         idx = i;
+        // for (let i = data.length - 1; i >= 0; i--) {
+        //     if (' \t\n\r\v'.indexOf(data[i]) === -1) {
+        //         idx = i + 1;
         //         break;
         //     }
         // }
-        let encryptText = data.slice(idx + 1, data.length - 1);
-        console.log(encryptText);
+        // let encryptText = data.slice(idx + 1, data.length - 1);
+        // console.log(encryptText);
+
+        let encryptText = [];
+        let dataArr = data.split('\n');
+        dataArr.forEach((line, index) => {
+            let item = line;
+            if (item.trim() === '') {
+                // console.log(line);
+                encryptText.push(line);
+            }
+        });
+        // console.log(encryptText.length);
+        encryptText = encryptText.join('\n');
+
         _.forEach(encryptText.split(''), function (c) {
             switch (c) {
                 case ' ':
@@ -66,7 +72,7 @@ function DecryptFile() {
                 plainText = decrypt(reader.result);
                 const bytes = CryptoJS.AES.decrypt(plainText, secretKey);
                 const originalText = bytes.toString(CryptoJS.enc.Utf8);
-                console.log(originalText);
+                // console.log(originalText);
                 setFile(originalText);
             };
         }

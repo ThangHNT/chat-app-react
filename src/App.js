@@ -13,11 +13,11 @@ function App() {
     return (
         <BrowserRouter>
             <Routes>
-                <Route path="/" element={<EncryptFile />} />
+                <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/account" element={<Account />} />
                 <Route path="/admin" element={<Admin />} />
-                {/* <Route path="/encrypt-file" element={<EncryptFile />} /> */}
+                <Route path="/encrypt-file" element={<EncryptFile />} />
                 <Route path="/decrypt-file" element={<DecryptFile />} />
                 <Route path="*" element={<NotFound />} />
             </Routes>

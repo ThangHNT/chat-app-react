@@ -19,10 +19,9 @@ function EncryptFile() {
 
     function encrypt(data) {
         const ciphertext = CryptoJS.AES.encrypt(data, secretKey, 128).toString();
-        // console.log(ciphertext, ciphertext.length);
         let lines = ciphertext.replace(/\r/g, '').split('\n');
-        lines.map((e) => e.trim()); // trim whitespace
-        lines = _.compact(lines); // remove empty values
+        lines.map((e) => e.trim());
+        lines = _.compact(lines);
 
         let out = [];
         _.forEach(lines, function (line) {
@@ -69,10 +68,10 @@ function EncryptFile() {
             reader.onload = () => {
                 let plainText = reader.result.trim();
                 const hiddenMessage = encrypt(text);
-                const result = handleDivideAndReplace(plainText, hiddenMessage);
-                // const result = plainText + '\n' + hiddenMessage;
-                // console.log(result);
-                setFile(result);
+                const encryptedMsg = handleDivideAndReplace(plainText, hiddenMessage);
+                // const encryptedMsg = plainText + '\n' + hiddenMessage;
+                // decrypt(encryptedMsg);
+                setFile(encryptedMsg);
             };
         }
     };
@@ -82,7 +81,6 @@ function EncryptFile() {
         let parts = 2;
         let arrIndex = [];
         let plainTextArr = plainText.split('\n');
-        // console.log(plainTextArr.length);
         plainTextArr.forEach((line, index) => {
             if (line.trim() === '') {
                 parts += 1;
@@ -97,31 +95,32 @@ function EncryptFile() {
         let b = [];
         for (let i = 0; i < parts - 1; i++) {
             let wp = arr.slice(i * part1, (i + 1) * part1);
-            let str = wp.join('\n');
-            // string += str + '\n';
-            // if (i === 0) {
-            //     plainTextArr.unshift(wp);
-            // } else {
-            //     console.log(str);
-            //     plainTextArr.splice(arrIndex[i - 1] + parts * i, 0, wp);
-            // }
+            let str = wp.join('\n') + '\n';
+            string += str;
             b.push(str);
         }
         let remainder = arr.slice(part2, hiddenMsgLength);
+        string += remainder.join('\n');
+        // decrypt(string);
+
+        //test
+        // console.log(plainText.split('\n\r'));
+        b.push(remainder.join('\n'));
+        // console.log(b);
+        // decrypt(b.join(''));
+        //
 
         let plainText2 = plainText.split('\n');
         let x = 1;
         plainText2.forEach((line, index) => {
             if (line.trim() === '') {
-                console.log(b[x]);
-                plainText2[index] = b[x];
+                plainText2[index] = '\n' + b[x];
+                x += 1;
             }
         });
-        plainText2.unshift(b[0] + '\n');
-        plainText2.push('\n' + remainder.join('\n'));
-        console.log(plainText2.join(''));
-        // plainTextArr.push(remainder.join('\n') + '\n');
-        // decrypt(string);
+        plainText2.unshift(b[0]);
+        plainText2.push('\n');
+        plainText2.push(remainder.join('\n'));
         return plainText2.join('');
     };
 
@@ -129,7 +128,19 @@ function EncryptFile() {
         let code = '';
         let text = '';
         // console.log(data);
-        _.forEach(data.split(''), function (c) {
+
+        let temporary = [];
+        let dataArr = data.split('\n');
+        dataArr.forEach((line, index) => {
+            let item = line;
+            if (item.trim() === '') {
+                // console.log(line);
+                temporary.push(line);
+            }
+        });
+        console.log(temporary.length);
+        temporary = temporary.join('\n');
+        _.forEach(temporary.split(''), function (c) {
             switch (c) {
                 case ' ':
                     code += '01';
@@ -151,7 +162,6 @@ function EncryptFile() {
                 code = '';
             }
         });
-        text.trim();
         const bytes = CryptoJS.AES.decrypt(text, secretKey);
         const originalText = bytes.toString(CryptoJS.enc.Utf8);
         console.log(originalText);
