@@ -90,7 +90,13 @@ function ChatContent() {
                     <Messages darkmodeMsg={darkLightMode} receiver={receiver} />
                     {setting && (
                         <div className={cx('setting')}>
-                            <Setting darkmode={darkLightMode} receiver={receiver} />
+                            <Setting
+                                darkmode={darkLightMode}
+                                receiver={receiver}
+                                onClose={() => {
+                                    setSetting(false);
+                                }}
+                            />
                         </div>
                     )}
                 </div>

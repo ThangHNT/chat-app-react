@@ -13,7 +13,7 @@ import { UserContext } from '~/components/Context/UserContext';
 
 const cx = classNames.bind(styles);
 
-function Setting({ receiver, darkmode }) {
+function Setting({ receiver, darkmode, onClose }) {
     // console.log('setting');
     const { currentUser } = useContext(UserContext);
     const { blockStatus, handlSetBlockStatus, handleDisplayThemeList, handleSetBackgroundImage, backgroundImage } =

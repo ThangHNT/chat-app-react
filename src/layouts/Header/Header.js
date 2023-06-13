@@ -60,46 +60,36 @@ function Header() {
             to: '/',
         },
         {
-            icon: <FontAwesomeIcon icon={faFileCode} />,
-            text: 'Encrypt file',
-            to: '/encrypt-file',
+            icon: <FontAwesomeIcon icon={faUser} />,
+            text: 'Tài khoản',
+            to: '/account',
         },
         {
-            icon: <FontAwesomeIcon icon={faFileCode} />,
-            text: 'Decryt file',
-            to: '/decrypt-file',
+            icon: <FontAwesomeIcon icon={faGear} />,
+            text: 'Cài đặt',
+            onClick: handleSetDisplayGeneralSetting,
         },
-        // {
-        //     icon: <FontAwesomeIcon icon={faUser} />,
-        //     text: 'Tài khoản',
-        //     to: '/account',
-        // },
-        // {
-        //     icon: <FontAwesomeIcon icon={faGear} />,
-        //     text: 'Cài đặt',
-        //     onClick: handleSetDisplayGeneralSetting,
-        // },
-        // {
-        //     icon: <FontAwesomeIcon icon={faMoon} />,
-        //     text: 'Chế độ tối',
-        //     children: {
-        //         text: 'Chế độ tối',
-        //         data: [
-        //             {
-        //                 text: 'Bật',
-        //                 icon: <FontAwesomeIcon icon={faCheck} />,
-        //                 onClick: handleChangeDarkLightMode,
-        //                 type: 'turn-on',
-        //             },
-        //             {
-        //                 text: 'Tắt',
-        //                 icon: <FontAwesomeIcon icon={faCheck} />,
-        //                 onClick: handleChangeDarkLightMode,
-        //                 type: 'turn-off',
-        //             },
-        //         ],
-        //     },
-        // },
+        {
+            icon: <FontAwesomeIcon icon={faMoon} />,
+            text: 'Chế độ tối',
+            children: {
+                text: 'Chế độ tối',
+                data: [
+                    {
+                        text: 'Bật',
+                        icon: <FontAwesomeIcon icon={faCheck} />,
+                        onClick: handleChangeDarkLightMode,
+                        type: 'turn-on',
+                    },
+                    {
+                        text: 'Tắt',
+                        icon: <FontAwesomeIcon icon={faCheck} />,
+                        onClick: handleChangeDarkLightMode,
+                        type: 'turn-off',
+                    },
+                ],
+            },
+        },
         {
             icon: <FontAwesomeIcon icon={faArrowRightFromBracket} />,
             text: 'Đăng xuất',
